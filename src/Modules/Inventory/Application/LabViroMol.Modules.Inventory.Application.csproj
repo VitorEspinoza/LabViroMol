@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Materials\Commands\RemoveStockException\" />
+      <Folder Include="MaterialTypes\Commands\" />
+      <Folder Include="Orders\Commands\Cancel\" />
+      <Folder Include="Orders\Commands\Process\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FluentValidation" Version="12.1.1" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+      <PackageReference Include="Mediator.Abstractions" Version="3.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Shared\Abstractions\LabViroMol.Modules.Shared.Abstractions.csproj" />
+      <ProjectReference Include="..\Domain\LabViroMol.Modules.Inventory.Domain.csproj" />
+    </ItemGroup>
+
+  
+</Project>

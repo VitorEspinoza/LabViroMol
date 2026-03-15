@@ -1,0 +1,58 @@
+using LabViroMol.Modules.Inventory.Application.Shared;
+using LabViroMol.Modules.Inventory.Domain.Materials;
+using LabViroMol.Modules.Inventory.Domain.Orders;
+using LabViroMol.Modules.Shared.Abstractions.Interfaces;
+using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using Mediator;
+
+namespace LabViroMol.Modules.Inventory.Application.Orders.Commands.Create;
+
+public class CreateOrderHandler : ICommandHandler<CreateOrderCommand, Result>
+{
+    private readonly IOrderRepository _orderRepository;
+    private readonly IProjectChecker _projectChecker;
+    private readonly ICurrentUser _currentUser;
+    private readonly IMaterialRepository _materialRepository;
+    private readonly IInventoryUnitOfWork _unitOfWork;
+
+    public CreateOrderHandler(
+        IOrderRepository orderRepository,
+        IProjectChecker projectChecker,
+        ICurrentUser currentUser,
+        IMaterialRepository materialRepository,
+        IInventoryUnitOfWork unitOfWork)
+    {
+        _orderRepository = orderRepository;
+        _projectChecker = projectChecker;
+        _currentUser = currentUser;
+        _materialRepository = materialRepository;
+        _unitOfWork = unitOfWork;
+        
+    }
+
+    public async ValueTask<Result> Handle(CreateOrderCommand command, CancellationToken ct)
+    {
+        var material = await _materialRepository.GetByIdAsync(command.MaterialId, ct);
+
+        if (material is null)
+            return Result.NotFound("Material não encontrado.");
+
+        var isEligibleForOrders = await _projectChecker.IsEligibleForOrdersAsync(command.ProjectId, ct);
+
+        if (!isEligibleForOrders)
+            return Result.BusinessRule("O projeto informado não está elegível para receber materiais.");
+
+        
+        var order = Order.Create(
+            command.MaterialId,
+            command.ProjectId,
+            _currentUser.Id,
+            command.Quantity,
+            command.description);
+
+        await _orderRepository.AddAsync(order, ct);
+        await _unitOfWork.CompleteAsync(ct);
+
+        return Result.Success();
+    }
+}
