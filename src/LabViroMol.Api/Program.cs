@@ -51,3 +51,5 @@ app.UseAuthorization();
 app.MapInventoryEndpoints();
 
 app.Run();
+
+public partial class Program;

@@ -12,8 +12,8 @@ using Microsoft.AspNetCore.Routing;
 
 namespace LabViroMol.Modules.Inventory.Presentation.Materials;
 
-internal record CreateMaterialRequest(string Name, string Location, decimal MinStock, decimal StockQuantity, Unit Unit, Guid TypeId);
-internal record UpdateMaterialRequest(string Name, string Location, decimal MinStock);
+public record CreateMaterialRequest(string Name, string Location, decimal MinStock, decimal StockQuantity, Unit Unit, Guid TypeId);
+public record UpdateMaterialRequest(string Name, string Location, decimal MinStock);
 
 internal static class MaterialCrudEndpoints
 {

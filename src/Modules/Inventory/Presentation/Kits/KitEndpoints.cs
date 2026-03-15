@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace LabViroMol.Modules.Inventory.Presentation.Kits;
 
-internal record UpdateKitRequest(string Name, string Description, List<KitItemInputModel> Materials);
+public record UpdateKitRequest(string Name, string Description, List<KitItemInputModel> Materials);
 
 internal static class KitEndpoints
 {

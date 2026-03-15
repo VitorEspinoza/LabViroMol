@@ -13,9 +13,9 @@ using Microsoft.AspNetCore.Routing;
 
 namespace LabViroMol.Modules.Inventory.Presentation.Materials;
 
-internal record AddStockMaterialRequest(decimal Quantity, string? Reason);
+public record AddStockMaterialRequest(decimal Quantity, string? Reason);
 
-internal record WriteOffRequest(decimal Quantity, Guid? ProjectId, string? Reason);
+public record WriteOffRequest(decimal Quantity, Guid? ProjectId, string? Reason);
 
 internal static class MaterialStockEndpoints
 {

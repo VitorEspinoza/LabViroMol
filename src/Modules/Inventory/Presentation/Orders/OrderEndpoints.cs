@@ -15,10 +15,10 @@ using Microsoft.AspNetCore.Routing;
 
 namespace LabViroMol.Modules.Inventory.Presentation.Orders;
 
-internal record CreateOrderRequest(Guid MaterialId, Guid ProjectId, decimal Quantity, string Description);
-internal record FixOrderDetailsRequest(Guid NewProjectId, decimal NewQuantity, string Description);
-internal record ProcessOrderRequest(string? Notes);
-internal record ReceiveOrderRequest(decimal QuantityReceived, string? Notes);
+public record CreateOrderRequest(Guid MaterialId, Guid ProjectId, decimal Quantity, string Description);
+public record FixOrderDetailsRequest(Guid NewProjectId, decimal NewQuantity, string Description);
+public record ProcessOrderRequest(string? Notes);
+public record ReceiveOrderRequest(decimal QuantityReceived, string? Notes);
 
 internal static class OrderEndpoints
 {
