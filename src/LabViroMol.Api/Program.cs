@@ -1,6 +1,7 @@
 using Kernel;
 using Kernel.Behaviors;
 using LabViroMol.Modules.Inventory.Presentation;
+using LabViroMol.Modules.Scheduling.Presentation;
 using Mediator;
 using Scalar.AspNetCore;
 
@@ -30,7 +31,8 @@ builder.Services.AddScoped(
 
 builder.Services
     .AddSharedModule()
-    .AddInventoryModule(builder.Configuration);
+    .AddInventoryModule(builder.Configuration)
+    .AddSchedulingModule(builder.Configuration);
     
 builder.Services.AddAuthorization();
 
@@ -49,6 +51,7 @@ app.UseCors("AngularApp");
 app.UseAuthorization();
 
 app.MapInventoryEndpoints();
+app.MapSchedulingEndpoints();
 
 app.Run();
 

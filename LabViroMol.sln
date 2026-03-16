@@ -61,6 +61,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Inventory", "Inventory", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Inventory.IntegrationTests", "tests\IntegrationTests\Modules\Inventory\LabViroMol.Modules.Inventory.IntegrationTests.csproj", "{93E7CF92-C596-4AE1-BEFD-93BF0AAC3C82}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scheduling", "Scheduling", "{43B77451-CBDA-4B62-B049-BA7E1462723E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{593633F8-84CF-4FD6-A908-D7A88E6DC5A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Domain", "src\Modules\Scheduling\Domain\LabViroMol.Modules.Scheduling.Domain\LabViroMol.Modules.Scheduling.Domain.csproj", "{F4A14410-2A57-4A06-9A46-80D7318E0511}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{9C14036B-8292-4FA8-BBC2-F1F3A01490CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Infrastructure", "src\Modules\Scheduling\Infrastructure\LabViroMol.Modules.Scheduling.Infrastructure\LabViroMol.Modules.Scheduling.Infrastructure.csproj", "{3BB58F69-DB52-467D-B81D-888F426C3DA7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{2E62F6DB-B673-45EB-BEA7-677B80FB43D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Presentation", "src\Modules\Scheduling\Presentation\LabViroMol.Modules.Scheduling.Presentation\LabViroMol.Modules.Scheduling.Presentation.csproj", "{E05E682C-4116-4DA7-B319-DB2892593D32}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{6E4C84AC-074B-40E8-ADA3-D37F10DEE3CB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Application", "src\Modules\Scheduling\Application\LabViroMol.Modules.Scheduling.Application\LabViroMol.Modules.Scheduling.Application.csproj", "{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +125,22 @@ Global
 		{93E7CF92-C596-4AE1-BEFD-93BF0AAC3C82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93E7CF92-C596-4AE1-BEFD-93BF0AAC3C82}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93E7CF92-C596-4AE1-BEFD-93BF0AAC3C82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4A14410-2A57-4A06-9A46-80D7318E0511}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4A14410-2A57-4A06-9A46-80D7318E0511}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4A14410-2A57-4A06-9A46-80D7318E0511}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4A14410-2A57-4A06-9A46-80D7318E0511}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BB58F69-DB52-467D-B81D-888F426C3DA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BB58F69-DB52-467D-B81D-888F426C3DA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BB58F69-DB52-467D-B81D-888F426C3DA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BB58F69-DB52-467D-B81D-888F426C3DA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E05E682C-4116-4DA7-B319-DB2892593D32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E05E682C-4116-4DA7-B319-DB2892593D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E05E682C-4116-4DA7-B319-DB2892593D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E05E682C-4116-4DA7-B319-DB2892593D32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,6 +173,15 @@ Global
 		{BE3AF575-4C87-4A91-9DCF-66A73BB6F055} = {1257C29E-61F1-4854-9AE8-02D0FA1A6F8E}
 		{7B0DEB8A-C1A1-4782-B34B-E185F8EE6047} = {BE3AF575-4C87-4A91-9DCF-66A73BB6F055}
 		{93E7CF92-C596-4AE1-BEFD-93BF0AAC3C82} = {7B0DEB8A-C1A1-4782-B34B-E185F8EE6047}
+		{43B77451-CBDA-4B62-B049-BA7E1462723E} = {2BDB71FA-3CB0-4E86-A2CE-9176CC2034D5}
+		{593633F8-84CF-4FD6-A908-D7A88E6DC5A9} = {43B77451-CBDA-4B62-B049-BA7E1462723E}
+		{F4A14410-2A57-4A06-9A46-80D7318E0511} = {593633F8-84CF-4FD6-A908-D7A88E6DC5A9}
+		{9C14036B-8292-4FA8-BBC2-F1F3A01490CA} = {43B77451-CBDA-4B62-B049-BA7E1462723E}
+		{3BB58F69-DB52-467D-B81D-888F426C3DA7} = {9C14036B-8292-4FA8-BBC2-F1F3A01490CA}
+		{2E62F6DB-B673-45EB-BEA7-677B80FB43D3} = {43B77451-CBDA-4B62-B049-BA7E1462723E}
+		{E05E682C-4116-4DA7-B319-DB2892593D32} = {2E62F6DB-B673-45EB-BEA7-677B80FB43D3}
+		{6E4C84AC-074B-40E8-ADA3-D37F10DEE3CB} = {43B77451-CBDA-4B62-B049-BA7E1462723E}
+		{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A} = {6E4C84AC-074B-40E8-ADA3-D37F10DEE3CB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {62F99306-E0EA-47D3-A6A7-7B0499A189B8}
