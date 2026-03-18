@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SchedulingDbContext))]
-    [Migration("20260316185702_Scheduling_InitialSetup")]
+    [Migration("20260318143434_Scheduling_InitialSetup")]
     partial class Scheduling_InitialSetup
     {
         /// <inheritdoc />
@@ -63,9 +63,9 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ProjectTitle");
 
-                    b.Property<Guid?>("RejectedBy")
+                    b.Property<Guid?>("RefusedBy")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("RejectedBy");
+                        .HasColumnName("RefusedBy");
 
                     b.Property<DateTimeOffset?>("RemovedAt")
                         .HasColumnType("datetimeoffset");

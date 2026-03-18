@@ -60,9 +60,9 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ProjectTitle");
 
-                    b.Property<Guid?>("RejectedBy")
+                    b.Property<Guid?>("RefusedBy")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("RejectedBy");
+                        .HasColumnName("RefusedBy");
 
                     b.Property<DateTimeOffset?>("RemovedAt")
                         .HasColumnType("datetimeoffset");

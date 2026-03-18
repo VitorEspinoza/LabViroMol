@@ -27,9 +27,7 @@ public class CreateScheduleValidator : AbstractValidator<CreateScheduleCommand>
             .NotEmpty().WithMessage("Horário de início é obrigatório");
 
         RuleFor(x => x.Scheduling.End)
-            .NotEmpty().WithMessage("Horário de término é obrigatório")
-            .GreaterThan(x => x.Scheduling.Start)
-            .WithMessage("O horário de término deve ser maior que o horário de início");
+            .NotEmpty().WithMessage("Horário de término é obrigatório");
 
         // Aceite de termos
         RuleFor(x => x.AcceptTerm)

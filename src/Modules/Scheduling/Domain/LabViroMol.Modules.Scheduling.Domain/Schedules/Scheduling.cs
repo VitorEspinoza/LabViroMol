@@ -1,6 +1,5 @@
-﻿using System.Data;
+﻿using LabViroMol.Modules.Scheduling.Domain.Schedules.Policies;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
 
 namespace LabViroMol.Modules.Scheduling.Domain.Schedules;
 
@@ -12,17 +11,18 @@ public record Scheduling
 
     public Scheduling(DateOnly date, DateTimeOffset startDateHour, DateTimeOffset endDateHour)
     {
-        if (date.IsBefore(DateOnly.FromDateTime(DateTime.Today)))
-            throw new DomainException("A data não pode ser no passado.");
-
-        if (endDateHour.IsBefore(startDateHour))
-            throw new DomainException("O horário de início deve ser anterior ao horário de término.");
-
-        if (!date.IsBusinessDay())
-            Result.BusinessRule("A data não representa um dia útil.");
-        
         Date = date;
         StartDateHour = startDateHour;
         EndDateHour = endDateHour;
+    }
+    
+    public static Result<Scheduling> Create(DateOnly date, DateTimeOffset start, DateTimeOffset end)
+    {
+        var result = BusinessTimePolicies.Validate(date, start, end);
+
+        if (result.IsFailure)
+            return Result<Scheduling>.Validation(result.Errors);
+
+        return Result<Scheduling>.Success(new Scheduling(date, start, end));
     }
 }
