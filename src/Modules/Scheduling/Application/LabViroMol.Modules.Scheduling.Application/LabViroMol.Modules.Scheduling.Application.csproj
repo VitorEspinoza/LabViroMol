@@ -13,10 +13,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Schedules\ViewModels\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\..\Shared\Abstractions\LabViroMol.Modules.Shared.Abstractions.csproj" />
       <ProjectReference Include="..\..\Domain\LabViroMol.Modules.Scheduling.Domain\LabViroMol.Modules.Scheduling.Domain.csproj" />
     </ItemGroup>

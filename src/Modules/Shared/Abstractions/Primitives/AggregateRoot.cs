@@ -6,6 +6,9 @@ namespace LabViroMol.Modules.Shared.Abstractions.Primitives;
 public abstract class AggregateRoot<TId> : AuditableEntity<TId>, IHasEvents
 {
     public AggregateRoot(TId id, UserId createdBy) : base(id, createdBy) { }
+    
+    public AggregateRoot(TId id) : base(id) { }
+    
     protected AggregateRoot() : base() { }
 
     private readonly List<IEvent> _events = new();

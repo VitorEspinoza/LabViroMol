@@ -22,9 +22,9 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
     public async ValueTask<Result> Handle(CreateScheduleCommand command, CancellationToken ct)
     {
         var conflictingSchedules =
-            _scheduleRepository.GetSchedulesConflictByDatesAsync(command.Scheduling.Start, command.Scheduling.End, ct);
+            await _scheduleRepository.GetSchedulesConflictByDatesAsync(command.Scheduling.Start, command.Scheduling.End, ct);
 
-        if (conflictingSchedules.Result.Count.Equals(0))
+        if (conflictingSchedules.Count.Equals(0))
             Result.BusinessRule(
                 $"Não é possível solicitar o agendamento, pois possui horário conflitante com outros agendamentos confirmados");
         

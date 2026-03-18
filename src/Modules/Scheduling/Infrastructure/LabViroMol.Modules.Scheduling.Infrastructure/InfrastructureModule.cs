@@ -16,8 +16,15 @@ public static class InfrastructureModule
         {
             services
                 .AddRepositories()
+                .AddQueries()
                 .AddContext(configuration);
         
+            return services;
+        }
+
+        private IServiceCollection AddQueries()
+        {
+            services.AddScoped<ScheduleQueries>();
             return services;
         }
         

@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\Shared\Abstractions\LabViroMol.Modules.Shared.Abstractions.csproj" />
+      <ProjectReference Include="..\..\..\Shared\Presentation\LabViroMol.Modules.Shared.Presentation.csproj" />
     </ItemGroup>
 
 </Project>

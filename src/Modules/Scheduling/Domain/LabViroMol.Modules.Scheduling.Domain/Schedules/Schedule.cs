@@ -1,5 +1,6 @@
 ﻿using LabViroMol.Modules.Shared.Abstractions.Identity;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Presentation.Extensions;
 
 namespace LabViroMol.Modules.Scheduling.Domain.Schedules;
 
@@ -8,7 +9,7 @@ public class Schedule : AggregateRoot<ScheduleId>
     private Schedule() {}
 
     private Schedule(ScheduleId id, Scheduler scheduler, Scheduling scheduling, bool acceptTerm,
-        string advisorProfessor, string projectTitle, string description)
+        string advisorProfessor, string projectTitle, string description) : base(id)
     {
         Scheduler = scheduler;
         Scheduling = scheduling;
@@ -32,16 +33,32 @@ public class Schedule : AggregateRoot<ScheduleId>
     public static Schedule Create(Scheduler scheduler, Scheduling scheduling, bool acceptTerm, string advisorProfessor,
         string projectTitle, string description)
     {
-        return new Schedule(ScheduleId.New(), scheduler, scheduling, acceptTerm, advisorProfessor, projectTitle, description);
+        return new Schedule(IdFactory.New<ScheduleId>(), scheduler, scheduling, acceptTerm, advisorProfessor, projectTitle, description);
     }
 
-    public void Approve(UserId approvedBy)
+    public void Approve(UserId userId)
     {
+        if (!Status.Equals(ScheduleStatus.PENDING))
+            Result.BusinessRule("Agendamento não está pendente.");
+
+        if (Scheduling.Date.IsBefore(DateOnly.FromDateTime(DateTime.Now)))
+            Result.BusinessRule("Não é possível aprovar agendamento com data passada.");
+        
         Status = ScheduleStatus.SCHEDULED;
+        ApprovedBy = userId;
+        MarkAsUpdated(userId);
     }
 
-    public void Reject(UserId rejectedBy)
+    public void Refuse(UserId userId)
     {
+        if (!Status.Equals(ScheduleStatus.PENDING))
+            Result.BusinessRule("Agendamento não está pendente.");
+
+        if (Scheduling.Date.IsBefore(DateOnly.FromDateTime(DateTime.Now)))
+            Result.BusinessRule("Não é possível recusar agendamento com data passada.");
+        
         Status = ScheduleStatus.REFUSED;
+        ApprovedBy = userId;
+        MarkAsUpdated(userId);
     }
 }
