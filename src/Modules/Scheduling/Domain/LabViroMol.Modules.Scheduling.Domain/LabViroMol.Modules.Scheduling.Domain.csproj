@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\Shared\Abstractions\LabViroMol.Modules.Shared.Abstractions.csproj" />
+      <ProjectReference Include="..\..\..\Shared\Domain\LabViroMol.Modules.Shared.Domain.csproj" />
       <ProjectReference Include="..\..\..\Shared\Domain\LabViroMol.Modules.Shared.Domain\LabViroMol.Modules.Shared.Domain.csproj" />
     </ItemGroup>
 
