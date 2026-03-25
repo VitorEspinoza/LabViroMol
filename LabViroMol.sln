@@ -81,6 +81,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduli
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{31BE1A07-2637-484C-9DB8-049CC8D1D2B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Shared.Domain", "src\Modules\Shared\Domain\LabViroMol.Modules.Shared.Domain.csproj", "{230C2D3E-D0FE-403C-8D16-465AE4ECE0B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,6 +145,10 @@ Global
 		{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{230C2D3E-D0FE-403C-8D16-465AE4ECE0B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{230C2D3E-D0FE-403C-8D16-465AE4ECE0B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{230C2D3E-D0FE-403C-8D16-465AE4ECE0B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{230C2D3E-D0FE-403C-8D16-465AE4ECE0B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -185,6 +191,7 @@ Global
 		{6E4C84AC-074B-40E8-ADA3-D37F10DEE3CB} = {43B77451-CBDA-4B62-B049-BA7E1462723E}
 		{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A} = {6E4C84AC-074B-40E8-ADA3-D37F10DEE3CB}
 		{31BE1A07-2637-484C-9DB8-049CC8D1D2B3} = {B2C3D4E5-6789-01AB-CDEF-B2C3D4E56789}
+		{230C2D3E-D0FE-403C-8D16-465AE4ECE0B2} = {31BE1A07-2637-484C-9DB8-049CC8D1D2B3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {62F99306-E0EA-47D3-A6A7-7B0499A189B8}
