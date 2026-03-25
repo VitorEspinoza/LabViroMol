@@ -1,5 +1,4 @@
-﻿using LabViroMol.Modules.Scheduling.Application.Schedules.Mappings;
-using LabViroMol.Modules.Scheduling.Application.Shared;
+﻿using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using Mediator;
@@ -24,19 +23,33 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
         var conflictingSchedules =
             await _scheduleRepository.GetSchedulesConflictByDatesAsync(command.Scheduling.Start, command.Scheduling.End, ct);
 
-        if (conflictingSchedules.Count.Equals(0))
-            Result.BusinessRule(
+        if (conflictingSchedules.Count > 0)
+            return Result.BusinessRule(
                 $"Não é possível solicitar o agendamento, pois possui horário conflitante com outros agendamentos confirmados");
+
+        var resultScheduling = Domain.Schedules.Scheduling.Create(
+            command.Scheduling.Date,
+            command.Scheduling.Start,
+            command.Scheduling.End);
         
-        var schedule = Schedule.Create(
-            ScheduleMapper.ToEntity(command.Scheduler), 
-            ScheduleMapper.ToEntity(command.Scheduling), 
+        if(resultScheduling.IsFailure)
+            return resultScheduling;
+        
+        var result = Schedule.Create(
+            new Scheduler(
+                command.Scheduler.Name,
+                command.Scheduler.Course,
+                command.Scheduler.Email), 
+            resultScheduling.Data!, 
             command.AcceptTerm, 
             command.AdvisorProfessor, 
             command.ProjectTitle, 
             command.Description);
+
+        if (result.IsFailure)
+            return result;
             
-        await _scheduleRepository.AddAsync(schedule, ct);
+        await _scheduleRepository.AddAsync(result.Data!, ct);
         await _unitOfWork.CompleteAsync(ct);
         
         return Result.Success();

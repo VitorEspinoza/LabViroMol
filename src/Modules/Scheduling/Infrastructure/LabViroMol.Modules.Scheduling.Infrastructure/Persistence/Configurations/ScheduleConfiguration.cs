@@ -56,8 +56,8 @@ public class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
         builder.Property(s => s.ApprovedBy)
             .HasColumnName("ApprovedBy");
         
-        builder.Property(s => s.RejectedBy)
-            .HasColumnName("RejectedBy");
+        builder.Property(s => s.RefusedBy)
+            .HasColumnName("RefusedBy");
 
     }
 }

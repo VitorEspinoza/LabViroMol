@@ -1,6 +1,6 @@
 ﻿using LabViroMol.Modules.Shared.Abstractions.Identity;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
+using LabViroMol.Modules.Shared.Domain.Extension;
 
 namespace LabViroMol.Modules.Scheduling.Domain.Schedules;
 
@@ -28,21 +28,18 @@ public class Schedule : AggregateRoot<ScheduleId>
     public string Description { get; private set; }
     public ScheduleStatus  Status { get; private set; }
     public UserId? ApprovedBy { get; private set; }
-    public UserId? RejectedBy { get; private set; }
+    public UserId? RefusedBy { get; private set; }
 
-    public static Schedule Create(Scheduler scheduler, Scheduling scheduling, bool acceptTerm, string advisorProfessor,
+    public static Result<Schedule> Create(Scheduler scheduler, Scheduling scheduling, bool acceptTerm, string advisorProfessor,
         string projectTitle, string description)
     {
-        return new Schedule(IdFactory.New<ScheduleId>(), scheduler, scheduling, acceptTerm, advisorProfessor, projectTitle, description);
+        var schedule = new Schedule(IdFactory.New<ScheduleId>(), scheduler, scheduling, acceptTerm, advisorProfessor, projectTitle, description);
+        return Result<Schedule>.Success(schedule);
     }
 
     public void Approve(UserId userId)
     {
-        if (!Status.Equals(ScheduleStatus.PENDING))
-            Result.BusinessRule("Agendamento não está pendente.");
-
-        if (Scheduling.Date.IsBefore(DateOnly.FromDateTime(DateTime.Now)))
-            Result.BusinessRule("Não é possível aprovar agendamento com data passada.");
+        EnsureCanBeApprovedOrRefused();
         
         Status = ScheduleStatus.SCHEDULED;
         ApprovedBy = userId;
@@ -51,14 +48,19 @@ public class Schedule : AggregateRoot<ScheduleId>
 
     public void Refuse(UserId userId)
     {
+        EnsureCanBeApprovedOrRefused();
+        
+        Status = ScheduleStatus.REFUSED;
+        RefusedBy = userId;
+        MarkAsUpdated(userId);
+    }
+    
+    private void EnsureCanBeApprovedOrRefused()
+    {
         if (!Status.Equals(ScheduleStatus.PENDING))
             Result.BusinessRule("Agendamento não está pendente.");
 
         if (Scheduling.Date.IsBefore(DateOnly.FromDateTime(DateTime.Now)))
-            Result.BusinessRule("Não é possível recusar agendamento com data passada.");
-        
-        Status = ScheduleStatus.REFUSED;
-        ApprovedBy = userId;
-        MarkAsUpdated(userId);
+            Result.BusinessRule("Não é possível alterar agendamento com data passada.");
     }
 }
