@@ -29,7 +29,7 @@ internal static class ScheduleEndpoints
         group.MapGet("/pending",
             async (ScheduleQueries scheduleQueries) => Results.Ok(await scheduleQueries.GetAllSchedulesPending()));
 
-        group.MapPatch("/{id:guid}/approve",
+        group.MapPost("/{id:guid}/approve",
             async (Guid id, IMediator mediator, CancellationToken ct) =>
             {
                 var command = new ApproveScheduleCommand(ScheduleId.From(id));
@@ -37,7 +37,7 @@ internal static class ScheduleEndpoints
                 return result.ToHttpResult(Results.Accepted());
             });
 
-        group.MapPatch("/{id:guid}/refuse",
+        group.MapPost("/{id:guid}/refuse",
             async (Guid id, IMediator mediator, CancellationToken ct) =>
             {
                 var command = new RefuseScheduleCommand(ScheduleId.From(id));

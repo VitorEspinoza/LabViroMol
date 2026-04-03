@@ -9,7 +9,7 @@ public class Schedule : AggregateRoot<ScheduleId>
     private Schedule() {}
 
     private Schedule(ScheduleId id, Scheduler scheduler, Scheduling scheduling, bool acceptTerm,
-        string advisorProfessor, string projectTitle, string description) : base(id)
+        string advisorProfessor, string projectTitle, string description, List<Equipment> equipments) : base(id)
     {
         Scheduler = scheduler;
         Scheduling = scheduling;
@@ -18,6 +18,7 @@ public class Schedule : AggregateRoot<ScheduleId>
         ProjectTitle = projectTitle;
         Description = description;
         Status = ScheduleStatus.PENDING;
+        Equipments = equipments;
     }
 
     public Scheduler Scheduler { get; private set; }
@@ -27,13 +28,14 @@ public class Schedule : AggregateRoot<ScheduleId>
     public string ProjectTitle  { get; private set; }
     public string Description { get; private set; }
     public ScheduleStatus  Status { get; private set; }
+    public List<Equipment> Equipments { get; private set; }
     public UserId? ApprovedBy { get; private set; }
     public UserId? RefusedBy { get; private set; }
 
     public static Result<Schedule> Create(Scheduler scheduler, Scheduling scheduling, bool acceptTerm, string advisorProfessor,
-        string projectTitle, string description)
+        string projectTitle, string description, List<Equipment> equipments)
     {
-        var schedule = new Schedule(IdFactory.New<ScheduleId>(), scheduler, scheduling, acceptTerm, advisorProfessor, projectTitle, description);
+        var schedule = new Schedule(IdFactory.New<ScheduleId>(), scheduler, scheduling, acceptTerm, advisorProfessor, projectTitle, description, equipments);
         return Result<Schedule>.Success(schedule);
     }
 
