@@ -45,11 +45,43 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Schedules", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "ScheduleEquipments",
+                schema: "scheduling",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EquipmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EquipmentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ScheduleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ScheduleEquipments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ScheduleEquipments_Schedules_ScheduleId",
+                        column: x => x.ScheduleId,
+                        principalSchema: "scheduling",
+                        principalTable: "Schedules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScheduleEquipments_ScheduleId",
+                schema: "scheduling",
+                table: "ScheduleEquipments",
+                column: "ScheduleId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ScheduleEquipments",
+                schema: "scheduling");
+
             migrationBuilder.DropTable(
                 name: "Schedules",
                 schema: "scheduling");

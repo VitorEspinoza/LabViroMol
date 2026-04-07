@@ -87,6 +87,34 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("LabViroMol.Modules.Scheduling.Domain.Schedules.Schedule", b =>
                 {
+                    b.OwnsMany("LabViroMol.Modules.Scheduling.Domain.Schedules.ScheduleEquipment", "Equipments", b1 =>
+                        {
+                            b1.Property<Guid>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<Guid>("EquipmentId")
+                                .HasColumnType("uniqueidentifier")
+                                .HasColumnName("EquipmentId");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("EquipmentName");
+
+                            b1.Property<Guid>("ScheduleId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("ScheduleId");
+
+                            b1.ToTable("ScheduleEquipments", "scheduling");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ScheduleId");
+                        });
+
                     b.OwnsOne("LabViroMol.Modules.Scheduling.Domain.Schedules.Scheduler", "Scheduler", b1 =>
                         {
                             b1.Property<Guid>("ScheduleId")
@@ -139,6 +167,8 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("ScheduleId");
                         });
+
+                    b.Navigation("Equipments");
 
                     b.Navigation("Scheduler")
                         .IsRequired();

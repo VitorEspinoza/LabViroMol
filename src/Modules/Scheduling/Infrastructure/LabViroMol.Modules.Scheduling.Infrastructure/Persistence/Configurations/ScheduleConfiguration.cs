@@ -58,6 +58,24 @@ public class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
         
         builder.Property(s => s.RefusedBy)
             .HasColumnName("RefusedBy");
+        
+        builder.OwnsMany(s => s.Equipments, p =>
+        {
+            p.ToTable("ScheduleEquipments");
+
+            p.WithOwner().HasForeignKey("ScheduleId");
+
+            p.Property<Guid>("Id");
+            p.HasKey("Id");
+
+            p.Property(e => e.EquipmentId)
+                .HasColumnName("EquipmentId")
+                .IsRequired();
+            
+            p.Property(e => e.Name)
+                .HasColumnName("EquipmentName")
+                .IsRequired();
+        });
 
     }
 }

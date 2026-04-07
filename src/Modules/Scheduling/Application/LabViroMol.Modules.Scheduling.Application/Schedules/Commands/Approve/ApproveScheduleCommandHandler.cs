@@ -30,9 +30,31 @@ public class ApproveScheduleCommandHandler : ICommandHandler<ApproveScheduleComm
             return Result.NotFound("Agendamento não encontrado.");
         
         schedule.Approve(_currentUser.Id);
-
+        
+        await RefuseConflictingSchedules(schedule, ct);
+         
         await _unitOfWork.CompleteAsync(ct);
         
         return Result.Success();
+    }
+
+    private async Task RefuseConflictingSchedules(Schedule schedule, CancellationToken ct)
+    {
+        var equipmentIds = schedule.Equipments
+            .Select(e => e.EquipmentId)
+            .ToList();
+
+        var conflicts = await _scheduleRepository.GetSchedulesConflictAsync(
+            schedule.Scheduling.StartDateHour,
+            schedule.Scheduling.EndDateHour,
+            equipmentIds,
+            ct);
+
+        foreach (var conflict in conflicts.Where(s => 
+                     s.Id != schedule.Id && 
+                     s.Status == ScheduleStatus.PENDING))
+        {
+            conflict.Refuse(_currentUser.Id);
+        }
     }
 }

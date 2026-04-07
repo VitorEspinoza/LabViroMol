@@ -5,5 +5,5 @@ public interface IScheduleRepository
     Task<Schedule?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task AddAsync(Schedule schedule, CancellationToken cancellationToken);
     
-    Task<List<Schedule>> GetSchedulesConflictByDatesAsync(DateTimeOffset start, DateTimeOffset end, CancellationToken cancellationToken);
+    Task<List<Schedule>> GetSchedulesConflictAsync(DateTimeOffset start, DateTimeOffset end, List<Guid> equipmentIds, CancellationToken cancellationToken);
 }

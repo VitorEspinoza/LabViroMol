@@ -1,4 +1,5 @@
 ﻿using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Shared;
+using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using Mediator;
 
@@ -10,5 +11,6 @@ public record CreateScheduleCommand(
     bool AcceptTerm,
     string AdvisorProfessor,
     string ProjectTitle,
-    string Description
+    string Description,
+    List<ScheduleEquipmentInput> Equipments
 ) : ICommand<Result>;

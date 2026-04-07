@@ -15,7 +15,8 @@ public class ScheduleTests
             // Arrange
             var scheduler = Fakers.CreateScheduler();
             var scheduling = Fakers.CreateScheduling();
- 
+            var equipments = Fakers.CreateScheduleEquipments();
+
             // Act
             var result = Schedule.Create(
                 scheduler,
@@ -23,10 +24,11 @@ public class ScheduleTests
                 true,
                 "Prof. João",
                 "Projeto X",
-                "Descrição do projeto");
- 
-            var schedule = result.Data!;
- 
+                "Descrição do projeto",
+                equipments);
+
+            var schedule = result.Data!;    
+
             // Assert
             Assert.Equal(scheduler, schedule.Scheduler);
             Assert.Equal(scheduling, schedule.Scheduling);
@@ -35,6 +37,9 @@ public class ScheduleTests
             Assert.Equal("Projeto X", schedule.ProjectTitle);
             Assert.Equal("Descrição do projeto", schedule.Description);
             Assert.Equal(ScheduleStatus.PENDING, schedule.Status);
+
+            // 🔥 novo
+            Assert.Equal(equipments.Count, schedule.Equipments.Count);
         }
     }
  
@@ -84,7 +89,9 @@ public class ScheduleTests
                 true,
                 "Prof",
                 "Projeto",
-                "Desc").Data!;
+                "Desc",
+                Fakers.CreateScheduleEquipments()
+            ).Data!;
  
             // Act & Assert
             Assert.Throws<DomainException>(() =>
@@ -155,6 +162,71 @@ public class ScheduleTests
  
             // Assert
             Assert.True(result.IsFailure);
+        }
+        
+        [Fact]
+        public void Create_WithoutEquipments_ShouldFail()
+        {
+            // Arrange
+            var scheduler = Fakers.CreateScheduler();
+            var scheduling = Fakers.CreateScheduling();
+
+            // Act
+            var result = Schedule.Create(
+                scheduler,
+                scheduling,
+                true,
+                "Prof",
+                "Projeto",
+                "Desc",
+                new List<ScheduleEquipment>());
+
+            // Assert
+            Assert.True(result.IsFailure);
+        }
+        
+        [Fact]
+        public void Create_WithDuplicatedEquipments_ShouldFail()
+        {
+            // Arrange
+            var scheduler = Fakers.CreateScheduler();
+            var scheduling = Fakers.CreateScheduling();
+
+            var equipmentId = Guid.NewGuid();
+
+            var equipments = new List<ScheduleEquipment>
+            {
+                new ScheduleEquipment(equipmentId, "Microscópio"),
+                new ScheduleEquipment(equipmentId, "Microscópio")
+            };
+
+            // Act
+            var result = Schedule.Create(
+                scheduler,
+                scheduling,
+                true,
+                "Prof",
+                "Projeto",
+                "Desc",
+                equipments);
+
+            // Assert
+            Assert.True(result.IsFailure);
+        }
+        
+        [Fact]
+        public void Create_WithEquipments_ShouldPersistCorrectly()
+        {
+            // Arrange
+            var equipments = Fakers.CreateScheduleEquipments(3);
+
+            // Act
+            var schedule = Fakers.CreateSchedule(equipments: equipments);
+
+            // Assert
+            Assert.Equal(3, schedule.Equipments.Count);
+            Assert.All(schedule.Equipments, e =>
+                Assert.Contains(e.EquipmentId, equipments.Select(x => x.EquipmentId)));
         }
     }
 }

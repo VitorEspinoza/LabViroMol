@@ -24,13 +24,19 @@ public class ScheduleRepository : IScheduleRepository
         await _context.Schedules.AddAsync(schedule, cancellationToken);
     }
 
-    public async Task<List<Schedule>> GetSchedulesConflictByDatesAsync(DateTimeOffset start, DateTimeOffset end, CancellationToken cancellationToken)
+    public async Task<List<Schedule>> GetSchedulesConflictAsync(
+        DateTimeOffset start,
+        DateTimeOffset end,
+        List<Guid> equipmentIds,
+        CancellationToken ct)
     {
         return await _context.Schedules
-            .Where(schedule =>
-                schedule.Scheduling.StartDateHour < end &&
-                schedule.Scheduling.EndDateHour > start &&
-                schedule.Status.Equals(ScheduleStatus.SCHEDULED))
-            .ToListAsync(cancellationToken);
+            .Where(s =>
+                s.Scheduling.StartDateHour < end &&
+                s.Scheduling.EndDateHour > start &&
+                s.Status == ScheduleStatus.SCHEDULED &&
+                s.Equipments.Any(e => equipmentIds.Contains(e.EquipmentId))
+            )
+            .ToListAsync(ct);
     }
 }

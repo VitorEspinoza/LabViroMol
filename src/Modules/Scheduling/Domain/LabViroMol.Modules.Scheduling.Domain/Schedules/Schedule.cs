@@ -9,7 +9,7 @@ public class Schedule : AggregateRoot<ScheduleId>
     private Schedule() {}
 
     private Schedule(ScheduleId id, Scheduler scheduler, Scheduling scheduling, bool acceptTerm,
-        string advisorProfessor, string projectTitle, string description, List<Equipment> equipments) : base(id)
+        string advisorProfessor, string projectTitle, string description, List<ScheduleEquipment> equipments) : base(id)
     {
         Scheduler = scheduler;
         Scheduling = scheduling;
@@ -28,13 +28,19 @@ public class Schedule : AggregateRoot<ScheduleId>
     public string ProjectTitle  { get; private set; }
     public string Description { get; private set; }
     public ScheduleStatus  Status { get; private set; }
-    public List<Equipment> Equipments { get; private set; }
+    public List<ScheduleEquipment> Equipments { get; private set; }
     public UserId? ApprovedBy { get; private set; }
     public UserId? RefusedBy { get; private set; }
 
     public static Result<Schedule> Create(Scheduler scheduler, Scheduling scheduling, bool acceptTerm, string advisorProfessor,
-        string projectTitle, string description, List<Equipment> equipments)
+        string projectTitle, string description, List<ScheduleEquipment> equipments)
     {
+        if (equipments == null || equipments.Count < 1)
+            return Result<Schedule>.BusinessRule("É necessário informar ao menos um equipamento");
+
+        if (equipments.Select(e => e.EquipmentId).Distinct().Count() != equipments.Count)
+            return Result<Schedule>.BusinessRule("Não é permitido equipamentos duplicados");
+        
         var schedule = new Schedule(IdFactory.New<ScheduleId>(), scheduler, scheduling, acceptTerm, advisorProfessor, projectTitle, description, equipments);
         return Result<Schedule>.Success(schedule);
     }

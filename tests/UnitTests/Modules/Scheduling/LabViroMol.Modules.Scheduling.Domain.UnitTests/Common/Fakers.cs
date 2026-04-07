@@ -51,6 +51,23 @@ internal static class Fakers
     
     #region Schedule
     
+    #region ScheduleEquipment
+
+    public static ScheduleEquipment CreateScheduleEquipment(
+        Guid? equipmentId = null,
+        string? name = null)
+        => new(
+            equipmentId ?? Guid.NewGuid(),
+            name ?? f.Commerce.ProductName()
+        );
+
+    public static List<ScheduleEquipment> CreateScheduleEquipments(int count = 2)
+        => Enumerable.Range(0, count)
+            .Select(_ => CreateScheduleEquipment())
+            .ToList();
+
+    #endregion
+    
     public static Schedule CreateSchedule(
         Scheduler? scheduler = null,
         Domain.Schedules.Scheduling? scheduling = null,
@@ -58,16 +75,16 @@ internal static class Fakers
         string? advisorProfessor = null,
         string? projectTitle = null,
         string? description = null,
-        List<Equipment>? equipments = null)
+        List<ScheduleEquipment>? equipments = null)
         => Schedule.Create(
-                scheduler ?? CreateScheduler(),
-                scheduling ?? CreateScheduling(),
-                acceptTerm ?? true,
-                advisorProfessor ?? f.Name.FullName(),
-                projectTitle ?? f.Commerce.ProductName(),
-                description ?? f.Lorem.Sentence(),
-                equipments ??
-           ).Data!;
+            scheduler ?? CreateScheduler(),
+            scheduling ?? CreateScheduling(),
+            acceptTerm ?? true,
+            advisorProfessor ?? f.Name.FullName(),
+            projectTitle ?? f.Commerce.ProductName(),
+            description ?? f.Lorem.Sentence(),
+            equipments ?? CreateScheduleEquipments()
+        ).Data!;
     
     #endregion
 }
