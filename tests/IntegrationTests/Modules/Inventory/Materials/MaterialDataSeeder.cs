@@ -2,6 +2,7 @@
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Abstractions.Identity;
+using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.IntegrationTests.Materials;

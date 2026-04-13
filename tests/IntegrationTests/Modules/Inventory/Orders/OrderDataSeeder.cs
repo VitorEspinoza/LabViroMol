@@ -5,6 +5,7 @@ using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Abstractions.Identity;
 
 using LabViroMol.Modules.Inventory.IntegrationTests.Materials;
+using LabViroMol.Modules.Shared.Abstractions.Primitives;
 
 namespace LabViroMol.Modules.Inventory.IntegrationTests.Orders;
 

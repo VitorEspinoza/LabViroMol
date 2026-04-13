@@ -1,32 +1,25 @@
 ﻿using Kernel.Persistence.Converters;
-using LabViroMol.Modules.Inventory.Domain.Kits;
-using LabViroMol.Modules.Inventory.Domain.Materials;
-using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
-using LabViroMol.Modules.Inventory.Domain.Orders;
+using LabViroMol.Modules.Assets.Domain;
+using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Shared.Abstractions.Identity;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using Microsoft.EntityFrameworkCore;
 
-namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence;
+namespace LabViroMol.Modules.Assets.Infrastructure.Persistence;
 
-public class InventoryDbContext : DbContext
+public class AssetsDbContext : DbContext
 {
-
-    public InventoryDbContext(DbContextOptions<InventoryDbContext> options) : base(options) { }
-
-    public DbSet<Kit> Kits { get; set; }
-    public DbSet<Material> Materials { get; set; }
-    public DbSet<MaterialType> MaterialTypes { get; set; }
-    public DbSet<Order> Orders { get; set; }
-    public DbSet<StockTransaction> StockTransactions { get; set; }
+    public AssetsDbContext(DbContextOptions<AssetsDbContext> options) : base(options) {}
+    
+    public DbSet<Equipment> Equipments { get; set; }
+    public DbSet<MaintenanceRequest> MaintenanceRequests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
-        modelBuilder.HasDefaultSchema("inventory");
-        
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(InventoryDbContext).Assembly);
+        modelBuilder.HasDefaultSchema("assets");
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssetsDbContext).Assembly);
     }
     
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -34,8 +27,8 @@ public class InventoryDbContext : DbContext
         configurationBuilder
             .Properties<Quantity>()
             .HaveConversion<QuantityConverter>();
-  
-        var assembly = typeof(MaterialId).Assembly; 
+        
+        var assembly = typeof(EquipmentId).Assembly; 
     
         var strongIdTypes = assembly.GetTypes()
             .Where(t => t.IsValueType && t.GetInterfaces()
@@ -49,6 +42,5 @@ public class InventoryDbContext : DbContext
         
             configurationBuilder.Properties(idType).HaveConversion(converterType);
         }
-        
     }
 }

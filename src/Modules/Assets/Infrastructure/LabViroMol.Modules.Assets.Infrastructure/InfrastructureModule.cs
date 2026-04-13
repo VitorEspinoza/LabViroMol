@@ -1,0 +1,57 @@
+﻿using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
+using LabViroMol.Modules.Assets.Infrastructure.Equipments;
+using LabViroMol.Modules.Assets.Infrastructure.MaintenanceRequests;
+using LabViroMol.Modules.Assets.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace LabViroMol.Modules.Assets.Infrastructure;
+
+public static class InfrastructureModule
+{
+    extension(IServiceCollection services)
+    {
+        public IServiceCollection AddInfrastructure(IConfiguration configuration)
+        {
+            services
+                .AddRepositories()
+                .AddQueries()
+                .AddContext(configuration);
+            
+            return services;
+        }
+
+        private IServiceCollection AddQueries()
+        {
+            services.AddScoped<EquipmentQueries>();
+            services.AddScoped<MaintenanceRequestQueries>();
+            
+            return services;
+        }
+        
+        private IServiceCollection AddRepositories()
+        {
+            services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+            services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
+            
+            return services;
+        }
+        
+        private IServiceCollection AddContext(IConfiguration configuration)
+        {
+            var connectionString = configuration.GetConnectionString("LabViroMol");
+            
+            services.AddDbContext<AssetsDbContext>(options =>
+                options.UseSqlServer(connectionString, sqlOptions =>
+                {
+                    sqlOptions.MigrationsHistoryTable("__AssetsMigrationsHistory");
+                    sqlOptions.MigrationsAssembly(typeof(AssetsDbContext).Assembly.FullName);
+            
+                }));
+            
+            return services;
+        }
+    }
+}
