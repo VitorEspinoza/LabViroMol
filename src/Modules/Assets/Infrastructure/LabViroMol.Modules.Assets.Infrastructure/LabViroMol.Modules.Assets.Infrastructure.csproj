@@ -18,8 +18,4 @@
       <ProjectReference Include="..\..\Domain\LabViroMol.Modules.Assets.Domain\LabViroMol.Modules.Assets.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Persistence\Configurations\" />
-    </ItemGroup>
-
 </Project>
