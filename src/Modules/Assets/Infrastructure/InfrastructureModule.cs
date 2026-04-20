@@ -1,4 +1,5 @@
-﻿using LabViroMol.Modules.Assets.Domain.Equipments;
+﻿using LabViroMol.Modules.Assets.Application.Shared;
+using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.Equipments;
 using LabViroMol.Modules.Assets.Infrastructure.MaintenanceRequests;
@@ -35,6 +36,7 @@ public static class InfrastructureModule
         {
             services.AddScoped<IEquipmentRepository, EquipmentRepository>();
             services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
+            services.AddScoped<IAssetsUnitOfWork, AssetsUnitOfWork>();
             
             return services;
         }

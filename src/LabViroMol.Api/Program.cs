@@ -1,5 +1,6 @@
 using Kernel;
 using Kernel.Behaviors;
+using LabViroMol.Modules.Assets.Presentation;
 using LabViroMol.Modules.Inventory.Presentation;
 using LabViroMol.Modules.Scheduling.Presentation;
 using Mediator;
@@ -33,7 +34,8 @@ builder.Services.AddScoped(
 builder.Services
     .AddSharedModule()
     .AddInventoryModule(builder.Configuration)
-    .AddSchedulingModule(builder.Configuration);
+    .AddSchedulingModule(builder.Configuration)
+    .AddAssetsModule(builder.Configuration);
     
 builder.Services.AddAuthorization();
 
@@ -53,6 +55,7 @@ app.UseAuthorization();
 
 app.MapInventoryEndpoints();
 app.MapSchedulingEndpoints();
+app.MapAssetsEndpoints();
 
 app.Run();
 

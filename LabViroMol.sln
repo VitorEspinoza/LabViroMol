@@ -99,11 +99,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{0F5A1A27-0B5B-4B9C-A292-91D60B4FEF46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Assets.Domain", "src\Modules\Assets\Domain\LabViroMol.Modules.Assets.Domain\LabViroMol.Modules.Assets.Domain.csproj", "{7D29ED1A-3A6D-4D6E-ACB6-341C1C6F82B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Assets.Domain", "src\Modules\Assets\Domain\LabViroMol.Modules.Assets.Domain.csproj", "{7D29ED1A-3A6D-4D6E-ACB6-341C1C6F82B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Assets.Infrastructure", "src\Modules\Assets\Infrastructure\LabViroMol.Modules.Assets.Infrastructure\LabViroMol.Modules.Assets.Infrastructure.csproj", "{91BAFBC1-6108-43E6-8A25-B7F1E7AED440}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Assets.Infrastructure", "src\Modules\Assets\Infrastructure\LabViroMol.Modules.Assets.Infrastructure.csproj", "{91BAFBC1-6108-43E6-8A25-B7F1E7AED440}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Assets.Application", "src\Modules\Assets\Application\LabViroMol.Modules.Assets.Application\LabViroMol.Modules.Assets.Application.csproj", "{4F065366-12A7-46D2-8B93-8D3732F750E2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Assets.Application", "src\Modules\Assets\Application\LabViroMol.Modules.Assets.Application.csproj", "{4F065366-12A7-46D2-8B93-8D3732F750E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Assets.Presentation", "src\Modules\Assets\Presentation\LabViroMol.Modules.Assets.Presentation.csproj", "{7E691D59-459E-479B-BCC6-29FFB16DD4DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{49E90B7C-EE8C-4F98-81F4-6DC250ADB106}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{245A7815-CECD-4A14-AD4E-310EB238DD40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Assets.Domain.UnitTests", "tests\UnitTests\Modules\LabViroMol.Modules.Assets.Domain.UnitTests\LabViroMol.Modules.Assets.Domain.UnitTests.csproj", "{3F318999-3741-42B8-A282-38F0B0EFC9F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -187,6 +195,14 @@ Global
 		{4F065366-12A7-46D2-8B93-8D3732F750E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F065366-12A7-46D2-8B93-8D3732F750E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F065366-12A7-46D2-8B93-8D3732F750E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E691D59-459E-479B-BCC6-29FFB16DD4DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E691D59-459E-479B-BCC6-29FFB16DD4DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E691D59-459E-479B-BCC6-29FFB16DD4DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E691D59-459E-479B-BCC6-29FFB16DD4DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F318999-3741-42B8-A282-38F0B0EFC9F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F318999-3741-42B8-A282-38F0B0EFC9F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F318999-3741-42B8-A282-38F0B0EFC9F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F318999-3741-42B8-A282-38F0B0EFC9F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -241,6 +257,10 @@ Global
 		{7D29ED1A-3A6D-4D6E-ACB6-341C1C6F82B5} = {14FF1F7C-BBAB-431E-85EC-97AFB2E264AF}
 		{91BAFBC1-6108-43E6-8A25-B7F1E7AED440} = {93978B02-4C77-4624-A982-2E428320F5B1}
 		{4F065366-12A7-46D2-8B93-8D3732F750E2} = {CB2788F4-B388-42F9-AADD-D4400D0E0409}
+		{7E691D59-459E-479B-BCC6-29FFB16DD4DD} = {0F5A1A27-0B5B-4B9C-A292-91D60B4FEF46}
+		{49E90B7C-EE8C-4F98-81F4-6DC250ADB106} = {827281F7-33FC-4ACF-A195-886122BF3481}
+		{245A7815-CECD-4A14-AD4E-310EB238DD40} = {49E90B7C-EE8C-4F98-81F4-6DC250ADB106}
+		{3F318999-3741-42B8-A282-38F0B0EFC9F4} = {245A7815-CECD-4A14-AD4E-310EB238DD40}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {62F99306-E0EA-47D3-A6A7-7B0499A189B8}
