@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using LabViroMol.Modules.Assets.Application.Equipments.Command.Update;
+using LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Shared.Abstractions.Identity;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;

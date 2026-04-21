@@ -3,9 +3,8 @@ using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Shared.Abstractions.Interfaces;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using Mediator;
-using Microsoft.Extensions.Logging;
 
-namespace LabViroMol.Modules.Assets.Application.Equipments.Command.Update;
+namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 
 public class UpdateEquipmentHandler : ICommandHandler<UpdateEquipmentCommand, Result>
 {

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace LabViroMol.Modules.Assets.Application.Equipments.Command.Update;
+namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 
 public class UpdateEquipmentValidator : AbstractValidator<UpdateEquipmentCommand>
 {

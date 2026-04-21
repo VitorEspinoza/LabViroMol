@@ -1,5 +1,5 @@
-﻿using LabViroMol.Modules.Assets.Application.Equipments.Command.Create;
-using LabViroMol.Modules.Assets.Application.Equipments.Command.Update;
+﻿using LabViroMol.Modules.Assets.Application.Equipments.Commands.Create;
+using LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Infrastructure.Equipments;
 using LabViroMol.Modules.Shared.Presentation.Extensions;

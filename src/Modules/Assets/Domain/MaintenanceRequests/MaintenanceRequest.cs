@@ -1,4 +1,5 @@
 ﻿using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Shared.Abstractions.Identity;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
 
 namespace LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
@@ -12,20 +13,21 @@ public class MaintenanceRequest : AggregateRoot<MaintenanceRequestId>
     public string ProblemDescription { get; private set; }
     public EquipmentId EquipmentId { get; private set; }
 
-    private MaintenanceRequest(MaintenanceRequestStatus status, string description, string problemDescription,
-        EquipmentId equipmentId)
+    private MaintenanceRequest(UserId createdBy, MaintenanceRequestId id, string description, string problemDescription,
+        EquipmentId equipmentId) : base(id, createdBy)
     {
-        Status = status;
+        Status = MaintenanceRequestStatus.REQUESTED;
         Description = description;
         ProblemDescription = problemDescription;
         EquipmentId = equipmentId;
     }
 
-    public static Result<MaintenanceRequest> Create(MaintenanceRequestStatus status, string description,
+    public static Result<MaintenanceRequest> Create(UserId createdBy,string description,
         string problemDescription, Guid equipmentId)
     {
         return new MaintenanceRequest(
-            status: status,
+            createdBy,
+            IdFactory.New<MaintenanceRequestId>(),
             description: description,
             problemDescription: problemDescription,
             equipmentId: EquipmentId.From(equipmentId));

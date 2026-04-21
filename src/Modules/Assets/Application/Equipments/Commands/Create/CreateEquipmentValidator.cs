@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace LabViroMol.Modules.Assets.Application.Equipments.Command.Create;
+namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.Create;
 
 public class CreateEquipmentValidator : AbstractValidator<CreateEquipmentCommand>
 {

@@ -2,6 +2,6 @@
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using Mediator;
 
-namespace LabViroMol.Modules.Assets.Application.Equipments.Command.Update;
+namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 
 public record UpdateEquipmentCommand(EquipmentId EquipmentId, string Name, string Model, string Brand, string Code, string Description) : ICommand<Result>;
