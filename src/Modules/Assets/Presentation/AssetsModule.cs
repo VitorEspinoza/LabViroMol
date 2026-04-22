@@ -1,6 +1,7 @@
 ﻿using LabViroMol.Modules.Assets.Application;
 using LabViroMol.Modules.Assets.Infrastructure;
 using LabViroMol.Modules.Assets.Presentation.Equipments;
+using LabViroMol.Modules.Assets.Presentation.MaintenanceRequests;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -26,6 +27,7 @@ public static class AssetsModule
             .WithTags("assets");
         
         group.MapEquipmentEndpoints();
+        group.MapMaintenanceRequestsEndpoints();
         
         return app;
     }

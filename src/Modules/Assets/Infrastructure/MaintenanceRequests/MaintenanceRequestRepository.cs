@@ -28,7 +28,7 @@ public class MaintenanceRequestRepository : IMaintenanceRequestRepository
         return await _context.MaintenanceRequests
             .Where(req => req.EquipmentId == equipmentId 
                           && (req.Status == MaintenanceRequestStatus.REQUESTED 
-                              || req.Status == MaintenanceRequestStatus.PENDING))
+                              || req.Status == MaintenanceRequestStatus.ON_GOING))
             .ToListAsync(cancellationToken);
     }
 }

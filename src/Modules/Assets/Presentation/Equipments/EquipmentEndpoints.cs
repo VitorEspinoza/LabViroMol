@@ -32,7 +32,7 @@ internal static class EquipmentEndpoints
         }).Accepts<UpdateEquipmentRequest>("application/json");
 
         group.MapGet("/",
-            async (EquipmentQueries equipmentQueries, CancellationToken ct) =>
+            async (EquipmentQueries equipmentQueries) =>
                 Results.Ok(await equipmentQueries.GetAllEquipments()));
     }
 }

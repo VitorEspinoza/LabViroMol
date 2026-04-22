@@ -4,4 +4,4 @@ using Mediator;
 
 namespace LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Create;
 
-public record CreateMaintenanceCommand(EquipmentId EquipmentId, string Description, string ProblemDescription) : ICommand<Result>;
+public record CreateMaintenanceCommand(Guid EquipmentId, string Description, string ProblemDescription) : ICommand<Result>;

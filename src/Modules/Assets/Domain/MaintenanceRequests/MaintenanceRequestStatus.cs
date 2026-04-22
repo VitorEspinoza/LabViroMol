@@ -3,7 +3,7 @@
 public enum MaintenanceRequestStatus
 {
     REQUESTED,
-    PENDING,
+    ON_GOING,
     DONE,
     FAILED
 }
