@@ -1,4 +1,6 @@
 ﻿using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Create;
+using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Start;
+using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.MaintenanceRequests;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using LabViroMol.Modules.Shared.Presentation.Extensions;
@@ -23,5 +25,12 @@ internal static class MaintenanceRequestsEndpoints
 
         group.MapGet("/", async (MaintenanceRequestQueries maintenanceRequestQueries) =>
             Results.Ok(await maintenanceRequestQueries.GetAllMaintenanceRequestsAsync()));
+
+        group.MapPost("/start/{id:guid}", async (Guid id, IMediator mediator, CancellationToken ct) =>
+        {
+            var command = new StartMaintenanceRequestCommand(MaintenanceRequestId.From(id));
+            var result = await mediator.Send(command, ct);
+            return result.ToHttpResult(Results.Accepted());
+        });
     }
 }

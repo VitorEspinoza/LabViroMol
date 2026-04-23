@@ -16,7 +16,7 @@ public class MaintenanceRequest : AggregateRoot<MaintenanceRequestId>
     private MaintenanceRequest(UserId createdBy, MaintenanceRequestId id, string description, string problemDescription,
         EquipmentId equipmentId) : base(id, createdBy)
     {
-        Status = MaintenanceRequestStatus.REQUESTED;
+        Status = MaintenanceRequestStatus.Requested;
         Description = description;
         ProblemDescription = problemDescription;
         EquipmentId = equipmentId;
@@ -31,5 +31,25 @@ public class MaintenanceRequest : AggregateRoot<MaintenanceRequestId>
             description: description,
             problemDescription: problemDescription,
             equipmentId: EquipmentId.From(equipmentId));
+    }
+
+    public Result Start(UserId updatedBy)
+    {
+        if (Status != MaintenanceRequestStatus.Requested)
+            return Result.BusinessRule("Não é possível alterar o status para 'Em progresso'.");
+        
+        Status = MaintenanceRequestStatus.InProgress;
+        MarkAsUpdated(updatedBy);
+        return Result.Success();
+    }
+
+    public Result Done(UserId updatedBy)
+    {
+        if (Status != MaintenanceRequestStatus.InProgress)
+            return Result.BusinessRule("Não é possível alterar o status para 'Finalizado'.");
+        
+        Status = MaintenanceRequestStatus.Done;
+        MarkAsUpdated(updatedBy);
+        return Result.Success();
     }
 }

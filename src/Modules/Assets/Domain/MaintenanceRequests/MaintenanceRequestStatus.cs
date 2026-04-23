@@ -2,8 +2,8 @@
 
 public enum MaintenanceRequestStatus
 {
-    REQUESTED,
-    ON_GOING,
-    DONE,
-    FAILED
+    Requested,
+    InProgress,
+    Done,
+    Cancelled,
 }

@@ -27,8 +27,14 @@ public class MaintenanceRequestRepository : IMaintenanceRequestRepository
     {
         return await _context.MaintenanceRequests
             .Where(req => req.EquipmentId == equipmentId 
-                          && (req.Status == MaintenanceRequestStatus.REQUESTED 
-                              || req.Status == MaintenanceRequestStatus.ON_GOING))
+                          && (req.Status == MaintenanceRequestStatus.Requested 
+                              || req.Status == MaintenanceRequestStatus.InProgress))
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<MaintenanceRequest?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await _context.MaintenanceRequests.FirstOrDefaultAsync(
+            req => req.Id == id, cancellationToken);
     }
 }

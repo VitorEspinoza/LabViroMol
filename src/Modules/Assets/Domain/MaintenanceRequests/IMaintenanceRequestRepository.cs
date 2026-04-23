@@ -7,4 +7,6 @@ public interface IMaintenanceRequestRepository
     Task AddAsync(MaintenanceRequest maintenanceRequest, CancellationToken cancellationToken);
     
     Task<List<MaintenanceRequest>> GetAllActiveByEquipmentIdAsync(Guid equipmentId, CancellationToken cancellationToken);
+    
+    Task<MaintenanceRequest?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 }
