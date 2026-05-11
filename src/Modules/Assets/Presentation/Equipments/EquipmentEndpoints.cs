@@ -1,5 +1,6 @@
 ﻿using LabViroMol.Modules.Assets.Application.Equipments.Commands.Create;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
+using LabViroMol.Modules.Assets.Application.Equipments.Commands.UploadImage;
 using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Infrastructure.Equipments;
 using LabViroMol.Modules.Shared.Presentation.Extensions;
@@ -34,5 +35,33 @@ internal static class EquipmentEndpoints
         group.MapGet("/",
             async (EquipmentQueries equipmentQueries) =>
                 Results.Ok(await equipmentQueries.GetAllEquipments()));
+
+        group.MapGet("{id:guid}",
+            async (Guid id, EquipmentQueries equipmentQueries) =>
+            {
+                var equipment = await equipmentQueries.GetEquipmentById(id);
+
+                return equipment is null
+                    ? Results.NotFound()
+                    : Results.Ok(equipment);
+            });
+        
+        group.MapPost("{id:guid}/image",
+            async (
+                Guid id,
+                IFormFile file,
+                IMediator mediator) =>
+            {
+                var result = await mediator.Send(
+                    new UploadImageCommand(
+                        new EquipmentId(id),
+                        file.OpenReadStream(),
+                        file.FileName));
+
+                return result.IsSuccess
+                    ? Results.Ok()
+                    : Results.BadRequest();
+            })
+            .DisableAntiforgery();
     }
 }

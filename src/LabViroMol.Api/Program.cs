@@ -4,6 +4,7 @@ using LabViroMol.Modules.Assets.Presentation;
 using LabViroMol.Modules.Inventory.Presentation;
 using LabViroMol.Modules.Scheduling.Presentation;
 using Mediator;
+using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +40,11 @@ builder.Services
     
 builder.Services.AddAuthorization();
 
+var imagesPath =
+    builder.Configuration["Storage:ImageFolderPath"]!;
+
+Directory.CreateDirectory(imagesPath);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -48,6 +54,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        builder.Configuration["Storage:ImageFolderPath"]!),
+    RequestPath = "/images"
+});
 
 app.UseCors("AngularApp");
 

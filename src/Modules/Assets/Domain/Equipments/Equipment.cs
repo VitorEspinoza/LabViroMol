@@ -12,6 +12,7 @@ public class Equipment : AggregateRoot<EquipmentId>
     public string Model { get; private set; }
     public string Code { get; private set; }
     public string Description { get; private set; }
+    public string ImageUrl { get; private set; }
 
     private Equipment(EquipmentId id, UserId createdBy, string name, string brand, string model, string code, string description) : base(id, createdBy)
     {
@@ -43,5 +44,10 @@ public class Equipment : AggregateRoot<EquipmentId>
         Code = code; 
         Description = description;
         MarkAsUpdated(modifiedBy);
+    }
+    
+    public void AttachImageUrl(string imageUrl)
+    {
+        ImageUrl = imageUrl;
     }
 }

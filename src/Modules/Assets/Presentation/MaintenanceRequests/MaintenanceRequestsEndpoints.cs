@@ -1,4 +1,6 @@
-﻿using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Create;
+﻿using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Cancel;
+using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Create;
+using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Done;
 using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Start;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.MaintenanceRequests;
@@ -26,9 +28,23 @@ internal static class MaintenanceRequestsEndpoints
         group.MapGet("/", async (MaintenanceRequestQueries maintenanceRequestQueries) =>
             Results.Ok(await maintenanceRequestQueries.GetAllMaintenanceRequestsAsync()));
 
-        group.MapPost("/start/{id:guid}", async (Guid id, IMediator mediator, CancellationToken ct) =>
+        group.MapPost("/{id:guid}/start", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {
             var command = new StartMaintenanceRequestCommand(MaintenanceRequestId.From(id));
+            var result = await mediator.Send(command, ct);
+            return result.ToHttpResult(Results.Accepted());
+        });
+        
+        group.MapPost("/{id:guid}/done", async (Guid id, IMediator mediator, CancellationToken ct) =>
+        {
+            var command = new DoneMaintenanceRequestCommand(MaintenanceRequestId.From(id));
+            var result = await mediator.Send(command, ct);
+            return result.ToHttpResult(Results.Accepted());
+        });
+        
+        group.MapPost("/{id:guid}/cancel", async (Guid id, IMediator mediator, CancellationToken ct) =>
+        {
+            var command = new CancelMaintenanceRequestCommand(MaintenanceRequestId.From(id));
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Accepted());
         });

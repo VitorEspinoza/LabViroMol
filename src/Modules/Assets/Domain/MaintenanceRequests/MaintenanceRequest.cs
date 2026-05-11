@@ -52,4 +52,14 @@ public class MaintenanceRequest : AggregateRoot<MaintenanceRequestId>
         MarkAsUpdated(updatedBy);
         return Result.Success();
     }
+
+    public Result Cancel(UserId updatedBy)
+    {
+        if(Status == MaintenanceRequestStatus.Done)
+            return Result.BusinessRule("Não é possível cancelar solicitações finalizadas.");
+        
+        Status = MaintenanceRequestStatus.Cancelled;
+        MarkAsUpdated(updatedBy);
+        return Result.Success();
+    }
 }

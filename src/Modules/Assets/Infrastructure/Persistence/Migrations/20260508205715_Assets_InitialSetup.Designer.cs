@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LabViroMol.Modules.Assets.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AssetsDbContext))]
-    [Migration("20260420173036_Assets_InitialSetup")]
+    [Migration("20260508205715_Assets_InitialSetup")]
     partial class Assets_InitialSetup
     {
         /// <inheritdoc />
@@ -51,6 +51,9 @@ namespace LabViroMol.Modules.Assets.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");

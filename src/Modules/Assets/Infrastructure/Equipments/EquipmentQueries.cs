@@ -23,9 +23,25 @@ public class EquipmentQueries
                 equipment.Model,
                 equipment.Brand,
                 equipment.Code,
-                equipment.Description))
+                equipment.Description,
+                equipment.ImageUrl))
             .ToListAsync();
         
         return equipments;
+    }
+
+    public async Task<EquipmentViewModel?> GetEquipmentById(Guid id)
+    {
+        return await _context.Equipments
+            .Where(equipment => equipment.Id == id)
+            .Select(equipment => new EquipmentViewModel(
+                equipment.Id!.Value,
+                equipment.Name,
+                equipment.Model,
+                equipment.Brand,
+                equipment.Code,
+                equipment.Description,
+                equipment.ImageUrl))
+            .FirstOrDefaultAsync();
     }
 }
