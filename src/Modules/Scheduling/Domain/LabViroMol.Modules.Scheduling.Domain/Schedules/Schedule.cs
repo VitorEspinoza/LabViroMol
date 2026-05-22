@@ -45,30 +45,40 @@ public class Schedule : AggregateRoot<ScheduleId>
         return Result<Schedule>.Success(schedule);
     }
 
-    public void Approve(UserId userId)
+    public Result Approve(UserId userId)
     {
-        EnsureCanBeApprovedOrRefused();
+        var valid = EnsureCanBeApprovedOrRefused();
+        
+        if(valid.IsFailure)
+            return valid;
         
         Status = ScheduleStatus.SCHEDULED;
         ApprovedBy = userId;
         MarkAsUpdated(userId);
+        return Result.Success();
     }
 
-    public void Refuse(UserId userId)
+    public Result Refuse(UserId userId)
     {
-        EnsureCanBeApprovedOrRefused();
+        var valid = EnsureCanBeApprovedOrRefused();
+        
+        if(valid.IsFailure)
+            return valid;
         
         Status = ScheduleStatus.REFUSED;
         RefusedBy = userId;
         MarkAsUpdated(userId);
+        return Result.Success();
     }
     
-    private void EnsureCanBeApprovedOrRefused()
+    private Result EnsureCanBeApprovedOrRefused()
     {
         if (!Status.Equals(ScheduleStatus.PENDING))
-            Result.BusinessRule("Agendamento não está pendente.");
+            return Result.BusinessRule("Agendamento não está pendente.");
 
         if (Scheduling.Date.IsBefore(DateOnly.FromDateTime(DateTime.Now)))
-            Result.BusinessRule("Não é possível alterar agendamento com data passada.");
+            return Result.BusinessRule("Não é possível alterar agendamento com data passada.");
+
+        return Result.Success();
     }
 }
