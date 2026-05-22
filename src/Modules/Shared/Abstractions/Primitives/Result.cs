@@ -1,6 +1,6 @@
 namespace LabViroMol.Modules.Shared.Abstractions.Primitives;
 
-public enum ResultErrorType { Validation, NotFound, Conflict, BusinessRule }
+public enum ResultErrorType { Validation, NotFound, Conflict, BusinessRule, InvalidReference }
 
 public class Result
 {
@@ -36,6 +36,9 @@ public class Result
 
     public static Result Validation(List<string> errors)
         => new(false, ResultErrorType.Validation, errors);
+    
+    public static Result InvalidReference(string error)
+        => new(false, ResultErrorType.InvalidReference, new List<string> { error });
 }
 
 public class Result<T> : Result
@@ -62,6 +65,9 @@ public class Result<T> : Result
 
     public new static Result<T> Validation(List<string> errors)
         => new(default, false, ResultErrorType.Validation, errors);
+    
+    public new static Result<T> InvalidReference(List<string> errors)
+        => new(default, false, ResultErrorType.InvalidReference, errors);
 
     public static implicit operator Result<T>(T value) => Success(value);
 }

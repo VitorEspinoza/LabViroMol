@@ -1,6 +1,7 @@
 using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.Orders;
+using LabViroMol.Modules.Research.Contracts;
 using LabViroMol.Modules.Shared.Abstractions.Interfaces;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using Mediator;
@@ -37,10 +38,10 @@ public class CreateOrderHandler : ICommandHandler<CreateOrderCommand, Result>
         if (material is null)
             return Result.NotFound("Material não encontrado.");
 
-        var isEligibleForOrders = await _projectChecker.IsEligibleForOrdersAsync(command.ProjectId, ct);
+        var isEligibleForOrdersResult = await _projectChecker.IsEligibleForOrdersAsync(command.ProjectId, ct);
 
-        if (!isEligibleForOrders)
-            return Result.BusinessRule("O projeto informado não está elegível para receber materiais.");
+        if (isEligibleForOrdersResult.IsFailure)
+            return isEligibleForOrdersResult;
 
         
         var order = Order.Create(

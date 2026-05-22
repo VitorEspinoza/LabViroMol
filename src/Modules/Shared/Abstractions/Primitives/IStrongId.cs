@@ -12,5 +12,4 @@ public static class IdFactory
     {
         return TId.From(Guid.CreateVersion7());
     }
-    
 }

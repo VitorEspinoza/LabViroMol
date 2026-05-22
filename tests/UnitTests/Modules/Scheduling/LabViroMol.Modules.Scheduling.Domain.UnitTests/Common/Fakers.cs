@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Abstractions.Identity;
+using LabViroMol.Modules.Shared.Abstractions.Primitives;
 
 namespace LabViroMol.Modules.Scheduling.Domain.UnitTests.Common;
 
@@ -10,7 +11,7 @@ internal static class Fakers
     
     #region Primitives
     
-    public static UserId AnyUserId() => UserId.New(); 
+    public static UserId AnyUserId() => IdFactory.New<UserId>(); 
     
     #endregion
     

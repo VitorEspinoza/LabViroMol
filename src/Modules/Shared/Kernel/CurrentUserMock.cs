@@ -6,6 +6,6 @@ namespace Kernel;
 
 public class CurrentUserMock : ICurrentUser
 {
-    public UserId Id { get; } = UserId.New();
+    public UserId Id { get; } =  IdFactory.New<UserId>();
     public string Name { get; } = "Mock User";
 }

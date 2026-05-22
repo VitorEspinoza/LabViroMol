@@ -1,6 +1,7 @@
 using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.References;
+using LabViroMol.Modules.Research.Contracts;
 using LabViroMol.Modules.Shared.Abstractions.Interfaces;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using Mediator;
@@ -32,9 +33,9 @@ public class ConsumeMaterialForProjectCommandHandler : ICommandHandler<ConsumeMa
         if (material is null)
             return Result.NotFound("Material não encontrado.");
 
-        var isEligible = await _projectChecker.IsEligibleForConsumptionAsync(ProjectId.From(command.ProjectId), ct);
-        if (!isEligible)
-            return Result.BusinessRule("O projeto informado não está elegível para baixa de materiais.");
+        var isEligibleResult = await _projectChecker.IsEligibleForConsumptionAsync(ProjectId.From(command.ProjectId), _currentUser.Id, ct);
+        if (isEligibleResult.IsFailure)
+            return isEligibleResult;
         
         var result = material.ConsumeForProject(command.ProjectId, command.Quantity, _currentUser.Id);
 
