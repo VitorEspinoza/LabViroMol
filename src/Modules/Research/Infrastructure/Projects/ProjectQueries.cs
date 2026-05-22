@@ -13,11 +13,13 @@ public class ProjectQueries(ResearchDbContext context)
             .Select(p => new ProjectSummaryViewModel(
                 p.Id.Value,
                 p.Title,
+                p.Description,
                 p.Status.ToString(),
                 context.Researchers
-                    .Where(r => p.Members.Any(m => m.Role == ProjectRole.ResearchLead && m.Id == r.Id)) 
+                    .Where(r => p.Members.Any(m => m.Role == ProjectRole.ResearchLead && m.Id == r.Id))
                     .Select(r => r.Name.FullName)
                     .Single(),
+                context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single(),
                 p.CreatedAt))
             .ToListAsync();
     public async Task<ProjectViewModel?> GetById(Guid id)
@@ -29,6 +31,7 @@ public class ProjectQueries(ResearchDbContext context)
                 p.Description,
                 p.Status,
                 p.PartnerId.Value,
+                context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single(),
                 p.Members.Select(m =>
                     new ProjectMemberViewModel(m.Id,
                         context.Researchers
