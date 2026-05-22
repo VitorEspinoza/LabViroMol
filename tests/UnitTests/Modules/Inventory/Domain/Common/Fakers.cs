@@ -15,9 +15,9 @@ internal static class Fakers
 
     #region Primitives
 
-    public static UserId AnyUserId() => UserId.New();
-    public static MaterialId AnyMaterialId() => MaterialId.New();
-    public static ProjectId AnyProjectId() => ProjectId.New();
+    public static UserId AnyUserId() => IdFactory.New<UserId>();
+    public static MaterialId AnyMaterialId() => IdFactory.New<MaterialId>();
+    public static ProjectId AnyProjectId() => IdFactory.New<ProjectId>();
 
     public static Quantity AnyQuantity(decimal? value = null)
         => new(value ?? F.Random.Decimal(1, 500));

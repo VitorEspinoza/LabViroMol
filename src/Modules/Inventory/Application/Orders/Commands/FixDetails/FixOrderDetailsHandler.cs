@@ -1,6 +1,7 @@
 ﻿using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Domain.References;
+using LabViroMol.Modules.Research.Contracts;
 using LabViroMol.Modules.Shared.Abstractions.Interfaces;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using Mediator;
@@ -29,9 +30,9 @@ public class FixOrderDetailsHandler : ICommandHandler<FixOrderDetailsCommand, Re
         if (order is null)
             return Result.NotFound("Pedido não encontrado.");
 
-        var isEligibleForOrders = await _projectChecker.IsEligibleForOrdersAsync(command.NewProjectId, ct);
-        if (!isEligibleForOrders)
-            return Result.BusinessRule("O projeto informado não está elegível para receber materiais.");
+        var isEligibleForOrdersResult = await _projectChecker.IsEligibleForOrdersAsync(command.NewProjectId, ct);
+        if (isEligibleForOrdersResult.IsFailure)
+            return isEligibleForOrdersResult;
 
         var result = order.FixDetails(
             command.NewProjectId,
