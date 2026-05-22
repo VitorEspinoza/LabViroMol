@@ -31,21 +31,25 @@ internal static class Fakers
     
     #region Scheduling
     
-    public static Domain.Schedules.Scheduling CreateScheduling(
-        DateOnly? date = null,
-        DateTimeOffset? start = null,
-        DateTimeOffset? end = null)
+    public static DateOnly NextWorkday()
     {
-        var baseDate = date ?? DateOnly.FromDateTime(DateTime.Now.AddDays(1));
+        var date = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
+        while (date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+            date = date.AddDays(1);
+        return date;
+    }
+    
+    public static Domain.Schedules.Scheduling CreateScheduling()
+    {
+        var date = NextWorkday();
+        var start = date.ToDateTime(TimeOnly.FromTimeSpan(TimeSpan.FromHours(9)));
+        var end   = date.ToDateTime(TimeOnly.FromTimeSpan(TimeSpan.FromHours(10)));
 
-        var startTime = start ?? new DateTimeOffset(
-            baseDate.ToDateTime(new TimeOnly(9, 0)),
-            TimeSpan.Zero
-        );
-
-        var endTime = end ?? startTime.AddHours(1);
-
-        return Domain.Schedules.Scheduling.Create(baseDate, startTime, endTime).Data!;
+        return Domain.Schedules.Scheduling.Create(
+            date,
+            new DateTimeOffset(start),
+            new DateTimeOffset(end)
+        ).Data!;
     }
     
     #endregion

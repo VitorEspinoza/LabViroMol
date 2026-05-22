@@ -29,13 +29,13 @@ public class ApproveScheduleCommandHandler : ICommandHandler<ApproveScheduleComm
         if (schedule is null)
             return Result.NotFound("Agendamento não encontrado.");
         
-        schedule.Approve(_currentUser.Id);
+        var result = schedule.Approve(_currentUser.Id);
         
         await RefuseConflictingSchedules(schedule, ct);
          
         await _unitOfWork.CompleteAsync(ct);
         
-        return Result.Success();
+        return result;
     }
 
     private async Task RefuseConflictingSchedules(Schedule schedule, CancellationToken ct)

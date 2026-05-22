@@ -66,10 +66,11 @@ public class ScheduleTests
             // Arrange
             var schedule = Fakers.CreateSchedule();
             schedule.Approve(Fakers.AnyUserId());
- 
+            
+            var result = schedule.Approve(Fakers.AnyUserId());
+            
             // Act & Assert
-            Assert.Throws<DomainException>(() =>
-                schedule.Approve(Fakers.AnyUserId()));
+            Assert.True(result.IsFailure);
         }
  
         [Fact]
@@ -77,25 +78,14 @@ public class ScheduleTests
         {
             // Arrange
             var pastDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
-            var scheduling = Domain.Schedules.Scheduling.Create(
-                pastDate,
-                DateTimeOffset.Now.AddHours(-2),
-                DateTimeOffset.Now.AddHours(-1)
-            ).Data!;
- 
-            var schedule = Schedule.Create(
-                Fakers.CreateScheduler(),
-                scheduling,
-                true,
-                "Prof",
-                "Projeto",
-                "Desc",
-                Fakers.CreateScheduleEquipments()
-            ).Data!;
  
             // Act & Assert
             Assert.Throws<DomainException>(() =>
-                schedule.Approve(Fakers.AnyUserId()));
+                Domain.Schedules.Scheduling.Create(
+                    pastDate,
+                    DateTimeOffset.Now.AddHours(-2),
+                    DateTimeOffset.Now.AddHours(-1)
+                ));
         }
     }
  
@@ -124,8 +114,8 @@ public class ScheduleTests
             schedule.Refuse(Fakers.AnyUserId());
  
             // Act & Assert
-            Assert.Throws<DomainException>(() =>
-                schedule.Refuse(Fakers.AnyUserId()));
+            var result  = schedule.Refuse(Fakers.AnyUserId());
+            Assert.True(result.IsFailure);
         }
     }
  
@@ -135,9 +125,9 @@ public class ScheduleTests
         public void CreateScheduling_WithValidData_ShouldSucceed()
         {
             // Arrange
-            var date = DateOnly.FromDateTime(DateTime.Now.AddDays(1));
-            var start = DateTimeOffset.Now.AddHours(1);
-            var end = DateTimeOffset.Now.AddHours(2);
+            var date = Fakers.NextWorkday();
+            var start = date.ToDateTime(TimeOnly.FromTimeSpan(TimeSpan.FromHours(9)));
+            var end   = date.ToDateTime(TimeOnly.FromTimeSpan(TimeSpan.FromHours(10)));
  
             // Act
             var result = Domain.Schedules.Scheduling.Create(date, start, end);
