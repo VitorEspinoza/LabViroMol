@@ -11,7 +11,7 @@ public static class MaterialDataSeeder
 {
     public static async Task<Guid> SeedMaterialAsync(InventoryDbContext dbContext, decimal stock = 100m)
     {
-        var userId = UserId.New();
+        var userId = IdFactory.New<UserId>();
         var type = MaterialType.Create(userId, "Tipo Teste");
         await dbContext.MaterialTypes.AddAsync(type);
 

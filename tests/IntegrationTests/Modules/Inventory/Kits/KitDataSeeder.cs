@@ -15,7 +15,7 @@ public static class KitDataSeeder
         var materialId = await MaterialDataSeeder.SeedMaterialAsync(dbContext);
 
         var kit = Kit.Create(
-            UserId.New(),
+            IdFactory.New<UserId>(),
             "Kit Teste",
             "Descrição do kit de teste",
             new List<KitItem> { new KitItem(MaterialId.From(materialId), (Quantity)1m) });

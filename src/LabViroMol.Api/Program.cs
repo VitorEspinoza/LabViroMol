@@ -1,16 +1,25 @@
+using System.Text.Json.Serialization;
 using Kernel;
 using Kernel.Behaviors;
 using LabViroMol.Modules.Assets.Presentation;
 using LabViroMol.Modules.Inventory.Presentation;
 using LabViroMol.Modules.Scheduling.Presentation;
+using LabViroMol.Modules.Research.Presentation;
+using LabViroMol.Modules.Shared.Presentation.Converters;
 using Mediator;
 using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+{
+    options.SerializerOptions.Converters.Add(new SmartEnumJsonConverterFactory());
+    
+    options.SerializerOptions.Converters.Add(new StrongIdJsonConverterFactory());
+    
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
@@ -36,7 +45,8 @@ builder.Services
     .AddSharedModule()
     .AddInventoryModule(builder.Configuration)
     .AddSchedulingModule(builder.Configuration)
-    .AddAssetsModule(builder.Configuration);
+    .AddAssetsModule(builder.Configuration)
+    .AddResearchModule(builder.Configuration);
     
 builder.Services.AddAuthorization();
 
@@ -67,6 +77,7 @@ app.UseCors("AngularApp");
 app.UseAuthorization();
 
 app.MapInventoryEndpoints();
+app.MapResearchEndpoints();
 app.MapSchedulingEndpoints();
 app.MapAssetsEndpoints();
 

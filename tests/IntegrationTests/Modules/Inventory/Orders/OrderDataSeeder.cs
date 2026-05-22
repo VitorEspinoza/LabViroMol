@@ -18,7 +18,7 @@ public static class OrderDataSeeder
         var order = Order.Create(
             MaterialId.From(materialId),
             ProjectId.From(Guid.NewGuid()),
-            UserId.New(),
+            IdFactory.New<UserId>(),
             (Quantity)10m,
             "Pedido de teste");
 
