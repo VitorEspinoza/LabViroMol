@@ -29,6 +29,7 @@ public class ProjectQueries(ResearchDbContext context)
                 p.Description,
                 p.Status,
                 p.PartnerId.Value,
+                context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single(),
                 p.Members.Select(m =>
                     new ProjectMemberViewModel(m.Id,
                         context.Researchers

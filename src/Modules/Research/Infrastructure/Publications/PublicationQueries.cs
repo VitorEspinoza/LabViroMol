@@ -29,7 +29,15 @@ public class PublicationQueries(ResearchDbContext context)
                 p.PublicationDate,
                 p.PublishedOn,
                 p.PublishUrl,
-                p.Researchers.Select(r => r.ResearcherId.Value).ToList(),
+                p.Researchers
+                    .OrderBy(pr => pr.Order)
+                    .Select(pr => new PublicationAuthorViewModel(
+                        context.Researchers
+                            .Where(r => r.Id == pr.ResearcherId)
+                            .Select(r => r.Name.FullName)
+                            .Single(),
+                        pr.Order))
+                    .ToList(),
                 p.CreatedAt))
             .FirstOrDefaultAsync();
 }

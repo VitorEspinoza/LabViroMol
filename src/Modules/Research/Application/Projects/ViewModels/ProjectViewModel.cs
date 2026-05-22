@@ -8,5 +8,6 @@ public record ProjectViewModel(
     string Description,
     ProjectStatus Status,
     Guid PartnerId,
+    string PartnerName,
     IReadOnlyCollection<ProjectMemberViewModel> Members,
     DateTimeOffset CreatedAt);
