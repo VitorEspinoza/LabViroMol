@@ -1,0 +1,34 @@
+namespace LabViroMol.Modules.Research.Application.Publications.Commands.Update;
+
+using LabViroMol.Modules.Research.Application.Shared;
+using LabViroMol.Modules.Research.Domain.Publications;
+using LabViroMol.Modules.Shared.Abstractions.Interfaces;
+using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using Mediator;
+
+public class UpdatePublicationHandler(
+    IPublicationRepository repository,
+    ICurrentUser currentUser,
+    IResearchUnitOfWork unitOfWork)
+    : ICommandHandler<UpdatePublicationCommand, Result>
+{
+    public async ValueTask<Result> Handle(UpdatePublicationCommand command, CancellationToken ct)
+    {
+        var publication = await repository.GetByIdAsync(PublicationId.From(command.PublicationId), ct);
+        if (publication is null)
+            return Result.NotFound("Publicacao nao encontrada.");
+
+        var result = publication.Update(
+            command.Title,
+            command.Description,
+            command.PublishedOn,
+            command.PublishUrl,
+            currentUser.Id);
+
+        if (result.IsFailure)
+            return result;
+
+        await unitOfWork.CompleteAsync(ct);
+        return Result.Success();
+    }
+}

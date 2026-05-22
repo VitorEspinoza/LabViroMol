@@ -3,7 +3,6 @@ using LabViroMol.Modules.Inventory.Domain.Kits;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 using LabViroMol.Modules.Inventory.Domain.Orders;
-using LabViroMol.Modules.Inventory.Infrastructure.External;
 using LabViroMol.Modules.Inventory.Infrastructure.Kits;
 using LabViroMol.Modules.Inventory.Infrastructure.Materials;
 using LabViroMol.Modules.Inventory.Infrastructure.MaterialTypes;
@@ -22,8 +21,6 @@ public static class InfrastructureModule
     {
         public IServiceCollection AddInfrastructure(IConfiguration configuration)
         {
-            services.AddScoped<IProjectChecker, ProjectCheckerMock>();
-            
             services
                 .AddRepositories()
                 .AddQueries()
