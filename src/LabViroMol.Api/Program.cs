@@ -50,8 +50,15 @@ builder.Services
     
 builder.Services.AddAuthorization();
 
-var imagesPath =
-    builder.Configuration["Storage:ImageFolderPath"]!;
+var configPath = builder.Configuration["Storage:ImageFolderPath"];
+if (string.IsNullOrWhiteSpace(configPath))
+{
+    throw new InvalidOperationException("A configuração 'Storage:ImageFolderPath' não foi encontrada ou está vazia.");
+}
+
+var imagesPath = Path.IsPathRooted(configPath) 
+    ? configPath 
+    : Path.Combine(builder.Environment.ContentRootPath, configPath);
 
 Directory.CreateDirectory(imagesPath);
 
@@ -67,11 +74,9 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(
-        builder.Configuration["Storage:ImageFolderPath"]!),
+    FileProvider = new PhysicalFileProvider(imagesPath),
     RequestPath = "/images"
 });
-
 app.UseCors("AngularApp");
 
 app.UseAuthorization();
