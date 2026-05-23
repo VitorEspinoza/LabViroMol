@@ -7,6 +7,7 @@ using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Domain.References;
 using LabViroMol.Modules.Inventory.Infrastructure.Orders;
+using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using LabViroMol.Modules.Shared.Presentation.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
