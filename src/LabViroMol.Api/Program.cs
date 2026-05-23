@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Kernel;
 using Kernel.Behaviors;
 using LabViroMol.Modules.Inventory.Presentation;
+using LabViroMol.Modules.Scheduling.Presentation;
 using LabViroMol.Modules.Research.Presentation;
 using LabViroMol.Modules.Shared.Presentation.Converters;
 using Mediator;
@@ -41,7 +42,8 @@ builder.Services.AddScoped(
 builder.Services
     .AddSharedModule()
     .AddInventoryModule(builder.Configuration)
-    .AddResearchModule(builder.Configuration);
+    .AddResearchModule(builder.Configuration)
+    .AddSchedulingModule(builder.Configuration);
     
 builder.Services.AddAuthorization();
 
@@ -61,6 +63,7 @@ app.UseAuthorization();
 
 app.MapInventoryEndpoints();
 app.MapResearchEndpoints();
+app.MapSchedulingEndpoints();
 
 app.Run();
 

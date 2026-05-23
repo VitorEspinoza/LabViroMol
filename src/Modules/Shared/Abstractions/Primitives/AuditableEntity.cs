@@ -16,6 +16,14 @@ public abstract class AuditableEntity<TId> : BaseEntity<TId>
         IsDeleted = false;
     }
 
+    protected AuditableEntity(TId id) : base(id)
+    {
+        if (id is null) throw new ArgumentNullException(nameof(id));
+
+        Id = id; 
+        CreatedAt = DateTimeOffset.UtcNow;
+        IsDeleted = false;
+    }
     public UserId CreatedBy { get; protected set; }
     public DateTimeOffset CreatedAt { get; protected set; }
     public UserId? UpdatedBy { get; protected set; }
