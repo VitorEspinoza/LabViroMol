@@ -8,37 +8,83 @@ using Microsoft.EntityFrameworkCore;
 public class ProjectQueries(ResearchDbContext context)
 {
     public async Task<IReadOnlyCollection<ProjectSummaryViewModel>> GetAll()
-        => await context.Projects
+    {
+        var result = await context.Projects
             .AsNoTracking()
-            .Select(p => new ProjectSummaryViewModel(
-                p.Id.Value,
-                p.Title,
-                p.Description,
-                p.Status.ToString(),
-                context.Researchers
-                    .Where(r => p.Members.Any(m => m.Role == ProjectRole.ResearchLead && m.Id == r.Id))
-                    .Select(r => r.Name.FullName)
-                    .Single(),
-                context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single(),
-                p.CreatedAt))
+            .Include(p => p.Members)
+            .Join(
+                context.Partners,
+                p => p.PartnerId,
+                pt => pt.Id,
+                (p, pt) => new { Project = p, Partner = pt })
             .ToListAsync();
+
+        var researcherIds = result
+            .SelectMany(x => x.Project.Members
+                .Where(m => m.Role == ProjectRole.ResearchLead)
+                .Select(m => (Guid)m.Id))
+            .ToList();
+
+        var researchers = await context.Researchers
+            .AsNoTracking()
+            .Where(r => researcherIds.Contains((Guid)r.Id))
+            .Select(r => new { Id = (Guid) r.Id, Name = r.Name.FullName })
+            .ToDictionaryAsync(r => r.Id, r => r.Name);
+
+        return result.Select(x =>
+        {
+            var leadId = x.Project.Members
+                .First(m => m.Role == ProjectRole.ResearchLead)
+                .Id.Value;
+
+            return new ProjectSummaryViewModel(
+                x.Project.Id.Value,
+                x.Project.Title,
+                x.Project.Description,
+                x.Project.Status.Value,
+                researchers.GetValueOrDefault(leadId, "Desconhecido"),
+                x.Partner.Name,
+                x.Project.CreatedAt);
+        }).ToList();
+    }
     public async Task<ProjectViewModel?> GetById(Guid id)
-        => await context.Projects.AsNoTracking()
-            .Where(p => p.Id == ProjectId.From(id))
-            .Select(p => new ProjectViewModel(
-                p.Id.Value,
-                p.Title,
-                p.Description,
-                p.Status,
-                p.PartnerId.Value,
-                context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single(),
-                p.Members.Select(m =>
-                    new ProjectMemberViewModel(m.Id,
-                        context.Researchers
-                            .Where(r => r.Id == m.Id)
-                            .Select(r => r.Name.FullName)
-                            .Single(),
-                        m.Role)).ToList(),
-                p.CreatedAt))
+    {
+        var project = await context.Projects
+            .AsNoTracking()
+            .Include(p => p.Members)
+            .FirstOrDefaultAsync(p => p.Id == ProjectId.From(id));
+
+        if (project is null) return null;
+
+        var partner = await context.Partners
+            .AsNoTracking()
+            .Where(pt => pt.Id == project.PartnerId)
+            .Select(pt => new { pt.Id, pt.Name })
             .FirstOrDefaultAsync();
+
+        var memberIds = project.Members
+            .Select(m => (Guid) m.Id)
+            .ToList();
+
+        var researchers = await context.Researchers
+            .AsNoTracking()
+            .Where(r => memberIds.Contains((Guid) r.Id))
+            .Select(r => new { Id = r.Id.Value, Name = r.Name.FullName })
+            .ToDictionaryAsync(r => r.Id, r => r.Name);
+
+        var members = project.Members.Select(m => new ProjectMemberViewModel(
+            m.Id,
+            researchers.GetValueOrDefault(m.Id.Value, "Desconhecido"),
+            m.Role)).ToList();
+
+        return new ProjectViewModel(
+            project.Id.Value,
+            project.Title,
+            project.Description,
+            project.Status,
+            project.PartnerId.Value,
+            partner?.Name ?? "Desconhecido",
+            members,
+            project.CreatedAt);
+    }
 }
