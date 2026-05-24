@@ -1,5 +1,5 @@
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Identity;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 
 namespace LabViroMol.Modules.Research.Domain.Partners;

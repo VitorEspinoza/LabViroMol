@@ -1,5 +1,5 @@
 ﻿using LabViroMol.Modules.Scheduling.Domain.Schedules.Policies;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Scheduling.Domain.Schedules;
 

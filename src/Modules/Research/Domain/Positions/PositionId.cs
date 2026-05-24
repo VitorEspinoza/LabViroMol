@@ -1,6 +1,6 @@
 namespace LabViroMol.Modules.Research.Domain.Positions;
 
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 public record struct PositionId(Guid Value) : IStrongId<PositionId>
 {

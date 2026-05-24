@@ -4,7 +4,7 @@ using LabViroMol.Modules.Research.Application.Partners.Commands.Create;
 using LabViroMol.Modules.Research.Application.Partners.Commands.Delete;
 using LabViroMol.Modules.Research.Application.Partners.Commands.Update;
 using LabViroMol.Modules.Research.Infrastructure.Partners;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

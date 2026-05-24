@@ -1,7 +1,7 @@
 using LabViroMol.Modules.Research.Application.External;
 using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 namespace LabViroMol.Modules.Research.Application.Researchers.Handlers;

@@ -2,7 +2,7 @@ namespace LabViroMol.Modules.Research.Presentation.Researchers;
 
 using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Research.Infrastructure.Researchers;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

@@ -3,7 +3,7 @@ using LabViroMol.Modules.Inventory.Application.Materials.Commands.Update;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 using LabViroMol.Modules.Inventory.Infrastructure.Materials;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using Unit = LabViroMol.Modules.Inventory.Domain.Materials.Unit;
 using Mediator;
 using Microsoft.AspNetCore.Builder;

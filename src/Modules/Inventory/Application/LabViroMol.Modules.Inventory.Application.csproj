@@ -21,7 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Research\Contracts\LabViroMol.Modules.Research.Contracts.csproj" />
-      <ProjectReference Include="..\..\Shared\Abstractions\LabViroMol.Modules.Shared.Abstractions.csproj" />
+      <ProjectReference Include="..\..\Shared\Kernel\LabViroMol.Modules.Shared.Kernel.csproj" />
       <ProjectReference Include="..\Domain\LabViroMol.Modules.Inventory.Domain.csproj" />
     </ItemGroup>
 

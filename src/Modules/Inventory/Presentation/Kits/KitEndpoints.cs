@@ -3,7 +3,7 @@ using LabViroMol.Modules.Inventory.Application.Kits.Commands.Shared;
 using LabViroMol.Modules.Inventory.Application.Kits.Commands.Update;
 using LabViroMol.Modules.Inventory.Domain.Kits;
 using LabViroMol.Modules.Inventory.Infrastructure.Kits;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

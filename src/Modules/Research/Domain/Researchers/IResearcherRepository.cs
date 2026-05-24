@@ -1,6 +1,6 @@
 namespace LabViroMol.Modules.Research.Domain.Researchers;
 
-using LabViroMol.Modules.Shared.Abstractions.Identity;
+using LabViroMol.Modules.Shared.Kernel.Identity;
 
 public interface IResearcherRepository
 {

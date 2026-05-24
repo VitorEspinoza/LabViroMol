@@ -8,7 +8,7 @@ using LabViroMol.Modules.Inventory.Infrastructure.Materials;
 using LabViroMol.Modules.Inventory.Infrastructure.MaterialTypes;
 using LabViroMol.Modules.Inventory.Infrastructure.Orders;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
-using LabViroMol.Modules.Shared.Abstractions.Interfaces;
+using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

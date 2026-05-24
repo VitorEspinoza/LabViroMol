@@ -3,7 +3,7 @@ namespace LabViroMol.Modules.Research.Presentation.Positions;
 using LabViroMol.Modules.Research.Application.Positions.Commands.Create;
 using LabViroMol.Modules.Research.Application.Positions.Commands.Delete;
 using LabViroMol.Modules.Research.Infrastructure.Positions;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

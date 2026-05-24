@@ -3,8 +3,8 @@ namespace LabViroMol.Modules.Research.Application.Publications.Commands.RemoveRe
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Abstractions.Interfaces;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Interfaces;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class RemovePublicationResearcherHandler(

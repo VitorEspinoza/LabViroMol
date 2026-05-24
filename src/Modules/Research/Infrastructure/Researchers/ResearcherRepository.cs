@@ -2,7 +2,7 @@ namespace LabViroMol.Modules.Research.Infrastructure.Researchers;
 
 using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
+using LabViroMol.Modules.Shared.Kernel.Identity;
 using Microsoft.EntityFrameworkCore;
 
 public class ResearcherRepository(ResearchDbContext context) : IResearcherRepository

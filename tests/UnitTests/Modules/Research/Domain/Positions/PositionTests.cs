@@ -1,6 +1,6 @@
 using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Research.Domain.UnitTests.Common;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.Domain.UnitTests.Positions;
 

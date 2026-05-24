@@ -1,15 +1,15 @@
-using Kernel.Extensions;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Extensions;
 
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence;
 
-using Kernel.Persistence.Converters;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Converters;
 using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Research.Domain.Projects;
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Identity;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Microsoft.EntityFrameworkCore;
 
 public class ResearchDbContext : DbContext

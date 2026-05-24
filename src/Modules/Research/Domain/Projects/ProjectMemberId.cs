@@ -2,7 +2,7 @@ using LabViroMol.Modules.Research.Domain.Researchers;
 
 namespace LabViroMol.Modules.Research.Domain.Projects;
 
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 public record struct ProjectMemberId(Guid Value) : IStrongId<ProjectMemberId>
 {

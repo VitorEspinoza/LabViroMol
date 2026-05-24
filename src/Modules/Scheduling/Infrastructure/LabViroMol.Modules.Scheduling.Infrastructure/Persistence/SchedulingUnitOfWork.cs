@@ -1,4 +1,4 @@
-﻿using Kernel.Persistence;
+﻿using LabViroMol.Modules.Shared.Infrastructure.Persistence;
 using LabViroMol.Modules.Scheduling.Application.Shared;
 using Mediator;
 

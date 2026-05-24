@@ -1,6 +1,6 @@
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence;
 
-using Kernel.Persistence;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence;
 using LabViroMol.Modules.Research.Application.Shared;
 using Mediator;
 

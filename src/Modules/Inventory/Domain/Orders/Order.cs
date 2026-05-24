@@ -1,7 +1,7 @@
-﻿using LabViroMol.Modules.Shared.Abstractions.Primitives;
+﻿using LabViroMol.Modules.Shared.Kernel.Primitives;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.References;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
+using LabViroMol.Modules.Shared.Kernel.Identity;
 
 namespace LabViroMol.Modules.Inventory.Domain.Orders;
 

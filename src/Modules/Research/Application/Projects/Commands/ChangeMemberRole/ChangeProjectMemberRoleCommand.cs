@@ -1,6 +1,6 @@
 namespace LabViroMol.Modules.Research.Application.Projects.Commands.ChangeMemberRole;
 
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public record ChangeProjectMemberRoleCommand(
