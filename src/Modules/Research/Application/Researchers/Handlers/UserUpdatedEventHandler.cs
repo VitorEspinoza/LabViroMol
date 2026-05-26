@@ -14,7 +14,7 @@ public class UserUpdatedEventHandler(
 {
     public async ValueTask Handle(UserUpdatedEvent notification, CancellationToken ct)
     {
-        
+
         var researcher = await researcherRepository.GetByUserIdAsync(notification.TargetUserId, ct);
 
         var hasResearcherData = notification.Data is { Academic: not null, Research: not null };
@@ -26,7 +26,7 @@ public class UserUpdatedEventHandler(
 
         if (researcher is not null && !hasResearcherData)
         {
-            researcher.MarkAsRemoved(notification.RequestedBy);
+            researcherRepository.Delete(researcher);
             return;
         }
 
@@ -38,10 +38,10 @@ public class UserUpdatedEventHandler(
     private async Task AddResearcher(UserUpdatedEvent notification, CancellationToken ct)
     {
         await ValidatePosition(PositionId.From(notification.Data.Research!.PositionId), ct);
-     
-            
-        var background = new AcademicBackground(  
-            DegreeLevel.FromString(notification.Data.Academic!.DegreeLevel), 
+
+
+        var background = new AcademicBackground(
+            DegreeLevel.FromString(notification.Data.Academic!.DegreeLevel),
             notification.Data.Academic.FieldOfStudy
             );
 
@@ -51,12 +51,12 @@ public class UserUpdatedEventHandler(
             notification.Data.Research.CitationName,
             notification.Data.Research.DisplayName
             );
-            
+
         var newResearcher = Researcher.Create(
             ResearcherId.From(notification.TargetUserId.Value),
-            notification.RequestedBy, researcherName,
+            researcherName,
             notification.Data.Research.LattesUrl,
-            background, 
+            background,
             PositionId.From(notification.Data.Research.PositionId)
             );
 
@@ -66,21 +66,20 @@ public class UserUpdatedEventHandler(
     private async Task UpdateResearcher(Researcher researcher, UserUpdatedEvent notification, CancellationToken ct)
     {
         await ValidatePosition(PositionId.From(notification.Data.Research!.PositionId), ct);
-        
+
         researcher!.Update(
-            DegreeLevel.FromString(notification.Data.Academic!.DegreeLevel), 
+            DegreeLevel.FromString(notification.Data.Academic!.DegreeLevel),
             notification.Data.Academic.FieldOfStudy,
-            PositionId.From(notification.Data.Research!.PositionId),
-            notification.RequestedBy
+            PositionId.From(notification.Data.Research!.PositionId)
             );
-        
+
     }
 
     private async Task ValidatePosition(PositionId positionId, CancellationToken ct)
     {
         var position = await positionRepository.GetByIdAsync(
             PositionId.From(positionId), ct);
-        
+
         if(position is null)
             throw new DomainException($"Cargo inválido.");
     }

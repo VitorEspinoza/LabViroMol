@@ -12,15 +12,11 @@ public class MaterialTypeTests
         [Fact]
         public void Create_ShouldInitializeCorrectly()
         {
-            // Arrange
-            var userId = Fakers.AnyUserId();
-
             // Act
-            var type = MaterialType.Create(userId, "Reagente");
+            var type = MaterialType.Create("Reagente");
 
             // Assert
             Assert.Equal("Reagente", type.Name);
-            Assert.Equal(userId,     type.CreatedBy);
             Assert.NotEqual(default, type.Id);
             Assert.True(type.Active);
         }
@@ -42,7 +38,6 @@ public class MaterialTypeTests
             Assert.False(type.Active);
             Assert.Equal(userId, type.DeactivatedBy);
             Assert.True(type.DeactivatedAt.HasValue);
-            Assert.Equal(userId, type.UpdatedBy);
         }
 
         [Fact]
@@ -55,7 +50,7 @@ public class MaterialTypeTests
 
             // Act
             type.Deactivate(firstUser);
-            type.Deactivate(secondUser); 
+            type.Deactivate(secondUser);
 
             // Assert
             Assert.Equal<UserId?>(firstUser, type.DeactivatedBy);
@@ -78,23 +73,20 @@ public class MaterialTypeTests
             Assert.True(type.Active);
             Assert.Null(type.DeactivatedBy);
             Assert.Null(type.DeactivatedAt);
-            Assert.Equal(activatedBy, type.UpdatedBy);
-            Assert.True(type.UpdatedAt.HasValue);
         }
 
         [Fact]
         public void Activate_CalledTwice_ShouldBeIdempotent()
         {
-            // Arrange 
+            // Arrange
             var type = Fakers.CreateMaterialType();
 
-            // Act 
+            // Act
             type.Activate(Fakers.AnyUserId());
 
-            // Assert 
+            // Assert
             Assert.True(type.Active);
             Assert.Null(type.DeactivatedBy);
-            Assert.Null(type.UpdatedBy); 
         }
     }
 }

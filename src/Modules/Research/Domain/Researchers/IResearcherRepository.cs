@@ -7,4 +7,5 @@ public interface IResearcherRepository
     Task<Researcher?> GetByIdAsync(ResearcherId id, CancellationToken ct);
     Task<Researcher?> GetByUserIdAsync(UserId userId, CancellationToken ct);
     Task AddAsync(Researcher researcher, CancellationToken ct);
+    void Delete(Researcher researcher);
 }

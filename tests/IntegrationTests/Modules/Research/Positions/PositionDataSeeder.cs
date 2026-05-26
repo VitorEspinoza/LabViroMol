@@ -8,7 +8,7 @@ public static class PositionDataSeeder
 {
     public static async Task<Guid> SeedPositionAsync(ResearchDbContext dbContext)
     {
-        var position = Position.Create(IdFactory.New<LabViroMol.Modules.Shared.Kernel.Identity.UserId>(),
+        var position = Position.Create(
             "Pesquisador Senior", "Cargo de pesquisador com experiencia avancada").Data!;
 
         await dbContext.Positions.AddAsync(position);

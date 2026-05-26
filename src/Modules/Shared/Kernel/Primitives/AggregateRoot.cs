@@ -1,14 +1,11 @@
-﻿using LabViroMol.Modules.Shared.Kernel.Identity;
-using LabViroMol.Modules.Shared.Kernel.Messaging;
+﻿using LabViroMol.Modules.Shared.Kernel.Messaging;
 
 namespace LabViroMol.Modules.Shared.Kernel.Primitives;
 
-public abstract class AggregateRoot<TId> : AuditableEntity<TId>, IHasEvents
+public abstract class AggregateRoot<TId> : BaseEntity<TId>, IHasEvents, IConcurrencySafe
 {
-    public AggregateRoot(TId id, UserId createdBy) : base(id, createdBy) { }
-    
     public AggregateRoot(TId id) : base(id) { }
-    
+
     protected AggregateRoot() : base() { }
 
     private readonly List<IEvent> _events = new();

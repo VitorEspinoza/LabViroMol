@@ -5,12 +5,12 @@ using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.Domain.Projects;
 
-public class Project : AggregateRoot<ProjectId>
+public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificationAuditable
 {
     private Project() { }
 
-    private Project(ProjectId id, UserId createdBy, string title, string description, PartnerId partnerId)
-        : base(id, createdBy)
+    private Project(ProjectId id, string title, string description, PartnerId partnerId)
+        : base(id)
     {
         Title = Guard.AgainstMinLength(title, 3, "O titulo deve ter ao menos 3 caracteres.");
         Description = Guard.AgainstMinLength(description, 3, "A descrição deve ter ao menos 3 caracteres.");
@@ -23,6 +23,11 @@ public class Project : AggregateRoot<ProjectId>
     public ProjectStatus Status { get; private set; }
     public PartnerId PartnerId { get; private set; }
 
+    public DateTimeOffset CreatedAt { get; protected set; }
+    public UserId CreatedBy { get; protected set; }
+    public DateTimeOffset? UpdatedAt { get; protected set; }
+    public UserId? UpdatedBy { get; protected set; }
+
     private readonly List<ProjectMember> _members = new();
     public IReadOnlyCollection<ProjectMember> Members => _members.AsReadOnly();
 
@@ -33,11 +38,11 @@ public class Project : AggregateRoot<ProjectId>
         => _members.Any(m => m.Id == id &&
             m.Role.In(ProjectRole.ResearchLead, ProjectRole.Manager));
 
-    public static Result<Project> Create(UserId createdBy, ResearcherId principalInvestigatorId,
+    public static Result<Project> Create(ResearcherId principalInvestigatorId,
         string title, string description, PartnerId partnerId)
     {
-        var project = new Project(IdFactory.New<ProjectId>(), createdBy, title, description, partnerId);
-        project._members.Add(new ProjectMember(principalInvestigatorId, ProjectRole.ResearchLead, createdBy));
+        var project = new Project(IdFactory.New<ProjectId>(), title, description, partnerId);
+        project._members.Add(new ProjectMember(principalInvestigatorId, ProjectRole.ResearchLead));
         return Result<Project>.Success(project);
     }
 
@@ -49,7 +54,6 @@ public class Project : AggregateRoot<ProjectId>
             return Result.BusinessRule("O projeto só pode ser iniciado a partir do status Planejado.");
 
         Status = ProjectStatus.InProgress;
-        MarkAsUpdated(UserId.From(requestedBy));
         return Result.Success();
     }
 
@@ -61,7 +65,6 @@ public class Project : AggregateRoot<ProjectId>
             return Result.BusinessRule("O projeto só pode ser concluído a partir do status Em Andamento.");
 
         Status = ProjectStatus.Completed;
-        MarkAsUpdated(UserId.From(requestedBy));
         return Result.Success();
     }
 
@@ -73,7 +76,6 @@ public class Project : AggregateRoot<ProjectId>
             return Result.BusinessRule("Projetos concluídos ou cancelados não podem ter seu status alterado.");
 
         Status = ProjectStatus.Canceled;
-        MarkAsUpdated(UserId.From(requestedBy));
         return Result.Success();
     }
 
@@ -81,11 +83,10 @@ public class Project : AggregateRoot<ProjectId>
     {
         if (!HasAdministrativePrivileges(requestedBy))
             return Result.BusinessRule("Apenas Lider ou Gerente podem editar o projeto.");
-       
+
         Title = Guard.AgainstMinLength(title, 3, "O titulo deve ter ao menos 3 caracteres.");
         Description = Guard.AgainstMinLength(description, 3, "A descrição deve ter ao menos 3 caracteres.");
 
-        MarkAsUpdated(UserId.From(requestedBy));
         return Result.Success();
     }
 
@@ -112,8 +113,7 @@ public class Project : AggregateRoot<ProjectId>
         if (role == ProjectRole.ResearchLead && _members.Any(m => !m.IsDeleted && m.Role == ProjectRole.ResearchLead))
             return Result.Conflict("O projeto já possui um líder de pesquisa.");
 
-        _members.Add(new ProjectMember(researcherId, role, UserId.From(requestedBy.Value)));
-        MarkAsUpdated(UserId.From(requestedBy));
+        _members.Add(new ProjectMember(researcherId, role));
         return Result.Success();
     }
     public Result TransferLeadership(ResearcherId newLeadId, ResearcherId requestedBy)
@@ -132,7 +132,6 @@ public class Project : AggregateRoot<ProjectId>
         currentLead.UpdateRole(ProjectRole.Manager, UserId.From(requestedBy));
         newLead.UpdateRole(ProjectRole.ResearchLead, UserId.From(requestedBy));
 
-        MarkAsUpdated(UserId.From(requestedBy));
         return Result.Success();
     }
 
@@ -155,7 +154,6 @@ public class Project : AggregateRoot<ProjectId>
             return Result.BusinessRule("Nao e possivel rebaixar o lider. Use TransferLeadership para transferir a lideranca primeiro.");
 
         member.UpdateRole(newRole, UserId.From(requestedBy.Value));
-        MarkAsUpdated(UserId.From(requestedBy));
         return Result.Success();
     }
 
@@ -169,10 +167,9 @@ public class Project : AggregateRoot<ProjectId>
             return Result.NotFound("Membro não encontrado no projeto.");
         if (member.Role == ProjectRole.ResearchLead)
             return Result.BusinessRule("Não e possivel remover o lider de pesquisa sem substituí-lo.");
-        
+
         member.MarkAsRemoved(UserId.From((requestedBy)));
-        MarkAsUpdated(UserId.From(requestedBy));
         return Result.Success();
     }
-    
+
 }

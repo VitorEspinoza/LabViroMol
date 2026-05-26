@@ -2,13 +2,11 @@ namespace LabViroMol.Modules.Research.Application.Publications.Commands.Delete;
 
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Publications;
-using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class DeletePublicationHandler(
     IPublicationRepository repository,
-    ICurrentUser currentUser,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<DeletePublicationCommand, Result>
 {
@@ -18,7 +16,7 @@ public class DeletePublicationHandler(
         if (publication is null)
             return Result.NotFound("Publicacao nao encontrada.");
 
-        publication.MarkAsRemoved(currentUser.Id);
+        repository.Delete(publication);
         await unitOfWork.CompleteAsync(ct);
         return Result.Success();
     }

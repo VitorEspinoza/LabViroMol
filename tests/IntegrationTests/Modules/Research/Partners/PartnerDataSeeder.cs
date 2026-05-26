@@ -9,7 +9,7 @@ public static class PartnerDataSeeder
 {
     public static async Task<Guid> SeedPartnerAsync(ResearchDbContext dbContext)
     {
-        var partner = Partner.Create(IdFactory.New<UserId>(),
+        var partner = Partner.Create(
             "Instituto de Pesquisa Teste", "Parceiro de pesquisa para testes").Data!;
 
         await dbContext.Partners.AddAsync(partner);

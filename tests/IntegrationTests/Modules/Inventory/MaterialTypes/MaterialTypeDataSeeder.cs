@@ -9,7 +9,7 @@ public static class MaterialTypeDataSeeder
 {
     public static async Task<Guid> SeedMaterialTypeAsync(InventoryDbContext dbContext)
     {
-        var type = MaterialType.Create(IdFactory.New<UserId>(), "Tipo Teste");
+        var type = MaterialType.Create("Tipo Teste");
         await dbContext.MaterialTypes.AddAsync(type);
         await dbContext.SaveChangesAsync();
         return type.Id.Value;

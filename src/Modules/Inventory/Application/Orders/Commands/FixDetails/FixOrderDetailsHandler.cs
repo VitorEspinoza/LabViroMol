@@ -1,8 +1,7 @@
-﻿using LabViroMol.Modules.Inventory.Application.Shared;
+using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Domain.References;
 using LabViroMol.Modules.Research.Contracts;
-using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
@@ -13,14 +12,12 @@ public class FixOrderDetailsHandler : ICommandHandler<FixOrderDetailsCommand, Re
     private readonly IOrderRepository _orderRepository;
     private readonly IProjectChecker _projectChecker;
     private readonly IInventoryUnitOfWork _unitOfWork;
-    private readonly ICurrentUser _currentUser;
 
-    public FixOrderDetailsHandler(IOrderRepository orderRepository, IProjectChecker projectChecker, IInventoryUnitOfWork unitOfWork, ICurrentUser currentUser)
+    public FixOrderDetailsHandler(IOrderRepository orderRepository, IProjectChecker projectChecker, IInventoryUnitOfWork unitOfWork)
     {
         _orderRepository = orderRepository;
         _projectChecker = projectChecker;
         _unitOfWork = unitOfWork;
-        _currentUser = currentUser;
     }
 
     public async ValueTask<Result> Handle(FixOrderDetailsCommand command, CancellationToken ct)
@@ -37,8 +34,7 @@ public class FixOrderDetailsHandler : ICommandHandler<FixOrderDetailsCommand, Re
         var result = order.FixDetails(
             command.NewProjectId,
             command.NewQuantity,
-            command.Description,
-            _currentUser.Id);
+            command.Description);
 
         if (result.IsFailure)
             return result;

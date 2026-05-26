@@ -4,17 +4,16 @@ using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 
-public class Researcher : AggregateRoot<ResearcherId>
+public class Researcher : AggregateRoot<ResearcherId>, IFullAuditable
 {
     private Researcher() { }
 
     private Researcher(ResearcherId id,
-        UserId createdBy,
         ResearcherName name,
-        string? lattesUrl, 
-        AcademicBackground academicBackground, 
+        string? lattesUrl,
+        AcademicBackground academicBackground,
         PositionId positionId)
-        : base(id, createdBy)
+        : base(id)
     {
         Name = name;
         LattesUrl = lattesUrl;
@@ -27,23 +26,29 @@ public class Researcher : AggregateRoot<ResearcherId>
     public AcademicBackground AcademicBackground { get; private set; }
     public PositionId PositionId { get; private set; }
 
+    public DateTimeOffset CreatedAt { get; protected set; }
+    public UserId CreatedBy { get; protected set; }
+    public DateTimeOffset? UpdatedAt { get; protected set; }
+    public UserId? UpdatedBy { get; protected set; }
+    public bool IsDeleted { get; protected set; }
+    public DateTimeOffset? RemovedAt { get; protected set; }
+    public UserId? RemovedBy { get; protected set; }
+
     public static Researcher Create(
         ResearcherId researcherId,
-        UserId createdBy,
         ResearcherName name,
         string? lattesUrl,
         AcademicBackground academicBackground,
         PositionId positionId)
     {
         return new Researcher(
-            researcherId, createdBy,
+            researcherId,
             name, lattesUrl, academicBackground, positionId);
     }
 
-    public void Update(DegreeLevel degreeLevel, string fieldOfStudy, PositionId positionId, UserId modifiedBy)
+    public void Update(DegreeLevel degreeLevel, string fieldOfStudy, PositionId positionId)
     {
         AcademicBackground = new AcademicBackground(degreeLevel, fieldOfStudy);
         PositionId = positionId;
-        MarkAsUpdated(modifiedBy);
     }
 }

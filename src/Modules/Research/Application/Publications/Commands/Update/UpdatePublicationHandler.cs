@@ -2,13 +2,11 @@ namespace LabViroMol.Modules.Research.Application.Publications.Commands.Update;
 
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Publications;
-using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class UpdatePublicationHandler(
     IPublicationRepository repository,
-    ICurrentUser currentUser,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<UpdatePublicationCommand, Result>
 {
@@ -22,8 +20,7 @@ public class UpdatePublicationHandler(
             command.Title,
             command.Description,
             command.PublishedOn,
-            command.PublishUrl,
-            currentUser.Id);
+            command.PublishUrl);
 
         if (result.IsFailure)
             return result;

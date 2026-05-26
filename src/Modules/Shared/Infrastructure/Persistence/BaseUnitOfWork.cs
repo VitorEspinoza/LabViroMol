@@ -12,12 +12,14 @@ public abstract class BaseUnitOfWork<TContext> : IUnitOfWork where TContext : Db
     
     protected readonly TContext _context;
     private readonly IMediator _mediator;
+    private readonly ICurrentUser _currentUser;
 
     private readonly List<IIntegrationEvent> _integrationEvents = new();
-    public BaseUnitOfWork(TContext context, IMediator mediator)
+    public BaseUnitOfWork(TContext context, IMediator mediator, ICurrentUser currentUser)
     {
         _context = context;
         _mediator = mediator;
+        _currentUser = currentUser;
     }
 
     public void AddIntegrationEvent(IIntegrationEvent integrationEvent)
@@ -49,6 +51,34 @@ public abstract class BaseUnitOfWork<TContext> : IUnitOfWork where TContext : Db
             }
         }
 
+        var now = DateTimeOffset.UtcNow;
+        var userId = _currentUser.Id;
+
+        foreach (var entry in _context.ChangeTracker.Entries())
+        {
+            if (entry is { State: EntityState.Added, Entity: ICreationAuditable })
+            {
+                entry.Property("CreatedAt").CurrentValue = now;
+                entry.Property("CreatedBy").CurrentValue = userId;
+            }
+
+            if (entry is { State: EntityState.Modified, Entity: IModificationAuditable })
+            {
+                entry.Property("UpdatedAt").CurrentValue = now;
+                entry.Property("UpdatedBy").CurrentValue = userId;
+            }
+            
+            if (entry is { State: EntityState.Deleted, Entity: IDeletionAuditable })
+            {
+                entry.State = EntityState.Modified; 
+                
+                entry.Property("IsDeleted").CurrentValue = true;
+                entry.Property("RemovedAt").CurrentValue = now;
+                entry.Property("RemovedBy").CurrentValue = userId;
+            }
+        }
+
+        
         var allIntegrationEvents = _context.ChangeTracker.Entries<IHasEvents>()
             .SelectMany(e => e.Entity.Events)
             .OfType<IIntegrationEvent>()

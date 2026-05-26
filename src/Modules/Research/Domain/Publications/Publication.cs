@@ -4,13 +4,13 @@ using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.Domain.Publications;
 
-public class Publication : AggregateRoot<PublicationId>
+public class Publication : AggregateRoot<PublicationId>, IFullAuditable
 {
     private Publication() { }
 
-    private Publication(PublicationId id, UserId createdBy, string title, string description,
+    private Publication(PublicationId id, string title, string description,
         string doi, DateOnly publicationDate, string publishedOn, string publishUrl)
-        : base(id, createdBy)
+        : base(id)
     {
         Title = Guard.AgainstMinLength(title, 3, "O título deve ter ao menos 3 caracteres.");
         Description = description;
@@ -27,19 +27,27 @@ public class Publication : AggregateRoot<PublicationId>
     public string PublishedOn { get; private set; }
     public string PublishUrl { get; private set; }
 
+    public DateTimeOffset CreatedAt { get; protected set; }
+    public UserId CreatedBy { get; protected set; }
+    public DateTimeOffset? UpdatedAt { get; protected set; }
+    public UserId? UpdatedBy { get; protected set; }
+    public bool IsDeleted { get; protected set; }
+    public DateTimeOffset? RemovedAt { get; protected set; }
+    public UserId? RemovedBy { get; protected set; }
+
     private readonly List<PublicationResearcher> _researchers = new();
     public IReadOnlyCollection<PublicationResearcher> Researchers => _researchers.AsReadOnly();
 
-    public static Result<Publication> Create(UserId createdBy, string title, string description,
+    public static Result<Publication> Create(string title, string description,
         string doi, DateOnly publicationDate, string publishedOn, string publishUrl)
     {
-        var publication = new Publication(IdFactory.New<PublicationId>(), createdBy,
+        var publication = new Publication(IdFactory.New<PublicationId>(),
             title, description, doi, publicationDate, publishedOn, publishUrl);
         return Result<Publication>.Success(publication);
     }
 
     public Result Update(string title, string description,
-        string publishedOn, string publishUrl, UserId modifiedBy)
+        string publishedOn, string publishUrl)
     {
         if (string.IsNullOrWhiteSpace(title) || title.Length < 3)
             return Result.BusinessRule("O titulo deve ter ao menos 3 caracteres.");
@@ -51,21 +59,19 @@ public class Publication : AggregateRoot<PublicationId>
         PublishedOn = publishedOn;
         PublishUrl = publishUrl;
 
-        MarkAsUpdated(modifiedBy);
         return Result.Success();
     }
 
-    public Result AssignDoi(string doi, UserId modifiedBy)
+    public Result AssignDoi(string doi)
     {
         if (string.IsNullOrWhiteSpace(doi))
             return Result.BusinessRule("O DOI e obrigatorio.");
 
         Doi = doi;
-        MarkAsUpdated(modifiedBy);
         return Result.Success();
     }
 
-    public Result AddResearcher(ResearcherId researcherId, UserId modifiedBy)
+    public Result AddResearcher(ResearcherId researcherId)
     {
         if (_researchers.Any(r => r.ResearcherId == researcherId))
             return Result.Conflict("O pesquisador ja esta vinculado a esta publicacao.");
@@ -73,11 +79,10 @@ public class Publication : AggregateRoot<PublicationId>
         var nextOrder = _researchers.Count > 0 ? _researchers.Max(r => r.Order) + 1 : 1;
         _researchers.Add(new PublicationResearcher(researcherId, nextOrder));
 
-        MarkAsUpdated(modifiedBy);
         return Result.Success();
     }
 
-    public Result RemoveResearcher(ResearcherId researcherId, UserId modifiedBy)
+    public Result RemoveResearcher(ResearcherId researcherId)
     {
         var researcher = _researchers.FirstOrDefault(r => r.ResearcherId == researcherId);
         if (researcher is null)
@@ -88,11 +93,10 @@ public class Publication : AggregateRoot<PublicationId>
         for (var i = 0; i < _researchers.Count; i++)
             _researchers[i] = _researchers[i] with { Order = i + 1 };
 
-        MarkAsUpdated(modifiedBy);
         return Result.Success();
     }
 
-    public Result ReorderResearchers(List<ResearcherId> orderedIds, UserId modifiedBy)
+    public Result ReorderResearchers(List<ResearcherId> orderedIds)
     {
         if (orderedIds.Distinct().Count() != orderedIds.Count)
             return Result.BusinessRule("A lista nao pode conter pesquisadores duplicados.");
@@ -108,7 +112,6 @@ public class Publication : AggregateRoot<PublicationId>
         for (var i = 0; i < orderedIds.Count; i++)
             _researchers.Add(new PublicationResearcher(orderedIds[i], i + 1));
 
-        MarkAsUpdated(modifiedBy);
         return Result.Success();
     }
 }

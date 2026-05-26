@@ -4,4 +4,5 @@ public interface IPartnerRepository
 {
     Task<Partner?> GetByIdAsync(PartnerId id, CancellationToken ct);
     Task AddAsync(Partner partner, CancellationToken ct);
+    void Delete(Partner partner);
 }

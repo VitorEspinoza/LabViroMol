@@ -1,6 +1,5 @@
 using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.Materials;
-using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
@@ -9,16 +8,13 @@ namespace LabViroMol.Modules.Inventory.Application.Materials.Commands.Update;
 public class UpdateMaterialHandler : ICommandHandler<UpdateMaterialCommand, Result>
 {
     private readonly IMaterialRepository _repository;
-    private readonly ICurrentUser _currentUser;
     private readonly IInventoryUnitOfWork _unitOfWork;
 
     public UpdateMaterialHandler(
         IMaterialRepository repository,
-        ICurrentUser currentUser,
         IInventoryUnitOfWork unitOfWork)
     {
         _repository = repository;
-        _currentUser = currentUser;
         _unitOfWork = unitOfWork;
     }
 
@@ -32,8 +28,7 @@ public class UpdateMaterialHandler : ICommandHandler<UpdateMaterialCommand, Resu
         material.Update(
             command.Name,
             command.MinStock,
-            command.Location,
-            _currentUser.Id);
+            command.Location);
 
         await _unitOfWork.CompleteAsync(ct);
         return Result.Success();

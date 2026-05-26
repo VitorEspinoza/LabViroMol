@@ -12,16 +12,14 @@ public class ProjectTests
         {
             // Arrange
             var leadId = Fakers.AnyResearcherId();
-            var createdBy = Fakers.AnyUserId();
 
             // Act
-            var project = Fakers.CreateProject(leadId, createdBy);
+            var project = Fakers.CreateProject(leadId);
 
             // Assert
             Assert.Equal(ProjectStatus.Planned, project.Status);
             Assert.Single(project.Members);
             Assert.Equal(ProjectRole.ResearchLead, project.Members.Single().Role);
-            Assert.Equal(createdBy, project.CreatedBy);
         }
     }
 
@@ -255,7 +253,7 @@ public class ProjectTests
     public class UpdateTests
     {
         [Fact]
-        public void Update_WhenByResearchLead_ShouldUpdatePropertiesAndAudit()
+        public void Update_WhenByResearchLead_ShouldUpdateProperties()
         {
             // Arrange
             var leadId = Fakers.AnyResearcherId();
@@ -270,7 +268,6 @@ public class ProjectTests
             Assert.True(result.IsSuccess);
             Assert.Equal(newTitle, project.Title);
             Assert.Equal(newDescription, project.Description);
-            Assert.NotNull(project.UpdatedBy);
         }
 
         [Fact]

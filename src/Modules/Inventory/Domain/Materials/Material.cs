@@ -1,4 +1,4 @@
-﻿
+
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Domain.References;
@@ -7,10 +7,10 @@ using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Inventory.Domain.Materials;
 
-public class Material : AggregateRoot<MaterialId>
+public class Material : AggregateRoot<MaterialId>, ICreationAuditable, IModificationAuditable
 {
-    private Material(MaterialId id, UserId createdBy, string name, string location, Quantity minStock, Quantity stockQuantity, Unit unit, MaterialTypeId typeId)
-        : base(id, createdBy)
+    private Material(MaterialId id, string name, string location, Quantity minStock, Quantity stockQuantity, Unit unit, MaterialTypeId typeId)
+        : base(id)
     {
         Name = name;
         Location = location;
@@ -19,7 +19,7 @@ public class Material : AggregateRoot<MaterialId>
         Unit = unit;
         TypeId = typeId;
     }
-    
+
     private Material() { }
 
     public string Name { get; private set; }
@@ -29,80 +29,80 @@ public class Material : AggregateRoot<MaterialId>
     public string Location { get; private set; }
     public MaterialTypeId TypeId { get; private set; }
 
+    public DateTimeOffset CreatedAt { get; protected set; }
+    public UserId CreatedBy { get; protected set; }
+    public DateTimeOffset? UpdatedAt { get; protected set; }
+    public UserId? UpdatedBy { get; protected set; }
+
     private readonly List<StockTransaction> _transactions = new();
     public IReadOnlyCollection<StockTransaction> Transactions => _transactions;
 
-    public static Result<Material> Create(UserId createdBy, string name, string location, Quantity minStock, Quantity stockQuantity, Unit unit, MaterialType type )
+    public static Result<Material> Create(string name, string location, Quantity minStock, Quantity stockQuantity, Unit unit, MaterialType type)
     {
         if (!type.Active)
             return Result<Material>.BusinessRule("Não é possível cadastrar um material para um tipo inativo.");
 
-        var material = new Material(IdFactory.New<MaterialId>(), createdBy, name, location, minStock, stockQuantity, unit, type.Id);
-        
+        var material = new Material(IdFactory.New<MaterialId>(), name, location, minStock, stockQuantity, unit, type.Id);
+
         if (stockQuantity.Value > 0)
         {
             var initialTransaction = StockTransaction.CreateExceptionIn(
-                material.Id, stockQuantity, "Inventário inicial no cadastro do sistema.", createdBy); 
-            
+                material.Id, stockQuantity, "Inventário inicial no cadastro do sistema.", UserId.From(Guid.Empty));
+
             material._transactions.Add(initialTransaction);
         }
-        
+
         return Result<Material>.Success(material);
     }
 
-    public void Update(string name, Quantity minStock, string location, UserId modifiedBy)
+    public void Update(string name, Quantity minStock, string location)
     {
         Name = name;
         MinStock = minStock;
         Location = location;
-        MarkAsUpdated(modifiedBy);
     }
 
- public Result ReceiveFromOrder(OrderId orderId, Quantity quantity, UserId modifiedBy)
+    public Result ReceiveFromOrder(OrderId orderId, Quantity quantity, UserId userId)
     {
-        var transaction = StockTransaction.CreateReceipt(Id, orderId, quantity, modifiedBy);
+        var transaction = StockTransaction.CreateReceipt(Id, orderId, quantity, userId);
         _transactions.Add(transaction);
-        
+
         StockQuantity += quantity;
-        MarkAsUpdated(modifiedBy);
-        
+
         return Result.Success();
     }
 
-    public void AddStockException(Quantity quantity, string justification, UserId modifiedBy)
+    public void AddStockException(Quantity quantity, string justification, UserId userId)
     {
-        var transaction = StockTransaction.CreateExceptionIn(Id, quantity, justification, modifiedBy);
+        var transaction = StockTransaction.CreateExceptionIn(Id, quantity, justification, userId);
         _transactions.Add(transaction);
 
         StockQuantity += quantity;
-        MarkAsUpdated(modifiedBy);
     }
-    
-    public Result ConsumeForProject(ProjectId projectId, Quantity quantity, UserId modifiedBy)
+
+    public Result ConsumeForProject(ProjectId projectId, Quantity quantity, UserId userId)
     {
         if (quantity > StockQuantity)
             return Result.BusinessRule("Quantidade insuficiente para o consumo do projeto.");
 
-        var transaction = StockTransaction.CreateProjectConsumption(Id, projectId, quantity, modifiedBy);
+        var transaction = StockTransaction.CreateProjectConsumption(Id, projectId, quantity, userId);
         _transactions.Add(transaction);
 
         StockQuantity -= quantity;
-        MarkAsUpdated(modifiedBy);
         CheckMinStockThreshold();
 
         return Result.Success();
     }
 
-    public Result RemoveStockException(Quantity quantity, string justification, UserId modifiedBy)
+    public Result RemoveStockException(Quantity quantity, string justification, UserId userId)
     {
         if (quantity > StockQuantity)
             return Result.BusinessRule("Quantidade insuficiente para realizar esta baixa.");
 
-        var transaction = StockTransaction.CreateExceptionOut(Id, quantity, justification, modifiedBy);
+        var transaction = StockTransaction.CreateExceptionOut(Id, quantity, justification, userId);
         _transactions.Add(transaction);
 
         StockQuantity -= quantity;
-        MarkAsUpdated(modifiedBy);
         CheckMinStockThreshold();
 
         return Result.Success();
@@ -116,5 +116,5 @@ public class Material : AggregateRoot<MaterialId>
         }
     }
 
-   
+
 }

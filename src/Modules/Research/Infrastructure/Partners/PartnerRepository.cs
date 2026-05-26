@@ -11,4 +11,7 @@ public class PartnerRepository(ResearchDbContext context) : IPartnerRepository
 
     public async Task AddAsync(Partner partner, CancellationToken ct)
         => await context.Partners.AddAsync(partner, ct);
+
+    public void Delete(Partner partner)
+        => context.Partners.Remove(partner);
 }

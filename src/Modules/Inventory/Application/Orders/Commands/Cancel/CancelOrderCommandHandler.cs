@@ -1,6 +1,5 @@
 using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.Orders;
-using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
@@ -9,16 +8,13 @@ namespace LabViroMol.Modules.Inventory.Application.Orders.Commands.Cancel;
 public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Result>
 {
     private readonly IOrderRepository _orderRepository;
-    private readonly ICurrentUser _currentUser;
     private readonly IInventoryUnitOfWork _unitOfWork;
 
     public CancelOrderCommandHandler(
         IOrderRepository orderRepository,
-        ICurrentUser currentUser,
         IInventoryUnitOfWork unitOfWork)
     {
         _orderRepository = orderRepository;
-        _currentUser = currentUser;
         _unitOfWork = unitOfWork;
     }
 
@@ -29,7 +25,7 @@ public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Res
         if (order is null)
             return Result.NotFound("Pedido não encontrado.");
 
-        var result = order.Cancel(_currentUser.Id);
+        var result = order.Cancel();
 
         if (result.IsFailure)
             return result;

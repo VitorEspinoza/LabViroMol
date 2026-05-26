@@ -1,7 +1,6 @@
 using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.Kits;
 using LabViroMol.Modules.Inventory.Domain.Materials;
-using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
@@ -11,18 +10,15 @@ public class CreateKitHandler : ICommandHandler<CreateKitCommand, Result>
 {
     private readonly IKitRepository _kitRepository;
     private readonly MaterialValidatorService _materialValidatorService;
-    private readonly ICurrentUser _currentUser;
     private readonly IInventoryUnitOfWork _unitOfWork;
 
     public CreateKitHandler(
         IKitRepository kitRepository,
         MaterialValidatorService materialValidatorService,
-        ICurrentUser currentUser,
         IInventoryUnitOfWork unitOfWork)
     {
         _kitRepository = kitRepository;
         _materialValidatorService = materialValidatorService;
-        _currentUser = currentUser;
         _unitOfWork = unitOfWork;
     }
 
@@ -35,7 +31,7 @@ public class CreateKitHandler : ICommandHandler<CreateKitCommand, Result>
             return validation;
 
         var items = command.Materials.Select(item => item.ToValueObject()).ToList();
-        var kit = Kit.Create(_currentUser.Id, command.Name, command.Description, items);
+        var kit = Kit.Create(command.Name, command.Description, items);
 
         await _kitRepository.AddAsync(kit, ct);
         await _unitOfWork.CompleteAsync(ct);

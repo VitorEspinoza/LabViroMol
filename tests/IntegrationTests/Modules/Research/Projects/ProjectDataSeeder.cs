@@ -18,7 +18,6 @@ public static class ProjectDataSeeder
         var (researcherId, _) = await ResearcherDataSeeder.SeedResearcherAsync(dbContext);
 
         var project = Project.Create(
-            IdFactory.New<UserId>(),
             ResearcherId.From(researcherId),
             "Projeto de Pesquisa Virologica",
             "Descricao detalhada do projeto de pesquisa virologica",

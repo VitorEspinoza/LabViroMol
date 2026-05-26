@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Extensions;
 
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence;
@@ -26,7 +27,7 @@ public class ResearchDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.HasDefaultSchema("research");
-        modelBuilder.ApplyLabViroMolConfigurations();
+        modelBuilder.ApplyPersistenceConfigs();
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ResearchDbContext).Assembly);
     }
 

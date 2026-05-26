@@ -10,7 +10,6 @@ public static class PublicationDataSeeder
     public static async Task<Guid> SeedPublicationAsync(ResearchDbContext dbContext)
     {
         var publication = Publication.Create(
-            IdFactory.New<UserId>(),
             "Estudo de Virologia Molecular em Amostras Clinicas",
             "Descricao detalhada do estudo de virologia molecular",
             "10.1234/test",

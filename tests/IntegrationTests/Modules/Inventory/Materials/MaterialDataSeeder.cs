@@ -11,11 +11,10 @@ public static class MaterialDataSeeder
 {
     public static async Task<Guid> SeedMaterialAsync(InventoryDbContext dbContext, decimal stock = 100m)
     {
-        var userId = IdFactory.New<UserId>();
-        var type = MaterialType.Create(userId, "Tipo Teste");
+        var type = MaterialType.Create("Tipo Teste");
         await dbContext.MaterialTypes.AddAsync(type);
 
-        var material = Material.Create(userId, "Material Teste", "Sala A",
+        var material = Material.Create("Material Teste", "Sala A",
             (Quantity)10m, (Quantity)stock, Unit.Gram, type).Data!;
             
         await dbContext.Materials.AddAsync(material);

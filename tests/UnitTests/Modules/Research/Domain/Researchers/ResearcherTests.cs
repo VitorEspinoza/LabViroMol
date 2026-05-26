@@ -12,13 +12,12 @@ public class ResearcherTests
         {
             // Arrange
             var id = Fakers.AnyResearcherId();
-            var createdBy = Fakers.AnyUserId();
             var name = Fakers.AnyResearcherName();
             var background = Fakers.AnyAcademicBackground();
             var positionId = Fakers.AnyPositionId();
 
             // Act
-            var researcher = Researcher.Create(id, createdBy, name, null, background, positionId);
+            var researcher = Researcher.Create(id, name, null, background, positionId);
 
             // Assert
             Assert.Equal(id, researcher.Id);
@@ -27,8 +26,6 @@ public class ResearcherTests
             Assert.Equal(background.DegreeLevel, researcher.AcademicBackground.DegreeLevel);
             Assert.Equal(background.FieldOfStudy, researcher.AcademicBackground.FieldOfStudy);
             Assert.Equal(positionId, researcher.PositionId);
-            Assert.Equal(createdBy, researcher.CreatedBy);
-            Assert.Null(researcher.UpdatedBy);
         }
     }
 
@@ -44,28 +41,12 @@ public class ResearcherTests
             var newPositionId = Fakers.AnyPositionId();
 
             // Act
-            researcher.Update(newDegreeLevel, newFieldOfStudy, newPositionId, Fakers.AnyUserId());
+            researcher.Update(newDegreeLevel, newFieldOfStudy, newPositionId);
 
             // Assert
             Assert.Equal(newDegreeLevel, researcher.AcademicBackground.DegreeLevel);
             Assert.Equal(newFieldOfStudy, researcher.AcademicBackground.FieldOfStudy);
             Assert.Equal(newPositionId, researcher.PositionId);
-        }
-
-        [Fact]
-        public void Update_ShouldSetAuditFields()
-        {
-            // Arrange
-            var researcher = Fakers.CreateResearcher();
-            var modifiedBy = Fakers.AnyUserId();
-            var before = DateTimeOffset.UtcNow;
-
-            // Act
-            researcher.Update(DegreeLevel.PostDoctorate, "Epidemiologia", Fakers.AnyPositionId(), modifiedBy);
-
-            // Assert
-            Assert.Equal(modifiedBy, researcher.UpdatedBy);
-            Assert.True(researcher.UpdatedAt >= before);
         }
 
         [Fact]
@@ -77,8 +58,8 @@ public class ResearcherTests
             var secondPositionId = Fakers.AnyPositionId();
 
             // Act
-            researcher.Update(DegreeLevel.Masters, "Campo A", firstPositionId, Fakers.AnyUserId());
-            researcher.Update(DegreeLevel.Doctorate, "Campo B", secondPositionId, Fakers.AnyUserId());
+            researcher.Update(DegreeLevel.Masters, "Campo A", firstPositionId);
+            researcher.Update(DegreeLevel.Doctorate, "Campo B", secondPositionId);
 
             // Assert
             Assert.Equal(DegreeLevel.Doctorate, researcher.AcademicBackground.DegreeLevel);

@@ -2,13 +2,11 @@ namespace LabViroMol.Modules.Research.Application.Partners.Commands.Delete;
 
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Partners;
-using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class DeletePartnerHandler(
     IPartnerRepository partnerRepository,
-    ICurrentUser currentUser,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<DeletePartnerCommand, Result>
 {
@@ -18,7 +16,7 @@ public class DeletePartnerHandler(
         if (partner is null)
             return Result.NotFound("Parceiro nao encontrado.");
 
-        partner.MarkAsRemoved(currentUser.Id);
+        partnerRepository.Delete(partner);
         await unitOfWork.CompleteAsync(ct);
         return Result.Success();
     }

@@ -15,4 +15,7 @@ public class ResearcherRepository(ResearchDbContext context) : IResearcherReposi
 
     public async Task AddAsync(Researcher researcher, CancellationToken ct)
         => await context.Researchers.AddAsync(researcher, ct);
+
+    public void Delete(Researcher researcher)
+        => context.Researchers.Remove(researcher);
 }

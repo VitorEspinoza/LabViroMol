@@ -12,12 +12,10 @@ public static class ResearcherDataSeeder
     public static async Task<(Guid researcherId, Guid positionId)> SeedResearcherAsync(ResearchDbContext dbContext)
     {
         var positionId = await PositionDataSeeder.SeedPositionAsync(dbContext);
-        var userId = IdFactory.New<UserId>();
         var researcherId = IdFactory.New<ResearcherId>();
 
         var researcher = Researcher.Create(
             researcherId,
-            userId,
             new ResearcherName("Ana", "Silva", null, null),
             null,
             new AcademicBackground(DegreeLevel.Doctorate, "Virologia"),
