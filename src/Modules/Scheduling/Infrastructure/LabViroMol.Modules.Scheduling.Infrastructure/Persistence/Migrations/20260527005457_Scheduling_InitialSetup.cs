@@ -33,13 +33,9 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApprovedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     RefusedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    RemovedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    RemovedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: true)
                 },
                 constraints: table =>
                 {

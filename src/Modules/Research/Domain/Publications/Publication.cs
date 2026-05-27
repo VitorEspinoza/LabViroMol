@@ -1,5 +1,4 @@
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.Domain.Publications;
@@ -26,14 +25,6 @@ public class Publication : AggregateRoot<PublicationId>, IFullAuditable
     public DateOnly PublicationDate { get; private set; }
     public string PublishedOn { get; private set; }
     public string PublishUrl { get; private set; }
-
-    public DateTimeOffset CreatedAt { get; protected set; }
-    public UserId CreatedBy { get; protected set; }
-    public DateTimeOffset? UpdatedAt { get; protected set; }
-    public UserId? UpdatedBy { get; protected set; }
-    public bool IsDeleted { get; protected set; }
-    public DateTimeOffset? RemovedAt { get; protected set; }
-    public UserId? RemovedBy { get; protected set; }
 
     private readonly List<PublicationResearcher> _researchers = new();
     public IReadOnlyCollection<PublicationResearcher> Researchers => _researchers.AsReadOnly();

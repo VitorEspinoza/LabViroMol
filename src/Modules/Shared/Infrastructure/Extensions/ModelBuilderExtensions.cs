@@ -32,7 +32,8 @@ public static class ModelBuilderExtensions
                 modelBuilder.Entity(clrType).Property<UserId?>("RemovedBy").IsRequired(false).HasMaxLength(15);
 
                 var parameter = Expression.Parameter(clrType, "e");
-                var property = Expression.Property(parameter, "IsDeleted");
+                var efPropertyMethod = typeof(EF).GetMethod(nameof(EF.Property))!.MakeGenericMethod(typeof(bool));
+                var property = Expression.Call(efPropertyMethod, parameter, Expression.Constant("IsDeleted"));
                 var falseConstant = Expression.Constant(false);
                 var comparison = Expression.Equal(property, falseConstant);
                 var lambda = Expression.Lambda(comparison, parameter);

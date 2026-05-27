@@ -10,12 +10,12 @@ public class PartnerQueries(ResearchDbContext context)
 {
     public async Task<IReadOnlyCollection<PartnerSummaryViewModel>> GetAll()
         => await context.Partners.AsNoTracking()
-            .Select(p => new PartnerSummaryViewModel(p.Id.Value, p.Name, p.CreatedAt))
+            .Select(p => new PartnerSummaryViewModel(p.Id.Value, p.Name, EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .ToListAsync();
 
     public async Task<PartnerViewModel?> GetById(Guid id)
         => await context.Partners.AsNoTracking()
             .Where(p => p.Id == PartnerId.From(id))
-            .Select(p => new PartnerViewModel(p.Id.Value, p.Name, p.Description, p.CreatedAt))
+            .Select(p => new PartnerViewModel(p.Id.Value, p.Name, p.Description, EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .FirstOrDefaultAsync();
 }

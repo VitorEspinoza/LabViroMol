@@ -26,11 +26,6 @@ public class Order : AggregateRoot<OrderId>, ICreationAuditable, IModificationAu
     public OrderReceipt? Receipt { get; set; }
     public string Description { get; private set; }
 
-    public DateTimeOffset CreatedAt { get; protected set; }
-    public UserId CreatedBy { get; protected set; }
-    public DateTimeOffset? UpdatedAt { get; protected set; }
-    public UserId? UpdatedBy { get; protected set; }
-
     public static Order Create(MaterialId materialId, ProjectId projectId, Quantity quantity, string description)
     {
         return new Order(OrderId.New(), materialId, projectId, quantity, description);

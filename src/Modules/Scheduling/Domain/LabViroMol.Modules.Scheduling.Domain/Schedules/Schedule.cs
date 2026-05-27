@@ -32,9 +32,6 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
     public UserId? ApprovedBy { get; private set; }
     public UserId? RefusedBy { get; private set; }
 
-    public DateTimeOffset? UpdatedAt { get; protected set; }
-    public UserId? UpdatedBy { get; protected set; }
-
     public static Result<Schedule> Create(Scheduler scheduler, Scheduling scheduling, bool acceptTerm, string advisorProfessor,
         string projectTitle, string description, List<ScheduleEquipment> equipments)
     {

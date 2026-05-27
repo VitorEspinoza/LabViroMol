@@ -1,5 +1,4 @@
 
-using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Inventory.Domain.Kits;
@@ -16,11 +15,6 @@ public class Kit : AggregateRoot<KitId>, ICreationAuditable, IModificationAudita
     private Kit() { }
     public string Name { get; private set; }
     public string Description { get; private set; }
-
-    public DateTimeOffset CreatedAt { get; protected set; }
-    public UserId CreatedBy { get; protected set; }
-    public DateTimeOffset? UpdatedAt { get; protected set; }
-    public UserId? UpdatedBy { get; protected set; }
 
     private readonly List<KitItem> _materials = new();
     public IReadOnlyCollection<KitItem> Materials => _materials.AsReadOnly();

@@ -1,6 +1,5 @@
 using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.Domain.Projects;
@@ -22,11 +21,6 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
     public string Description { get; private set; }
     public ProjectStatus Status { get; private set; }
     public PartnerId PartnerId { get; private set; }
-
-    public DateTimeOffset CreatedAt { get; protected set; }
-    public UserId CreatedBy { get; protected set; }
-    public DateTimeOffset? UpdatedAt { get; protected set; }
-    public UserId? UpdatedBy { get; protected set; }
 
     private readonly List<ProjectMember> _members = new();
     public IReadOnlyCollection<ProjectMember> Members => _members.AsReadOnly();
@@ -118,8 +112,8 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
             return Result.Success();
 
         var currentLead = _members.First(m => m.ResearcherId == requestedBy && m.IsActive);
-        currentLead.UpdateRole(ProjectRole.Manager, UserId.From(requestedBy));
-        newLead.UpdateRole(ProjectRole.ResearchLead, UserId.From(requestedBy));
+        currentLead.UpdateRole(ProjectRole.Manager);
+        newLead.UpdateRole(ProjectRole.ResearchLead);
 
         return Result.Success();
     }
@@ -142,7 +136,7 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
         if (member.Role == ProjectRole.ResearchLead)
             return Result.BusinessRule("Nao e possivel rebaixar o lider. Use TransferLeadership para transferir a lideranca primeiro.");
 
-        member.UpdateRole(newRole, UserId.From(requestedBy.Value));
+        member.UpdateRole(newRole);
         return Result.Success();
     }
 

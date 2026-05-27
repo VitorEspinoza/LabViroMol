@@ -20,7 +20,7 @@ public class ProjectQueries(ResearchDbContext context)
                         && m.ResearcherId == r.Id))
                     .Select(r => r.Name.FullName)
                     .Single(),
-                p.CreatedAt))
+                EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .ToListAsync();
 
     public async Task<ProjectViewModel?> GetById(Guid id)
@@ -39,6 +39,6 @@ public class ProjectQueries(ResearchDbContext context)
                             .Select(r => r.Name.FullName)
                             .Single(),
                         m.Role)).ToList(),
-                p.CreatedAt))
+                EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .FirstOrDefaultAsync();
 }

@@ -29,11 +29,6 @@ public class Material : AggregateRoot<MaterialId>, ICreationAuditable, IModifica
     public string Location { get; private set; }
     public MaterialTypeId TypeId { get; private set; }
 
-    public DateTimeOffset CreatedAt { get; protected set; }
-    public UserId CreatedBy { get; protected set; }
-    public DateTimeOffset? UpdatedAt { get; protected set; }
-    public UserId? UpdatedBy { get; protected set; }
-
     private readonly List<StockTransaction> _transactions = new();
     public IReadOnlyCollection<StockTransaction> Transactions => _transactions;
 

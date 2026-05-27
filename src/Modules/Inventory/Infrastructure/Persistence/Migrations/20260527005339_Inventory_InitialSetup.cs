@@ -34,13 +34,11 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
                     ReceivedQuantity = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: true),
                     ReceivedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    RemovedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    RemovedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,13 +53,11 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    RemovedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    RemovedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -78,13 +74,11 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
                     Active = table.Column<bool>(type: "bit", nullable: false),
                     DeactivatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeactivatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    RemovedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    RemovedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -124,13 +118,11 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
                     MinStock = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: false),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    RemovedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    RemovedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: true)
                 },
                 constraints: table =>
                 {

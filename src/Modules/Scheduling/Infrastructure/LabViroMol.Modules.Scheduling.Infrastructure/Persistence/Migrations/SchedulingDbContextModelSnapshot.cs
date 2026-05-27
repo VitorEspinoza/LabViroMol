@@ -41,19 +41,10 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ApprovedBy");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("Description");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("ProjectTitle")
                         .IsRequired()
@@ -64,11 +55,10 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("RefusedBy");
 
-                    b.Property<DateTimeOffset?>("RemovedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("RemovedBy")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -78,6 +68,7 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("UpdatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");

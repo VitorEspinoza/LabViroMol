@@ -58,7 +58,7 @@ public class OrderQueries
                         (order.Receipt != null ? order.Receipt.Quantity : null)!,
                         order.Status.ToString(),
                         "Mock User",
-                        order.CreatedAt)
+                        EF.Property<DateTimeOffset>(order, "CreatedAt"))
                 ) 
             .ToListAsync();
     }

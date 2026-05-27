@@ -19,11 +19,6 @@ public class MaterialType : AggregateRoot<MaterialTypeId>, ICreationAuditable, I
     public UserId? DeactivatedBy { get; private set; }
     public DateTimeOffset? DeactivatedAt { get; private set; }
 
-    public DateTimeOffset CreatedAt { get; protected set; }
-    public UserId CreatedBy { get; protected set; }
-    public DateTimeOffset? UpdatedAt { get; protected set; }
-    public UserId? UpdatedBy { get; protected set; }
-
     public static MaterialType Create(string name)
     {
         return new MaterialType(IdFactory.New<MaterialTypeId>(), name);

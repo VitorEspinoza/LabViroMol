@@ -1,4 +1,3 @@
-using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 
@@ -17,14 +16,6 @@ public class Partner : AggregateRoot<PartnerId>, IFullAuditable
 
     public string Name { get; private set; } = default!;
     public string? Description { get; private set; }
-
-    public DateTimeOffset CreatedAt { get; protected set; }
-    public UserId CreatedBy { get; protected set; }
-    public DateTimeOffset? UpdatedAt { get; protected set; }
-    public UserId? UpdatedBy { get; protected set; }
-    public bool IsDeleted { get; protected set; }
-    public DateTimeOffset? RemovedAt { get; protected set; }
-    public UserId? RemovedBy { get; protected set; }
 
     public static Result<Partner> Create(string name, string? description)
     {
