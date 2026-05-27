@@ -12,4 +12,9 @@
       <PackageReference Include="Mediator.Abstractions" Version="3.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\LabViroMol.Modules.Notify.Contracts\LabViroMol.Modules.Notify.Contracts.csproj" />
+      <ProjectReference Include="..\LabViroMol.Modules.Notify.Domain\LabViroMol.Modules.Notify.Domain.csproj" />
+    </ItemGroup>
+
 </Project>

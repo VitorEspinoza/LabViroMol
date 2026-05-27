@@ -20,4 +20,15 @@ public class Notification : AggregateRoot<NotificationId>
     public DateTimeOffset ExpiresOn  { get; private set; }
     
     public List<NotificationDismissal>  NotificationDismissals { get; private set; }
+
+    public static Result<Notification> Create(string title, string message, string targetPermissionId)
+    {
+        var notification = new Notification(
+            IdFactory.New<NotificationId>(),
+            title,
+            message,
+            Guid.Parse(targetPermissionId));
+        
+        return Result<Notification>.Success(notification);
+    }
 }

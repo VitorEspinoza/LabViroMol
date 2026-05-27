@@ -1,4 +1,5 @@
-﻿using LabViroMol.Modules.Scheduling.Application.Shared;
+﻿using LabViroMol.Modules.Notify.Contracts;
+using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using Mediator;
@@ -9,13 +10,16 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
 {
     private readonly IScheduleRepository _scheduleRepository;
     private readonly ISchedulingUnitOfWork _unitOfWork;
+    private readonly ISendNotification _sendNotification;
 
     public CreateScheduleHandler(
         IScheduleRepository scheduleRepository,
-        ISchedulingUnitOfWork unitOfWork)
+        ISchedulingUnitOfWork unitOfWork,
+        ISendNotification sendNotification)
     {
         _scheduleRepository = scheduleRepository;
         _unitOfWork = unitOfWork;
+        _sendNotification = sendNotification;
     }
     
     public async ValueTask<Result> Handle(CreateScheduleCommand command, CancellationToken ct)
@@ -35,6 +39,8 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
 
         await PersistAsync(scheduleResult.Data!, ct);
 
+        await SendNotificationAsync(command, ct);
+        
         return Result.Success();
     }
     
@@ -89,5 +95,28 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
     {
         await _scheduleRepository.AddAsync(schedule, ct);
         await _unitOfWork.CompleteAsync(ct);
+    }
+
+    private async Task SendNotificationAsync(CreateScheduleCommand command, CancellationToken ct)
+    {
+        var equipments = string.Join(", ", 
+            command.Equipments.Select(e => e.Name));
+
+        var message = $"""
+           Novo agendamento solicitado.
+
+           Solicitante: {command.Scheduler.Name}
+
+           Data: {command.Scheduling.Date:dd/MM/yyyy}
+           Horário: {command.Scheduling.Start:HH:mm} às {command.Scheduling.End:HH:mm}
+
+           Equipamentos: {equipments}
+           """;
+
+        await _sendNotification.SendNotification(
+            "Agendamento solicitado",
+            message,
+            "f3a7c1d2-8b4e-4c91-a6f7-2d9e5b7f4a13",
+            ct);
     }
 }

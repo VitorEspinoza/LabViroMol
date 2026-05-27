@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Notify.Application.Shared;
 using LabViroMol.Modules.Notify.Domain.Notifications;
 using LabViroMol.Modules.Notify.Infrastructure.Notifications;
 using LabViroMol.Modules.Notify.Infrastructure.Persistence;
@@ -21,7 +22,9 @@ public static class InfrastructureModule
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services
-            .AddScoped<INotificationRepository, NotificationRepository>();
+            .AddScoped<INotificationRepository, NotificationRepository>()
+            .AddScoped<INotifyUnitOfWork, NotifyUnitOfWork>();
+        
         return services;
     }
     

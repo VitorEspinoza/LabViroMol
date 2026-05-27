@@ -3,6 +3,7 @@ using Kernel;
 using Kernel.Behaviors;
 using LabViroMol.Modules.Assets.Presentation;
 using LabViroMol.Modules.Inventory.Presentation;
+using LabViroMol.Modules.Notify.Presentation;
 using LabViroMol.Modules.Scheduling.Presentation;
 using LabViroMol.Modules.Research.Presentation;
 using LabViroMol.Modules.Shared.Presentation.Converters;
@@ -46,7 +47,8 @@ builder.Services
     .AddInventoryModule(builder.Configuration)
     .AddSchedulingModule(builder.Configuration)
     .AddAssetsModule(builder.Configuration)
-    .AddResearchModule(builder.Configuration);
+    .AddResearchModule(builder.Configuration)
+    .AddNotifyModule(builder.Configuration);
     
 builder.Services.AddAuthorization();
 

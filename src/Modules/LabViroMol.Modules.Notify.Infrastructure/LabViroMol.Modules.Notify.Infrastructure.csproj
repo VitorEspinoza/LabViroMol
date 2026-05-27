@@ -12,8 +12,13 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\LabViroMol.Modules.Notify.Application\LabViroMol.Modules.Notify.Application.csproj" />
       <ProjectReference Include="..\LabViroMol.Modules.Notify.Domain\LabViroMol.Modules.Notify.Domain.csproj" />
       <ProjectReference Include="..\Shared\Kernel\Kernel.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Persistence\Migrations\" />
     </ItemGroup>
 
 </Project>
