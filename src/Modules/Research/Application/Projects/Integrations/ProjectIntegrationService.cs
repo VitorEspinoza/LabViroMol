@@ -1,5 +1,6 @@
 ﻿using LabViroMol.Modules.Research.Contracts;
 using LabViroMol.Modules.Research.Domain.Projects;
+using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 
@@ -18,7 +19,7 @@ internal class ProjectIntegrationService(IProjectRepository projectRepository) :
         if (!projectElegible)
             return Result.BusinessRule("Apenas projetos em andamento podem ser atribuídos a baixas no estoque");
         
-        var consumerResearcher = project.Members.FirstOrDefault(x => x.Id == ProjectMemberId.From(projectMemberId.Value) && !x.IsDeleted);
+        var consumerResearcher = project.Members.FirstOrDefault(x => x.ResearcherId == ResearcherId.From(projectMemberId.Value) && x.IsActive);
        
         if (consumerResearcher is null)
             return Result.BusinessRule("Apenas membros do projeto podem dar baixa no estoque");

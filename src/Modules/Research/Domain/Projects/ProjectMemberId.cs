@@ -10,6 +10,5 @@ public record struct ProjectMemberId(Guid Value) : IStrongId<ProjectMemberId>
     
     public static ProjectMemberId From(Guid value) => new(value);
     
-    public static implicit operator ProjectMemberId(ResearcherId id) => new(id.Value);
     public static implicit operator Guid(ProjectMemberId id) => id.Value;
 }

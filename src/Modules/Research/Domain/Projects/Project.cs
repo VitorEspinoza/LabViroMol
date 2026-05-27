@@ -32,10 +32,10 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
     public IReadOnlyCollection<ProjectMember> Members => _members.AsReadOnly();
 
     private bool IsResearchLead(ResearcherId id)
-        => _members.Any(m => m.Id == id && m.Role == ProjectRole.ResearchLead);
+        => _members.Any(m => m.ResearcherId == id && m.IsActive && m.Role == ProjectRole.ResearchLead);
 
     private bool HasAdministrativePrivileges(ResearcherId id)
-        => _members.Any(m => m.Id == id &&
+        => _members.Any(m => m.ResearcherId == id && m.IsActive &&
             m.Role.In(ProjectRole.ResearchLead, ProjectRole.Manager));
 
     public static Result<Project> Create(ResearcherId principalInvestigatorId,
@@ -95,40 +95,29 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
         if (!HasAdministrativePrivileges(requestedBy))
             return Result.BusinessRule("Apenas Líder ou Gerente podem gerenciar membros.");
 
-        var existingMember = _members.FirstOrDefault(m => m.Id == researcherId);
+        if (_members.Any(m => m.ResearcherId == researcherId && m.IsActive))
+            return Result.Conflict("O pesquisador já é um membro ativo deste projeto.");
 
-        if (existingMember is not null)
-        {
-            if (!existingMember.IsDeleted)
-                return Result.Conflict("O pesquisador já é um membro ativo deste projeto.");
-
-            if (role == ProjectRole.ResearchLead && _members.Any(m => !m.IsDeleted && m.Role == ProjectRole.ResearchLead))
-                return Result.Conflict("O projeto já possui um líder de pesquisa ativo.");
-
-            existingMember.UndoRemove(UserId.From(requestedBy.Value));
-            existingMember.UpdateRole(role, UserId.From(requestedBy.Value));
-            return Result.Success();
-        }
-
-        if (role == ProjectRole.ResearchLead && _members.Any(m => !m.IsDeleted && m.Role == ProjectRole.ResearchLead))
-            return Result.Conflict("O projeto já possui um líder de pesquisa.");
+        if (role == ProjectRole.ResearchLead && _members.Any(m => m.IsActive && m.Role == ProjectRole.ResearchLead))
+            return Result.Conflict("O projeto já possui um líder de pesquisa ativo.");
 
         _members.Add(new ProjectMember(researcherId, role));
         return Result.Success();
     }
+
     public Result TransferLeadership(ResearcherId newLeadId, ResearcherId requestedBy)
     {
         if (!IsResearchLead(requestedBy))
             return Result.BusinessRule("Apenas o lider atual pode transferir a lideranca do projeto.");
 
-        var newLead = _members.FirstOrDefault(m => m.Id == newLeadId && !m.IsDeleted);
+        var newLead = _members.FirstOrDefault(m => m.ResearcherId == newLeadId && m.IsActive);
         if (newLead is null)
             return Result.NotFound("Membro nao encontrado no projeto.");
 
         if (newLead.Role == ProjectRole.ResearchLead)
             return Result.Success();
 
-        var currentLead = _members.First(m => m.Id == requestedBy && !m.IsDeleted);
+        var currentLead = _members.First(m => m.ResearcherId == requestedBy && m.IsActive);
         currentLead.UpdateRole(ProjectRole.Manager, UserId.From(requestedBy));
         newLead.UpdateRole(ProjectRole.ResearchLead, UserId.From(requestedBy));
 
@@ -143,7 +132,7 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
         if (newRole == ProjectRole.ResearchLead)
             return Result.BusinessRule("Use TransferLeadership para promover um membro a lider de pesquisa.");
 
-        var member = _members.FirstOrDefault(m => m.Id == researcherId && !m.IsDeleted);
+        var member = _members.FirstOrDefault(m => m.ResearcherId == researcherId && m.IsActive);
         if (member is null)
             return Result.NotFound("Membro nao encontrado no projeto.");
 
@@ -162,13 +151,13 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
         if (!HasAdministrativePrivileges(requestedBy))
             return Result.BusinessRule("Apenas Líder ou Gerente podem gerenciar membros do projeto.");
 
-        var member = _members.FirstOrDefault(m => m.Id == researcherId);
+        var member = _members.FirstOrDefault(m => m.ResearcherId == researcherId && m.IsActive);
         if (member is null)
             return Result.NotFound("Membro não encontrado no projeto.");
         if (member.Role == ProjectRole.ResearchLead)
             return Result.BusinessRule("Não e possivel remover o lider de pesquisa sem substituí-lo.");
 
-        member.MarkAsRemoved(UserId.From((requestedBy)));
+        member.RemoveFromProject();
         return Result.Success();
     }
 

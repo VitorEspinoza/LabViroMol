@@ -5,23 +5,28 @@ namespace LabViroMol.Modules.Research.Domain.Projects;
 
 using Researchers;
 
-public class ProjectMember : BaseEntity<ProjectMemberId>, IFullAuditable
+public class ProjectMember : BaseEntity<ProjectMemberId>, ICreationAuditable, IModificationAuditable
 {
+    public ResearcherId ResearcherId { get; private set; }
     public ProjectRole Role { get; private set; }
-    private ProjectMember() { }
-    internal ProjectMember(ResearcherId researcherId, ProjectRole role)
-        : base(ProjectMemberId.From(researcherId))
-    {
-        Role = role;
-    }
+    public DateTimeOffset JoinedAt { get; private set; }
+    public DateTimeOffset? LeftAt { get; private set; }
+    public bool IsActive => LeftAt is null;
 
     public DateTimeOffset CreatedAt { get; protected set; }
     public UserId CreatedBy { get; protected set; }
     public DateTimeOffset? UpdatedAt { get; protected set; }
     public UserId? UpdatedBy { get; protected set; }
-    public bool IsDeleted { get; protected set; }
-    public DateTimeOffset? RemovedAt { get; protected set; }
-    public UserId? RemovedBy { get; protected set; }
+
+    private ProjectMember() { }
+
+    internal ProjectMember(ResearcherId researcherId, ProjectRole role)
+        : base(IdFactory.New<ProjectMemberId>())
+    {
+        ResearcherId = researcherId;
+        Role = role;
+        JoinedAt = DateTimeOffset.UtcNow;
+    }
 
     internal void UpdateRole(ProjectRole newRole, UserId updatedBy)
     {
@@ -29,21 +34,10 @@ public class ProjectMember : BaseEntity<ProjectMemberId>, IFullAuditable
         MarkAsUpdated(updatedBy);
     }
 
-    internal void MarkAsRemoved(UserId removedBy)
+    internal void RemoveFromProject()
     {
-        if (IsDeleted) return;
-
-        RemovedAt = DateTimeOffset.UtcNow;
-        RemovedBy = removedBy;
-        IsDeleted = true;
-    }
-
-    internal void UndoRemove(UserId restoredBy)
-    {
-        RemovedAt = null;
-        RemovedBy = null;
-        IsDeleted = false;
-        MarkAsUpdated(restoredBy);
+        if (LeftAt.HasValue) return;
+        LeftAt = DateTimeOffset.UtcNow;
     }
 
     private void MarkAsUpdated(UserId updatedBy)
