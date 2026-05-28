@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Abstractions\LabViroMol.Modules.Shared.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Shared\Kernel\Kernel.csproj" />
+    <ProjectReference Include="..\..\Shared\Kernel\LabViroMol.Modules.Shared.Kernel.csproj" />
   </ItemGroup>
   
 

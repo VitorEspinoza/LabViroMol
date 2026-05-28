@@ -1,6 +1,6 @@
 namespace LabViroMol.Modules.Research.Domain.Projects;
 
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 public record struct ProjectId(Guid Value) : IStrongId<ProjectId>
 {

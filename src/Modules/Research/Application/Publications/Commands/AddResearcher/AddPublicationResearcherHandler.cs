@@ -3,14 +3,12 @@ namespace LabViroMol.Modules.Research.Application.Publications.Commands.AddResea
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Abstractions.Interfaces;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class AddPublicationResearcherHandler(
     IPublicationRepository publicationRepository,
     IResearcherRepository researcherRepository,
-    ICurrentUser currentUser,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<AddPublicationResearcherCommand, Result>
 {
@@ -24,7 +22,7 @@ public class AddPublicationResearcherHandler(
         if (researcher is null)
             return Result.NotFound("Pesquisador nao encontrado.");
 
-        var result = publication.AddResearcher(ResearcherId.From(command.ResearcherId), currentUser.Id);
+        var result = publication.AddResearcher(ResearcherId.From(command.ResearcherId));
         if (result.IsFailure)
             return result;
 

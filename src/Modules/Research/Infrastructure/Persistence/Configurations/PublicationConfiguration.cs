@@ -49,7 +49,5 @@ public class PublicationConfiguration : IEntityTypeConfiguration<Publication>
         
         builder.Metadata.FindNavigation(nameof(Publication.Researchers))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
-
-        builder.HasQueryFilter(p => !p.IsDeleted);
     }
 }

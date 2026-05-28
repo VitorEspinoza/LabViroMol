@@ -1,20 +1,18 @@
 namespace LabViroMol.Modules.Research.Domain.Researchers;
 
 using LabViroMol.Modules.Research.Domain.Positions;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
-public class Researcher : AggregateRoot<ResearcherId>
+public class Researcher : AggregateRoot<ResearcherId>, IFullAuditable
 {
     private Researcher() { }
 
     private Researcher(ResearcherId id,
-        UserId createdBy,
         ResearcherName name,
-        string? lattesUrl, 
-        AcademicBackground academicBackground, 
+        string? lattesUrl,
+        AcademicBackground academicBackground,
         PositionId positionId)
-        : base(id, createdBy)
+        : base(id)
     {
         Name = name;
         LattesUrl = lattesUrl;
@@ -29,21 +27,19 @@ public class Researcher : AggregateRoot<ResearcherId>
 
     public static Researcher Create(
         ResearcherId researcherId,
-        UserId createdBy,
         ResearcherName name,
         string? lattesUrl,
         AcademicBackground academicBackground,
         PositionId positionId)
     {
         return new Researcher(
-            researcherId, createdBy,
+            researcherId,
             name, lattesUrl, academicBackground, positionId);
     }
 
-    public void Update(DegreeLevel degreeLevel, string fieldOfStudy, PositionId positionId, UserId modifiedBy)
+    public void Update(DegreeLevel degreeLevel, string fieldOfStudy, PositionId positionId)
     {
         AcademicBackground = new AcademicBackground(degreeLevel, fieldOfStudy);
         PositionId = positionId;
-        MarkAsUpdated(modifiedBy);
     }
 }

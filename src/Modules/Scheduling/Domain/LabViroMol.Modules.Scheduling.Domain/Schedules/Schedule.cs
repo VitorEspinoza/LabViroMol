@@ -1,10 +1,10 @@
-﻿using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
-using LabViroMol.Modules.Shared.Domain.Extension;
+using LabViroMol.Modules.Shared.Kernel.Extensions;
+using LabViroMol.Modules.Shared.Kernel.Identity;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Scheduling.Domain.Schedules;
 
-public class Schedule : AggregateRoot<ScheduleId>
+public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
 {
     private Schedule() {}
 
@@ -40,7 +40,7 @@ public class Schedule : AggregateRoot<ScheduleId>
 
         if (equipments.Select(e => e.EquipmentId).Distinct().Count() != equipments.Count)
             return Result<Schedule>.BusinessRule("Não é permitido equipamentos duplicados");
-        
+
         var schedule = new Schedule(IdFactory.New<ScheduleId>(), scheduler, scheduling, acceptTerm, advisorProfessor, projectTitle, description, equipments);
         return Result<Schedule>.Success(schedule);
     }
@@ -48,29 +48,27 @@ public class Schedule : AggregateRoot<ScheduleId>
     public Result Approve(UserId userId)
     {
         var valid = EnsureCanBeApprovedOrRefused();
-        
+
         if(valid.IsFailure)
             return valid;
-        
+
         Status = ScheduleStatus.SCHEDULED;
         ApprovedBy = userId;
-        MarkAsUpdated(userId);
         return Result.Success();
     }
 
     public Result Refuse(UserId userId)
     {
         var valid = EnsureCanBeApprovedOrRefused();
-        
+
         if(valid.IsFailure)
             return valid;
-        
+
         Status = ScheduleStatus.REFUSED;
         RefusedBy = userId;
-        MarkAsUpdated(userId);
         return Result.Success();
     }
-    
+
     private Result EnsureCanBeApprovedOrRefused()
     {
         if (!Status.Equals(ScheduleStatus.PENDING))

@@ -1,4 +1,4 @@
-﻿using LabViroMol.Modules.Research.Domain.Projects;
+using LabViroMol.Modules.Research.Domain.Projects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,8 +13,13 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id).ValueGeneratedNever();
 
+        builder.Property(m => m.ResearcherId).IsRequired();
+
         builder.Property(m => m.Role)
             .HasMaxLength(50)
             .IsRequired();
+
+        builder.Property(m => m.JoinedAt).IsRequired();
+        builder.Property(m => m.LeftAt).IsRequired(false);
     }
 }

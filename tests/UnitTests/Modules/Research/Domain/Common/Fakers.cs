@@ -4,8 +4,8 @@ using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Research.Domain.Projects;
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Identity;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.Domain.UnitTests.Common;
 
@@ -37,23 +37,22 @@ internal static class Fakers
     #region Position
 
     public static Position CreatePosition(string? name = null)
-        => Position.Create(AnyUserId(), name ?? F.Name.JobTitle(), F.Lorem.Sentence()).Data!;
+        => Position.Create(name ?? F.Name.JobTitle(), F.Lorem.Sentence()).Data!;
 
     #endregion
 
     #region Partner
 
     public static Partner CreatePartner(string? name = null)
-        => Partner.Create(AnyUserId(), name ?? F.Company.CompanyName(), F.Lorem.Sentence()).Data!;
+        => Partner.Create(name ?? F.Company.CompanyName(), F.Lorem.Sentence()).Data!;
 
     #endregion
 
     #region Researcher
 
-    public static Researcher CreateResearcher(ResearcherId? id = null, UserId? createdBy = null)
+    public static Researcher CreateResearcher(ResearcherId? id = null)
         => Researcher.Create(
             id ?? AnyResearcherId(),
-            createdBy ?? AnyUserId(),
             AnyResearcherName(),
             null,
             AnyAcademicBackground(),
@@ -63,9 +62,8 @@ internal static class Fakers
 
     #region Project
 
-    public static Project CreateProject(ResearcherId? leadId = null, UserId? createdBy = null)
+    public static Project CreateProject(ResearcherId? leadId = null)
         => Project.Create(
-            createdBy ?? AnyUserId(),
             leadId ?? AnyResearcherId(),
             F.Lorem.Sentence(),
             F.Lorem.Paragraph(),
@@ -77,7 +75,6 @@ internal static class Fakers
 
     public static Publication CreatePublication()
         => Publication.Create(
-            AnyUserId(),
             F.Lorem.Sentence(5),
             F.Lorem.Paragraph(),
             "10.1234/test",

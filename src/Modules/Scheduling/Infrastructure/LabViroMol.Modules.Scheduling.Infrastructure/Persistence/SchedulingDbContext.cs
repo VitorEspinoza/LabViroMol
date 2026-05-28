@@ -1,7 +1,8 @@
-﻿using Kernel.Persistence.Converters;
+﻿using LabViroMol.Modules.Shared.Infrastructure.Extensions;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Converters;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Identity;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence;
@@ -18,6 +19,7 @@ public class SchedulingDbContext : DbContext
         
         modelBuilder.HasDefaultSchema("scheduling");
         
+        modelBuilder.ApplyPersistenceConfigs();
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(SchedulingDbContext).Assembly);
     }
 

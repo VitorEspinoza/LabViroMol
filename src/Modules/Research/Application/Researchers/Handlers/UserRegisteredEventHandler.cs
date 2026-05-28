@@ -1,7 +1,7 @@
 using LabViroMol.Modules.Research.Application.External;
 using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 namespace LabViroMol.Modules.Research.Application.Researchers.Handlers;
@@ -13,7 +13,7 @@ public class UserRegisteredEventHandler(
 {
     public async ValueTask Handle(UserRegisteredEvent notification, CancellationToken ct)
     {
-        
+
         if (notification.Data.Research is null || notification.Data.Academic is null)
             return;
 
@@ -21,9 +21,9 @@ public class UserRegisteredEventHandler(
 
         if (position is null)
             throw new DomainException("Cargo inválido selecionado para usuário");
-    
-        var background = new AcademicBackground(        
-            DegreeLevel.FromString(notification.Data.Academic!.DegreeLevel),  
+
+        var background = new AcademicBackground(
+            DegreeLevel.FromString(notification.Data.Academic!.DegreeLevel),
             notification.Data.Academic.FieldOfStudy
             );
 
@@ -31,7 +31,6 @@ public class UserRegisteredEventHandler(
 
         var researcher = Researcher.Create(
             ResearcherId.From(notification.TargetUserId.Value),
-            notification.RequestedBy,
             name,
             notification.Data.Research.LattesUrl,
             background,

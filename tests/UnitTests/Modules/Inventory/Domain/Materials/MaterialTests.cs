@@ -11,11 +11,10 @@ public class MaterialTests
         public void Create_WhenTypeIsActive_ShouldReturnSuccessWithCorrectProperties()
         {
             // Arrange
-            var userId = Fakers.AnyUserId();
             var activeType = Fakers.CreateActiveMaterialType();
 
             // Act
-            var result = Material.Create(userId, "Etanol", "Prateleira A",
+            var result = Material.Create("Etanol", "Prateleira A",
                 Fakers.QuantityOf(5m), Fakers.QuantityOf(75m), Unit.Milliliter, activeType);
 
             // Assert
@@ -34,7 +33,7 @@ public class MaterialTests
             var inactiveType = Fakers.CreateInactiveMaterialType();
 
             // Act
-            var result = Material.Create(Fakers.AnyUserId(), "Etanol", "Prateleira A",
+            var result = Material.Create("Etanol", "Prateleira A",
                 Fakers.QuantityOf(5m), Fakers.QuantityOf(50m), Unit.Milliliter, inactiveType);
 
             // Assert
@@ -49,7 +48,7 @@ public class MaterialTests
             var activeType = Fakers.CreateActiveMaterialType();
 
             // Act
-            var result = Material.Create(Fakers.AnyUserId(), "Etanol", "Prateleira A",
+            var result = Material.Create("Etanol", "Prateleira A",
                 Fakers.QuantityOf(5m), Fakers.QuantityOf(75m), Unit.Milliliter, activeType);
 
             // Assert
@@ -65,7 +64,7 @@ public class MaterialTests
             var activeType = Fakers.CreateActiveMaterialType();
 
             // Act
-            var result = Material.Create(Fakers.AnyUserId(), "Etanol", "Prateleira A",
+            var result = Material.Create("Etanol", "Prateleira A",
                 Fakers.QuantityOf(5m), Fakers.QuantityOf(0m), Unit.Milliliter, activeType);
 
             // Assert
@@ -76,29 +75,26 @@ public class MaterialTests
     public class UpdateTests
     {
         [Fact]
-        public void Update_WhenCalled_ShouldUpdatePropertiesAndAudit()
+        public void Update_WhenCalled_ShouldUpdateProperties()
         {
             // Arrange
-            var userId = Fakers.AnyUserId();
             var newMin = Fakers.QuantityOf(20m);
             var material = Fakers.CreateMaterial();
 
             // Act
-            material.Update("Novo Nome", newMin, "Nova Localização", userId);
+            material.Update("Novo Nome", newMin, "Nova Localização");
 
             // Assert
             Assert.Equal("Novo Nome",        material.Name);
             Assert.Equal(newMin,             material.MinStock);
             Assert.Equal("Nova Localização", material.Location);
-            Assert.Equal(userId,             material.UpdatedBy);
-            Assert.True(material.UpdatedAt.HasValue);
         }
     }
 
     public class AddStockExceptionTests
     {
         [Fact]
-        public void AddStockException_WhenCalled_ShouldIncreaseStockAndAudit()
+        public void AddStockException_WhenCalled_ShouldIncreaseStock()
         {
             // Arrange
             var userId = Fakers.AnyUserId();
@@ -109,7 +105,6 @@ public class MaterialTests
 
             // Assert
             Assert.Equal(80m, (decimal)material.StockQuantity);
-            Assert.Equal(userId, material.UpdatedBy);
         }
 
         [Fact]
@@ -148,7 +143,7 @@ public class MaterialTests
     public class RemoveStockExceptionTests
     {
         [Fact]
-        public void RemoveStockException_WhenSufficientAndAboveMin_ShouldDecreaseStockReturnSuccessAndAudit()
+        public void RemoveStockException_WhenSufficientAndAboveMin_ShouldDecreaseStockAndReturnSuccess()
         {
             // Arrange
             var userId = Fakers.AnyUserId();
@@ -160,7 +155,6 @@ public class MaterialTests
             // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(70m, (decimal)material.StockQuantity);
-            Assert.Equal(userId, material.UpdatedBy);
             Assert.DoesNotContain(material.Events, e => e is LowStockDomainEvent);
         }
 

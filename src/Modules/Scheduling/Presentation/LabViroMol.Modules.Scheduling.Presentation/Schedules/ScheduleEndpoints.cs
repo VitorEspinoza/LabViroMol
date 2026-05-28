@@ -3,7 +3,7 @@ using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Create;
 using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Refuse;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Infrastructure.Schedules;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;

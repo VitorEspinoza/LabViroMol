@@ -13,11 +13,10 @@ public class OrderTests
             // Arrange
             var materialId  = Fakers.AnyMaterialId();
             var projectId   = Fakers.AnyProjectId();
-            var userId      = Fakers.AnyUserId();
             var quantity    = Fakers.QuantityOf(25m);
 
             // Act
-            var order = Fakers.CreateOrder(materialId, projectId, quantity, "Pedido de teste", userId);
+            var order = Fakers.CreateOrder(materialId, projectId, quantity, "Pedido de teste");
 
             // Assert
             Assert.Equal(OrderStatus.Pending, order.Status);
@@ -25,30 +24,27 @@ public class OrderTests
             Assert.Equal(projectId,           order.ProjectId);
             Assert.Equal(quantity,            order.RequestedQuantity);
             Assert.Equal("Pedido de teste",   order.Description);
-            Assert.Equal(userId,              order.CreatedBy);
         }
     }
 
     public class FixDetailsTests
     {
         [Fact]
-        public void FixDetails_WhenPending_ShouldUpdateDetailsAndAudit()
+        public void FixDetails_WhenPending_ShouldUpdateDetails()
         {
             // Arrange
-            var userId     = Fakers.AnyUserId();
             var newProject = Fakers.AnyProjectId();
             var newQty     = Fakers.QuantityOf(99m);
             var order      = Fakers.CreateOrder();
 
             // Act
-            var result = order.FixDetails(newProject, newQty, "nova descrição", userId);
+            var result = order.FixDetails(newProject, newQty, "nova descrição");
 
             // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(newProject,      order.ProjectId);
             Assert.Equal(newQty,          order.RequestedQuantity);
             Assert.Equal("nova descrição", order.Description);
-            Assert.Equal(userId,          order.UpdatedBy);
         }
 
         [Fact]
@@ -57,7 +53,7 @@ public class OrderTests
             var order = Fakers.CreateOrder();
             order.Process(Fakers.AnyUserId(), "Nome", null);
 
-            var result = order.FixDetails(Fakers.AnyProjectId(), Fakers.AnyQuantity(), "desc", Fakers.AnyUserId());
+            var result = order.FixDetails(Fakers.AnyProjectId(), Fakers.AnyQuantity(), "desc");
 
             Assert.True(result.IsFailure);
             Assert.Contains("pendentes", result.Errors[0]);
@@ -70,7 +66,7 @@ public class OrderTests
             order.Process(Fakers.AnyUserId(), "Nome", null);
             order.Receive(Fakers.AnyUserId(), "Nome", Fakers.AnyQuantity(), null);
 
-            var result = order.FixDetails(Fakers.AnyProjectId(), Fakers.AnyQuantity(), "desc", Fakers.AnyUserId());
+            var result = order.FixDetails(Fakers.AnyProjectId(), Fakers.AnyQuantity(), "desc");
 
             Assert.True(result.IsFailure);
             Assert.Contains("pendentes", result.Errors[0]);
@@ -80,9 +76,9 @@ public class OrderTests
         public void FixDetails_WhenCanceled_ShouldReturnFailureWithError()
         {
             var order = Fakers.CreateOrder();
-            order.Cancel(Fakers.AnyUserId());
+            order.Cancel();
 
-            var result = order.FixDetails(Fakers.AnyProjectId(), Fakers.AnyQuantity(), "desc", Fakers.AnyUserId());
+            var result = order.FixDetails(Fakers.AnyProjectId(), Fakers.AnyQuantity(), "desc");
 
             Assert.True(result.IsFailure);
             Assert.Contains("pendentes", result.Errors[0]);
@@ -92,7 +88,7 @@ public class OrderTests
     public class ProcessTests
     {
         [Fact]
-        public void Process_WhenPending_ShouldSetProcessingStateAndAudit()
+        public void Process_WhenPending_ShouldSetProcessingState()
         {
             // Arrange
             var userId = Fakers.AnyUserId();
@@ -138,7 +134,7 @@ public class OrderTests
         public void Process_WhenCanceled_ShouldReturnFailureWithError()
         {
             var order = Fakers.CreateOrder();
-            order.Cancel(Fakers.AnyUserId());
+            order.Cancel();
 
             var result = order.Process(Fakers.AnyUserId(), "Nome", null);
 
@@ -204,7 +200,7 @@ public class OrderTests
         public void Receive_WhenCanceled_ShouldReturnFailureWithError()
         {
             var order = Fakers.CreateOrder();
-            order.Cancel(Fakers.AnyUserId());
+            order.Cancel();
 
             var result = order.Receive(Fakers.AnyUserId(), "Nome", Fakers.AnyQuantity(), null);
 
@@ -216,19 +212,17 @@ public class OrderTests
     public class CancelTests
     {
         [Fact]
-        public void Cancel_WhenPending_ShouldMarkAsCanceledAndAudit()
+        public void Cancel_WhenPending_ShouldMarkAsCanceled()
         {
             // Arrange
-            var userId = Fakers.AnyUserId();
             var order  = Fakers.CreateOrder();
 
             // Act
-            var result = order.Cancel(userId);
+            var result = order.Cancel();
 
             // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(OrderStatus.Canceled, order.Status);
-            Assert.Equal(userId, order.UpdatedBy);
         }
 
         [Fact]
@@ -236,10 +230,10 @@ public class OrderTests
         {
             // Arrange
             var order = Fakers.CreateOrder();
-            order.Cancel(Fakers.AnyUserId());
+            order.Cancel();
 
             // Act
-            var result = order.Cancel(Fakers.AnyUserId());
+            var result = order.Cancel();
 
             // Assert
             Assert.True(result.IsFailure);
@@ -253,7 +247,7 @@ public class OrderTests
             var order = Fakers.CreateOrder();
             order.Process(Fakers.AnyUserId(), "Nome", null);
 
-            var result = order.Cancel(Fakers.AnyUserId());
+            var result = order.Cancel();
 
             Assert.True(result.IsFailure);
             Assert.Contains("pendentes", result.Errors[0]);
@@ -266,7 +260,7 @@ public class OrderTests
             order.Process(Fakers.AnyUserId(), "Nome", null);
             order.Receive(Fakers.AnyUserId(), "Nome", Fakers.AnyQuantity(), null);
 
-            var result = order.Cancel(Fakers.AnyUserId());
+            var result = order.Cancel();
 
             Assert.True(result.IsFailure);
             Assert.Contains("pendentes", result.Errors[0]);

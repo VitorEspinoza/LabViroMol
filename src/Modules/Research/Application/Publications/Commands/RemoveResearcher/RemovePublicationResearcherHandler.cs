@@ -3,13 +3,11 @@ namespace LabViroMol.Modules.Research.Application.Publications.Commands.RemoveRe
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Abstractions.Interfaces;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class RemovePublicationResearcherHandler(
     IPublicationRepository publicationRepository,
-    ICurrentUser currentUser,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<RemovePublicationResearcherCommand, Result>
 {
@@ -19,7 +17,7 @@ public class RemovePublicationResearcherHandler(
         if (publication is null)
             return Result.NotFound("Publicacao nao encontrada.");
 
-        var result = publication.RemoveResearcher(ResearcherId.From(command.ResearcherId), currentUser.Id);
+        var result = publication.RemoveResearcher(ResearcherId.From(command.ResearcherId));
         if (result.IsFailure)
             return result;
 

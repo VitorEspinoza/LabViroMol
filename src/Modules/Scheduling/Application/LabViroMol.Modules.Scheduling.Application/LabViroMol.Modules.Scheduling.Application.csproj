@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\Shared\Abstractions\LabViroMol.Modules.Shared.Abstractions.csproj" />
+      <ProjectReference Include="..\..\..\Shared\Kernel\LabViroMol.Modules.Shared.Kernel.csproj" />
       <ProjectReference Include="..\..\Domain\LabViroMol.Modules.Scheduling.Domain\LabViroMol.Modules.Scheduling.Domain.csproj" />
     </ItemGroup>
 

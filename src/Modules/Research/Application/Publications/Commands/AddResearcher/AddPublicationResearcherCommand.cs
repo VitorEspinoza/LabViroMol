@@ -1,6 +1,6 @@
 namespace LabViroMol.Modules.Research.Application.Publications.Commands.AddResearcher;
 
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public record AddPublicationResearcherCommand(

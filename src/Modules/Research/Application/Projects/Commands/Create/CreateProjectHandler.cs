@@ -5,14 +5,12 @@ namespace LabViroMol.Modules.Research.Application.Projects.Commands.Create;
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Projects;
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Abstractions.Interfaces;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class CreateProjectHandler(
     IProjectRepository projectRepository,
     IResearcherRepository researcherRepository,
-    ICurrentUser currentUser,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<CreateProjectCommand, Result>
 {
@@ -24,7 +22,6 @@ public class CreateProjectHandler(
             return Result.NotFound("Pesquisador nao encontrado.");
 
         var result = Project.Create(
-            currentUser.Id,
             piId,
             command.Title,
             command.Description,

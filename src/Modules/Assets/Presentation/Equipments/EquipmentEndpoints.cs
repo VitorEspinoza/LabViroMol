@@ -3,7 +3,7 @@ using LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.UploadImage;
 using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Infrastructure.Equipments;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

@@ -1,6 +1,6 @@
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 using Unit = LabViroMol.Modules.Inventory.Domain.Materials.Unit;
 

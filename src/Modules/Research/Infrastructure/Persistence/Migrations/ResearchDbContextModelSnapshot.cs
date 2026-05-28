@@ -32,6 +32,7 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("CreatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -50,12 +51,19 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("RemovedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("UpdatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -72,6 +80,7 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("CreatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -91,13 +100,13 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("RemovedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.HasKey("Id");
 
@@ -113,6 +122,7 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("CreatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -120,17 +130,13 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("PartnerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset?>("RemovedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("RemovedBy")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -146,6 +152,7 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("UpdatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -162,18 +169,19 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("CreatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                    b.Property<DateTimeOffset>("JoinedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("LeftAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("ProjectId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset?>("RemovedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("RemovedBy")
+                    b.Property<Guid>("ResearcherId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Role")
@@ -185,6 +193,7 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("UpdatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -203,6 +212,7 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("CreatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -235,7 +245,13 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("RemovedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -246,6 +262,7 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("UpdatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -262,6 +279,7 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid>("CreatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -278,12 +296,19 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("RemovedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<Guid?>("UpdatedBy")
+                        .HasMaxLength(15)
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");

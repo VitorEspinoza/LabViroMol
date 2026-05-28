@@ -1,7 +1,5 @@
-﻿using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Domain.UnitTests.Common;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
 using Xunit;
 
 namespace LabViroMol.Modules.Assets.Domain.UnitTests.Equipments;
@@ -15,7 +13,7 @@ public class EquipmentTests
     [Fact]
     public void Create_WithValidData_ShouldSucceed()
     {
-        var (equipment, _) = Fakers.Generate();
+        var equipment = Fakers.GenerateEquipment();
 
         Assert.NotNull(equipment);
     }
@@ -23,8 +21,7 @@ public class EquipmentTests
     [Fact]
     public void Create_ShouldSetFieldsCorrectly()
     {
-        var createdBy = IdFactory.New<UserId>();
-        var result = Equipment.Create(createdBy, "Nome", "Marca", "Modelo", "COD001", "Descrição");
+        var result = Equipment.Create("Nome", "Marca", "Modelo", "COD001", "Descrição");
 
         Assert.True(result.IsSuccess);
         Assert.Equal("Nome", result.Data!.Name);
@@ -37,8 +34,8 @@ public class EquipmentTests
     [Fact]
     public void Create_MultipleEquipments_ShouldHaveUniqueIds()
     {
-        var (equipment1, _) = Fakers.Generate();
-        var (equipment2, _) = Fakers.Generate();
+        var equipment1 = Fakers.GenerateEquipment();
+        var equipment2 = Fakers.GenerateEquipment();
 
         Assert.NotEqual(equipment1.Id, equipment2.Id);
     }
@@ -50,10 +47,9 @@ public class EquipmentTests
     [Fact]
     public void Update_WithValidData_ShouldUpdateFields()
     {
-        var (equipment, _) = Fakers.Generate();
-        var modifiedBy = IdFactory.New<UserId>();
+        var equipment = Fakers.GenerateEquipment();
 
-        equipment.Update("Novo Nome", "Nova Marca", "Novo Modelo", "COD999", "Nova Descrição", modifiedBy);
+        equipment.Update("Novo Nome", "Nova Marca", "Novo Modelo", "COD999", "Nova Descrição");
 
         Assert.Equal("Novo Nome", equipment.Name);
         Assert.Equal("Nova Marca", equipment.Brand);
@@ -63,25 +59,12 @@ public class EquipmentTests
     }
 
     [Fact]
-    public void Update_ShouldMarkEntityAsUpdated()
-    {
-        var (equipment, _) = Fakers.Generate();
-        var modifiedBy = IdFactory.New<UserId>();
-
-        equipment.Update("Nome", "Marca", "Modelo", "COD001", "Desc", modifiedBy);
-
-        Assert.NotNull(equipment.UpdatedAt);
-        Assert.Equal(modifiedBy, equipment.UpdatedBy);
-    }
-
-    [Fact]
     public void Update_WithFakeData_ShouldSucceed()
     {
-        var (equipment, _) = Fakers.Generate();
+        var equipment = Fakers.GenerateEquipment();
         var command = Fakers.GenerateUpdateCommand(equipment.Id);
-        var updatedBy = IdFactory.New<UserId>();
-        
-        equipment.Update(command.Name, command.Brand, command.Model, command.Code, command.Description, updatedBy);
+
+        equipment.Update(command.Name, command.Brand, command.Model, command.Code, command.Description);
 
         Assert.Equal(command.Name, equipment.Name);
         Assert.Equal(command.Brand, equipment.Brand);

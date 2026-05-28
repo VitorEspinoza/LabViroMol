@@ -1,5 +1,5 @@
 ﻿using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 namespace LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Cancel;

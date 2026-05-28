@@ -1,7 +1,7 @@
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Identity;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Inventory.IntegrationTests.MaterialTypes;
 
@@ -9,7 +9,7 @@ public static class MaterialTypeDataSeeder
 {
     public static async Task<Guid> SeedMaterialTypeAsync(InventoryDbContext dbContext)
     {
-        var type = MaterialType.Create(IdFactory.New<UserId>(), "Tipo Teste");
+        var type = MaterialType.Create("Tipo Teste");
         await dbContext.MaterialTypes.AddAsync(type);
         await dbContext.SaveChangesAsync();
         return type.Id.Value;

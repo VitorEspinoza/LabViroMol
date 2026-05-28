@@ -8,7 +8,7 @@ using LabViroMol.Modules.Research.Application.Publications.Commands.RemoveResear
 using LabViroMol.Modules.Research.Application.Publications.Commands.ReorderResearchers;
 using LabViroMol.Modules.Research.Application.Publications.Commands.Update;
 using LabViroMol.Modules.Research.Infrastructure.Publications;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
