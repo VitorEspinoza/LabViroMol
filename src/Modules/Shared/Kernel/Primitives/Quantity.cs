@@ -1,6 +1,4 @@
-﻿using LabViroMol.Modules.Shared.Kernel.Primitives;
-
-namespace LabViroMol.Modules.Inventory.Domain.Materials;
+﻿namespace LabViroMol.Modules.Shared.Kernel.Primitives;
 
 public record Quantity
 {
