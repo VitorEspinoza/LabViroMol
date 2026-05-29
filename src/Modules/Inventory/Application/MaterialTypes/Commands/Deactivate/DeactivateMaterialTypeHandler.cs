@@ -1,7 +1,7 @@
 using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
-using LabViroMol.Modules.Shared.Abstractions.Interfaces;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Interfaces;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.MaterialTypes.Commands.Deactivate;

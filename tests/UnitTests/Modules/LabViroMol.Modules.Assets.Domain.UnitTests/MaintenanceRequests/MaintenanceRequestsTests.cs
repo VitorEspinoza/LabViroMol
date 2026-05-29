@@ -11,17 +11,13 @@ public class MaintenanceRequestTests
         [Fact]
         public void Create_ShouldInitializeCorrectly()
         {
-            // Arrange
-            var createdBy     = Fakers.AnyUserId();
             var equipmentId   = Fakers.AnyEquipmentId();
             var description   = "Substituição de peça";
             var problemDesc   = "Equipamento apresentando ruído anormal";
 
-            // Act
-            var result  = MaintenanceRequest.Create(createdBy, description, problemDesc, equipmentId);
+            var result  = MaintenanceRequest.Create(description, problemDesc, equipmentId);
             var request = result.Data!;
 
-            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(MaintenanceRequestStatus.Requested, request.Status);
             Assert.Equal(description,  request.Description);
@@ -35,14 +31,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Start_WhenRequested_ShouldSetInProgress()
         {
-            // Arrange
             var request = Fakers.CreateMaintenanceRequest();
-            var userId  = Fakers.AnyUserId();
 
-            // Act
-            var result = request.Start(userId);
+            var result = request.Start();
 
-            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(MaintenanceRequestStatus.InProgress, request.Status);
         }
@@ -50,13 +42,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Start_WhenInProgress_ShouldFail()
         {
-            // Arrange
             var request = Fakers.CreateInProgressMaintenanceRequest();
 
-            // Act
-            var result = request.Start(Fakers.AnyUserId());
+            var result = request.Start();
 
-            // Assert
             Assert.True(result.IsFailure);
             Assert.Equal(MaintenanceRequestStatus.InProgress, request.Status);
         }
@@ -64,13 +53,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Start_WhenDone_ShouldFail()
         {
-            // Arrange
             var request = Fakers.CreateDoneMaintenanceRequest();
 
-            // Act
-            var result = request.Start(Fakers.AnyUserId());
+            var result = request.Start();
 
-            // Assert
             Assert.True(result.IsFailure);
             Assert.Equal(MaintenanceRequestStatus.Done, request.Status);
         }
@@ -78,13 +64,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Start_WhenCancelled_ShouldFail()
         {
-            // Arrange
             var request = Fakers.CreateCancelledMaintenanceRequest();
 
-            // Act
-            var result = request.Start(Fakers.AnyUserId());
+            var result = request.Start();
 
-            // Assert
             Assert.True(result.IsFailure);
             Assert.Equal(MaintenanceRequestStatus.Cancelled, request.Status);
         }
@@ -95,14 +78,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Done_WhenInProgress_ShouldSetDone()
         {
-            // Arrange
             var request = Fakers.CreateInProgressMaintenanceRequest();
-            var userId  = Fakers.AnyUserId();
 
-            // Act
-            var result = request.Done(userId);
+            var result = request.Done();
 
-            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(MaintenanceRequestStatus.Done, request.Status);
         }
@@ -110,13 +89,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Done_WhenRequested_ShouldFail()
         {
-            // Arrange
             var request = Fakers.CreateMaintenanceRequest();
 
-            // Act
-            var result = request.Done(Fakers.AnyUserId());
+            var result = request.Done();
 
-            // Assert
             Assert.True(result.IsFailure);
             Assert.Equal(MaintenanceRequestStatus.Requested, request.Status);
         }
@@ -124,13 +100,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Done_WhenAlreadyDone_ShouldFail()
         {
-            // Arrange
             var request = Fakers.CreateDoneMaintenanceRequest();
 
-            // Act
-            var result = request.Done(Fakers.AnyUserId());
+            var result = request.Done();
 
-            // Assert
             Assert.True(result.IsFailure);
             Assert.Equal(MaintenanceRequestStatus.Done, request.Status);
         }
@@ -138,13 +111,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Done_WhenCancelled_ShouldFail()
         {
-            // Arrange
             var request = Fakers.CreateCancelledMaintenanceRequest();
 
-            // Act
-            var result = request.Done(Fakers.AnyUserId());
+            var result = request.Done();
 
-            // Assert
             Assert.True(result.IsFailure);
             Assert.Equal(MaintenanceRequestStatus.Cancelled, request.Status);
         }
@@ -155,14 +125,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Cancel_WhenRequested_ShouldSetCancelled()
         {
-            // Arrange
             var request = Fakers.CreateMaintenanceRequest();
-            var userId  = Fakers.AnyUserId();
 
-            // Act
-            var result = request.Cancel(userId);
+            var result = request.Cancel();
 
-            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(MaintenanceRequestStatus.Cancelled, request.Status);
         }
@@ -170,13 +136,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Cancel_WhenInProgress_ShouldSetCancelled()
         {
-            // Arrange
             var request = Fakers.CreateInProgressMaintenanceRequest();
 
-            // Act
-            var result = request.Cancel(Fakers.AnyUserId());
+            var result = request.Cancel();
 
-            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(MaintenanceRequestStatus.Cancelled, request.Status);
         }
@@ -184,13 +147,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Cancel_WhenDone_ShouldFail()
         {
-            // Arrange
             var request = Fakers.CreateDoneMaintenanceRequest();
 
-            // Act
-            var result = request.Cancel(Fakers.AnyUserId());
+            var result = request.Cancel();
 
-            // Assert
             Assert.True(result.IsFailure);
             Assert.Equal(MaintenanceRequestStatus.Done, request.Status);
         }
@@ -198,13 +158,10 @@ public class MaintenanceRequestTests
         [Fact]
         public void Cancel_WhenAlreadyCancelled_ShouldSetCancelled()
         {
-            // Arrange
             var request = Fakers.CreateCancelledMaintenanceRequest();
 
-            // Act
-            var result = request.Cancel(Fakers.AnyUserId());
+            var result = request.Cancel();
 
-            // Assert
             Assert.True(result.IsSuccess);
             Assert.Equal(MaintenanceRequestStatus.Cancelled, request.Status);
         }

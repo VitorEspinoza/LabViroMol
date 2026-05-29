@@ -13,4 +13,7 @@ public class PublicationRepository(ResearchDbContext context) : IPublicationRepo
 
     public async Task AddAsync(Publication publication, CancellationToken ct)
         => await context.Publications.AddAsync(publication, ct);
+
+    public void Delete(Publication publication)
+        => context.Publications.Remove(publication);
 }

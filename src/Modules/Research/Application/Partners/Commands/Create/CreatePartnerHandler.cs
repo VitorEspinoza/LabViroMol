@@ -2,19 +2,17 @@ namespace LabViroMol.Modules.Research.Application.Partners.Commands.Create;
 
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Partners;
-using LabViroMol.Modules.Shared.Abstractions.Interfaces;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class CreatePartnerHandler(
     IPartnerRepository partnerRepository,
-    ICurrentUser currentUser,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<CreatePartnerCommand, Result>
 {
     public async ValueTask<Result> Handle(CreatePartnerCommand command, CancellationToken ct)
     {
-        var result = Partner.Create(currentUser.Id, command.Name, command.Description);
+        var result = Partner.Create(command.Name, command.Description);
         if (result.IsFailure)
             return result;
 

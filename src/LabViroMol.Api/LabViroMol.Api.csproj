@@ -32,7 +32,7 @@
     <ProjectReference Include="..\Modules\LabViroMol.Modules.Notify.Presentation\LabViroMol.Modules.Notify.Presentation.csproj" />
     <ProjectReference Include="..\Modules\Research\Presentation\LabViroMol.Modules.Research.Presentation.csproj" />
     <ProjectReference Include="..\Modules\Scheduling\Presentation\LabViroMol.Modules.Scheduling.Presentation\LabViroMol.Modules.Scheduling.Presentation.csproj" />
-    <ProjectReference Include="..\Modules\Shared\Kernel\Kernel.csproj" />
+    <ProjectReference Include="..\Modules\Shared\Infrastructure\LabViroMol.Modules.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

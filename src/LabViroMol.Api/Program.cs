@@ -1,12 +1,12 @@
 using System.Text.Json.Serialization;
-using Kernel;
-using Kernel.Behaviors;
 using LabViroMol.Modules.Assets.Presentation;
 using LabViroMol.Modules.Inventory.Presentation;
 using LabViroMol.Modules.Notify.Presentation;
 using LabViroMol.Modules.Scheduling.Presentation;
 using LabViroMol.Modules.Research.Presentation;
-using LabViroMol.Modules.Shared.Presentation.Converters;
+using LabViroMol.Modules.Shared.Infrastructure;
+using LabViroMol.Modules.Shared.Infrastructure.Behaviors;
+using LabViroMol.Modules.Shared.Infrastructure.Converters;
 using Mediator;
 using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;

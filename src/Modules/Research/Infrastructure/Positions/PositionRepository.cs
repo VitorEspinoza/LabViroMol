@@ -11,4 +11,7 @@ public class PositionRepository(ResearchDbContext context) : IPositionRepository
 
     public async Task AddAsync(Position position, CancellationToken ct)
         => await context.Positions.AddAsync(position, ct);
+
+    public void Delete(Position position)
+        => context.Positions.Remove(position);
 }

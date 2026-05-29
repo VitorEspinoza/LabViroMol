@@ -1,4 +1,4 @@
-﻿using LabViroMol.Modules.Shared.Abstractions.Interfaces;
+﻿using LabViroMol.Modules.Shared.Kernel.Interfaces;
 
 namespace LabViroMol.Modules.Scheduling.Application.Shared;
 

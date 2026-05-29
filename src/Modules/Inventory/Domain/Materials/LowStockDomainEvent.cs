@@ -1,4 +1,4 @@
-﻿using LabViroMol.Modules.Shared.Abstractions.Messaging;
+﻿using LabViroMol.Modules.Shared.Kernel.Messaging;
 
 namespace LabViroMol.Modules.Inventory.Domain.Materials;
 

@@ -11,7 +11,7 @@ using LabViroMol.Modules.Research.Application.Projects.Commands.Start;
 using LabViroMol.Modules.Research.Application.Projects.Commands.Update;
 using LabViroMol.Modules.Research.Domain.Projects;
 using LabViroMol.Modules.Research.Infrastructure.Projects;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

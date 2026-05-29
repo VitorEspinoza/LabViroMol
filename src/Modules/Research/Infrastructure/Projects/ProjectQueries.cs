@@ -15,11 +15,14 @@ public class ProjectQueries(ResearchDbContext context)
                 p.Title,
                 p.Status.ToString(),
                 context.Researchers
-                    .Where(r => p.Members.Any(m => m.Role == ProjectRole.ResearchLead && m.Id == r.Id)) 
+                    .Where(r => p.Members.Any(m => m.Role == ProjectRole.ResearchLead
+                        && m.LeftAt == null
+                        && m.ResearcherId == r.Id))
                     .Select(r => r.Name.FullName)
                     .Single(),
-                p.CreatedAt))
+                EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .ToListAsync();
+
     public async Task<ProjectViewModel?> GetById(Guid id)
         => await context.Projects.AsNoTracking()
             .Where(p => p.Id == ProjectId.From(id))
@@ -29,13 +32,13 @@ public class ProjectQueries(ResearchDbContext context)
                 p.Description,
                 p.Status,
                 p.PartnerId.Value,
-                p.Members.Select(m =>
-                    new ProjectMemberViewModel(m.Id,
+                p.Members.Where(m => m.LeftAt == null).Select(m =>
+                    new ProjectMemberViewModel(m.ResearcherId,
                         context.Researchers
-                            .Where(r => r.Id == m.Id)
+                            .Where(r => r.Id == m.ResearcherId)
                             .Select(r => r.Name.FullName)
                             .Single(),
                         m.Role)).ToList(),
-                p.CreatedAt))
+                EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .FirstOrDefaultAsync();
 }

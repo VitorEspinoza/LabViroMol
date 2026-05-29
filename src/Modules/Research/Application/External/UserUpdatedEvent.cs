@@ -1,8 +1,8 @@
-using LabViroMol.Modules.Shared.Abstractions.Identity;
+using LabViroMol.Modules.Shared.Kernel.Identity;
 
 namespace LabViroMol.Modules.Research.Application.External;
 
-using LabViroMol.Modules.Shared.Abstractions.Messaging;
+using LabViroMol.Modules.Shared.Kernel.Messaging;
 
 
 public record UserUpdatedEvent(

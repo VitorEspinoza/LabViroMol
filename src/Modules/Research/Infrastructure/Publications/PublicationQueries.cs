@@ -14,7 +14,7 @@ public class PublicationQueries(ResearchDbContext context)
                 p.Title,
                 p.PublishedOn,
                 p.PublicationDate,
-                p.CreatedAt))
+                EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .ToListAsync();
 
     public async Task<PublicationViewModel?> GetById(Guid id)
@@ -30,6 +30,6 @@ public class PublicationQueries(ResearchDbContext context)
                 p.PublishedOn,
                 p.PublishUrl,
                 p.Researchers.Select(r => r.ResearcherId.Value).ToList(),
-                p.CreatedAt))
+                EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .FirstOrDefaultAsync();
 }

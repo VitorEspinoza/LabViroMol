@@ -1,6 +1,6 @@
 ﻿using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Domain.UnitTests.Common;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Xunit;
 
 namespace LabViroMol.Modules.Scheduling.Domain.UnitTests.Schedules;

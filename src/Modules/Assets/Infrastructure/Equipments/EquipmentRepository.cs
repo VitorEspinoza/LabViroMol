@@ -28,4 +28,9 @@ public class EquipmentRepository : IEquipmentRepository
     {
         return await _context.Equipments.FirstOrDefaultAsync(e => e.Id == id, ct);
     }
+
+    public void Remove(Equipment equipment)
+    {
+        _context.Equipments.Remove(equipment);
+    }
 }

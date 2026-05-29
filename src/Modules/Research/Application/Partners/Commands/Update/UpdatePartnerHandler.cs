@@ -2,13 +2,11 @@ namespace LabViroMol.Modules.Research.Application.Partners.Commands.Update;
 
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Partners;
-using LabViroMol.Modules.Shared.Abstractions.Interfaces;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class UpdatePartnerHandler(
     IPartnerRepository partnerRepository,
-    ICurrentUser currentUser,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<UpdatePartnerCommand, Result>
 {
@@ -18,7 +16,7 @@ public class UpdatePartnerHandler(
         if (partner is null)
             return Result.NotFound("Parceiro nao encontrado.");
 
-        var result = partner.Update(command.Name, command.Description, currentUser.Id);
+        var result = partner.Update(command.Name, command.Description);
         if (result.IsFailure)
             return result;
 

@@ -2,13 +2,11 @@ namespace LabViroMol.Modules.Research.Application.Publications.Commands.AssignDo
 
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Publications;
-using LabViroMol.Modules.Shared.Abstractions.Interfaces;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class AssignPublicationDoiHandler(
     IPublicationRepository publicationRepository,
-    ICurrentUser currentUser,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<AssignPublicationDoiCommand, Result>
 {
@@ -18,7 +16,7 @@ public class AssignPublicationDoiHandler(
         if (publication is null)
             return Result.NotFound("Publicacao nao encontrada.");
 
-        var result = publication.AssignDoi(command.Doi, currentUser.Id);
+        var result = publication.AssignDoi(command.Doi);
         if (result.IsFailure)
             return result;
 
