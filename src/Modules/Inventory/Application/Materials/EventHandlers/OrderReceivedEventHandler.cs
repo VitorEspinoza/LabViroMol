@@ -1,7 +1,7 @@
 ﻿using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.Orders;
-using LabViroMol.Modules.Shared.Kernel.Interfaces;
+
 using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Materials.EventHandlers;
@@ -21,7 +21,5 @@ public class OrderReceivedEventHandler : INotificationHandler<OrderReceivedDomai
         var material = await _materialRepository.GetByIdAsync(notification.MaterialId, cancellationToken);
 
         material?.ReceiveFromOrder(notification.OrderId, notification.QuantityReceived, notification.ReceivedBy);
-        
-        await _unitOfWork.CompleteAsync(cancellationToken);
     }
 }

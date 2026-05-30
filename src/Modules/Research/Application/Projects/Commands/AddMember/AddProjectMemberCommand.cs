@@ -1,3 +1,5 @@
+using LabViroMol.Modules.Shared.Kernel.Primitives;
+
 namespace LabViroMol.Modules.Research.Application.Projects.Commands.AddMember;
 
 using Mediator;
