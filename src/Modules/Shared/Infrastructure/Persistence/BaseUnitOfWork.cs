@@ -95,7 +95,11 @@ public abstract class BaseUnitOfWork<TContext> : IUnitOfWork where TContext : Db
         //     );
         //     _context.Set<OutboxMessage>().Add(outboxMessage);
         // }
-
+        
+        foreach (var integrationEvent in allIntegrationEvents)
+        {
+            await _mediator.Publish(integrationEvent, cancellationToken);
+        }
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

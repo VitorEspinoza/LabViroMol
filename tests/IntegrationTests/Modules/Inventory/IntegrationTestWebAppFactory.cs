@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Identity.Infrastructure.Persistence;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
 using LabViroMol.Modules.Research.Contracts;
 using LabViroMol.Modules.Shared.Kernel.Identity;
@@ -27,8 +28,22 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseSetting("Jwt:Key", "IntegrationTestSecretKeyThatIsLongEnoughForHmacSha256!!");
+        builder.UseSetting("Jwt:Issuer", "TestIssuer");
+        builder.UseSetting("Jwt:Audience", "TestAudience");
+
         builder.ConfigureServices(services =>
         {
+            var identityDescriptors = services
+                .Where(d => d.ServiceType == typeof(DbContextOptions<LabViroMolIdentityDbContext>)
+                            || d.ServiceType == typeof(LabViroMolIdentityDbContext)
+                            || (d.ServiceType.IsGenericType
+                                && d.ServiceType.GetGenericArguments().Length == 1
+                                && d.ServiceType.GetGenericArguments()[0] == typeof(LabViroMolIdentityDbContext)))
+                .ToList();
+            foreach (var descriptor in identityDescriptors) services.Remove(descriptor);
+            services.AddDbContext<LabViroMolIdentityDbContext>(options =>
+                options.UseInMemoryDatabase("LabViroMol_Identity_Integration_Db"));
             var descriptorsToRemove = services
                 .Where(d => d.ServiceType == typeof(DbContextOptions<InventoryDbContext>)
                             || d.ServiceType == typeof(InventoryDbContext)
@@ -52,7 +67,7 @@ public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>
 
             var checkerDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IProjectChecker));
             if (checkerDescriptor != null) services.Remove(checkerDescriptor);
-            
+
             services.AddSingleton(ProjectCheckerMock);
         });
     }

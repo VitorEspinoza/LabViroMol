@@ -31,6 +31,7 @@
     <ProjectReference Include="..\Modules\Inventory\Presentation\LabViroMol.Modules.Inventory.Presentation.csproj" />
     <ProjectReference Include="..\Modules\Research\Presentation\LabViroMol.Modules.Research.Presentation.csproj" />
     <ProjectReference Include="..\Modules\Scheduling\Presentation\LabViroMol.Modules.Scheduling.Presentation\LabViroMol.Modules.Scheduling.Presentation.csproj" />
+    <ProjectReference Include="..\Modules\Identity\Presentation\LabViroMol.Modules.Identity.Presentation.csproj" />
     <ProjectReference Include="..\Modules\Shared\Infrastructure\LabViroMol.Modules.Shared.Infrastructure.csproj" />
   </ItemGroup>
 

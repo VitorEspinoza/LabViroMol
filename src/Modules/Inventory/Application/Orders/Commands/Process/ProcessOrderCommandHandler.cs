@@ -29,7 +29,7 @@ public class ProcessOrderCommandHandler : ICommandHandler<ProcessOrderCommand, R
         if (order is null)
             return Result.NotFound("Pedido não encontrado.");
 
-        var result = order.Process(_currentUser.Id, _currentUser.Name, command.Notes);
+        var result = order.Process(_currentUser.Id, _currentUser.FullName, command.Notes);
 
         if (result.IsFailure)
             return result;
