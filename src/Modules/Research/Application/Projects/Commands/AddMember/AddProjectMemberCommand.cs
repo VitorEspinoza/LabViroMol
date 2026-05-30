@@ -1,6 +1,5 @@
 namespace LabViroMol.Modules.Research.Application.Projects.Commands.AddMember;
 
-using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public record AddProjectMemberCommand(
