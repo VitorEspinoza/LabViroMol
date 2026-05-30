@@ -39,7 +39,7 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
 
         await PersistAsync(scheduleResult.Data!, ct);
 
-        await SendNotificationAsync(command, ct);
+        await SendNotificationAsync(scheduleResult.Data!, ct);
         
         return Result.Success();
     }
@@ -97,18 +97,18 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
         await _unitOfWork.CompleteAsync(ct);
     }
 
-    private async Task SendNotificationAsync(CreateScheduleCommand command, CancellationToken ct)
+    private async Task SendNotificationAsync(Schedule schedule, CancellationToken ct)
     {
         var equipments = string.Join(", ", 
-            command.Equipments.Select(e => e.Name));
+            schedule.Equipments.Select(e => e.Name));
 
         var message = $"""
            Novo agendamento solicitado.
 
-           Solicitante: {command.Scheduler.Name}
+           Solicitante: {schedule.Scheduler.Name}
 
-           Data: {command.Scheduling.Date:dd/MM/yyyy}
-           Horário: {command.Scheduling.Start:HH:mm} às {command.Scheduling.End:HH:mm}
+           Data: {schedule.Scheduling.Date:dd/MM/yyyy}
+           Horário: {schedule.Scheduling.StartDateHour:HH:mm} às {schedule.Scheduling.EndDateHour:HH:mm}
 
            Equipamentos: {equipments}
            """;
@@ -116,6 +116,9 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
         await _sendNotification.SendNotification(
             "Agendamento solicitado",
             message,
+            schedule.Id.ToString(),
+            "Schedule",
+            "NewSchedule",
             "f3a7c1d2-8b4e-4c91-a6f7-2d9e5b7f4a13",
             ct);
     }

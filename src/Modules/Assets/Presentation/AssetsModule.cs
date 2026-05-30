@@ -24,7 +24,7 @@ public static class AssetsModule
     public static IEndpointRouteBuilder MapAssetsEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/assets")
-            .WithTags("assets");
+            .WithTags("Assets");
         
         group.MapEquipmentEndpoints();
         group.MapMaintenanceRequestsEndpoints();

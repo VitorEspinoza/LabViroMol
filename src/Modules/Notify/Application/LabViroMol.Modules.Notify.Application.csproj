@@ -13,9 +13,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\Notify\Contracts\LabViroMol.Modules.Notify.Contracts.csproj" />
-      <ProjectReference Include="..\..\..\Shared\Kernel\LabViroMol.Modules.Shared.Kernel.csproj" />
-      <ProjectReference Include="..\..\Domain\LabViroMol.Modules.Scheduling.Domain\LabViroMol.Modules.Scheduling.Domain.csproj" />
+      <ProjectReference Include="..\..\Shared\Kernel\LabViroMol.Modules.Shared.Kernel.csproj" />
+      <ProjectReference Include="..\Contracts\LabViroMol.Modules.Notify.Contracts.csproj" />
+      <ProjectReference Include="..\Domain\LabViroMol.Modules.Notify.Domain.csproj" />
     </ItemGroup>
 
 </Project>

@@ -144,23 +144,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Notify", "Notify", "{E4DBE3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{DFF8C55D-1AB5-438E-B086-F2FC83C3E282}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Notify.Domain", "src\Modules\LabViroMol.Modules.Notify.Domain\LabViroMol.Modules.Notify.Domain.csproj", "{D4465672-62EB-4E4F-B064-7A448606DF9B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Notify.Domain", "src\Modules\Notify\Domain\LabViroMol.Modules.Notify.Domain.csproj", "{D4465672-62EB-4E4F-B064-7A448606DF9B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{9B30D0DF-3C94-4700-BFD6-FBE59197C49D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Notify.Infrastructure", "src\Modules\LabViroMol.Modules.Notify.Infrastructure\LabViroMol.Modules.Notify.Infrastructure.csproj", "{EEE7D930-FB68-4DF2-8794-82399A507B0F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Notify.Infrastructure", "src\Modules\Notify\Infrastructure\LabViroMol.Modules.Notify.Infrastructure.csproj", "{EEE7D930-FB68-4DF2-8794-82399A507B0F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{3F7A00D2-BE75-4239-94C3-A041FCB37C97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Notify.Application", "src\Modules\LabViroMol.Modules.Notify.Application\LabViroMol.Modules.Notify.Application.csproj", "{082A4DA3-47A9-4EEF-8B79-B59AA3366C97}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Notify.Application", "src\Modules\Notify\Application\LabViroMol.Modules.Notify.Application.csproj", "{082A4DA3-47A9-4EEF-8B79-B59AA3366C97}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contracts", "Contracts", "{16BFE4EF-C39F-4BAA-96A6-5E7819A23F1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Notify.Contracts", "src\Modules\LabViroMol.Modules.Notify.Contracts\LabViroMol.Modules.Notify.Contracts.csproj", "{1599EEE6-18EA-4335-9776-66D1EA975D03}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Notify.Contracts", "src\Modules\Notify\Contracts\LabViroMol.Modules.Notify.Contracts.csproj", "{1599EEE6-18EA-4335-9776-66D1EA975D03}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{5AD1DEDA-661D-4946-8771-643E875C0FC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Notify.Presentation", "src\Modules\LabViroMol.Modules.Notify.Presentation\LabViroMol.Modules.Notify.Presentation.csproj", "{6740329F-5994-4014-8ADA-9E37261150B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Notify.Presentation", "src\Modules\Notify\Presentation\LabViroMol.Modules.Notify.Presentation.csproj", "{6740329F-5994-4014-8ADA-9E37261150B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

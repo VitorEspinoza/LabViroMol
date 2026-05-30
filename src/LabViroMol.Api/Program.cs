@@ -87,6 +87,7 @@ app.MapInventoryEndpoints();
 app.MapResearchEndpoints();
 app.MapSchedulingEndpoints();
 app.MapAssetsEndpoints();
+app.MapNotifyEndpoints();
 
 app.Run();
 
