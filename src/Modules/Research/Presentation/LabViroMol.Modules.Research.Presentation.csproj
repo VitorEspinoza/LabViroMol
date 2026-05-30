@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\Abstractions\LabViroMol.Modules.Shared.Abstractions.csproj" />
-    <ProjectReference Include="..\..\Shared\Presentation\LabViroMol.Modules.Shared.Presentation.csproj" />
+    <ProjectReference Include="..\..\Shared\Kernel\LabViroMol.Modules.Shared.Kernel.csproj" />
+    <ProjectReference Include="..\..\Shared\Infrastructure\LabViroMol.Modules.Shared.Infrastructure.csproj" />
     <ProjectReference Include="..\Application\LabViroMol.Modules.Research.Application.csproj" />
     <ProjectReference Include="..\Infrastructure\LabViroMol.Modules.Research.Infrastructure.csproj" />
   </ItemGroup>

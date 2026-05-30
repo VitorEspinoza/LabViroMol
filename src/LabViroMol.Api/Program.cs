@@ -1,10 +1,13 @@
 using System.Text.Json.Serialization;
-using Kernel;
-using Kernel.Behaviors;
+using LabViroMol.Modules.Assets.Presentation;
 using LabViroMol.Modules.Inventory.Presentation;
+using LabViroMol.Modules.Scheduling.Presentation;
 using LabViroMol.Modules.Research.Presentation;
-using LabViroMol.Modules.Shared.Presentation.Converters;
+using LabViroMol.Modules.Shared.Infrastructure;
+using LabViroMol.Modules.Shared.Infrastructure.Behaviors;
+using LabViroMol.Modules.Shared.Infrastructure.Converters;
 using Mediator;
+using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,9 +44,23 @@ builder.Services.AddScoped(
 builder.Services
     .AddSharedModule()
     .AddInventoryModule(builder.Configuration)
+    .AddSchedulingModule(builder.Configuration)
+    .AddAssetsModule(builder.Configuration)
     .AddResearchModule(builder.Configuration);
     
 builder.Services.AddAuthorization();
+
+var configPath = builder.Configuration["Storage:ImageFolderPath"];
+if (string.IsNullOrWhiteSpace(configPath))
+{
+    throw new InvalidOperationException("A configuração 'Storage:ImageFolderPath' não foi encontrada ou está vazia.");
+}
+
+var imagesPath = Path.IsPathRooted(configPath) 
+    ? configPath 
+    : Path.Combine(builder.Environment.ContentRootPath, configPath);
+
+Directory.CreateDirectory(imagesPath);
 
 var app = builder.Build();
 
@@ -55,12 +72,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(imagesPath),
+    RequestPath = "/images"
+});
 app.UseCors("AngularApp");
 
 app.UseAuthorization();
 
 app.MapInventoryEndpoints();
 app.MapResearchEndpoints();
+app.MapSchedulingEndpoints();
+app.MapAssetsEndpoints();
 
 app.Run();
 

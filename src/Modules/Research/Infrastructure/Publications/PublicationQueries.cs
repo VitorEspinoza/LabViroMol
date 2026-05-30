@@ -12,19 +12,9 @@ public class PublicationQueries(ResearchDbContext context)
             .Select(p => new PublicationSummaryViewModel(
                 p.Id.Value,
                 p.Title,
-                p.Doi,
                 p.PublishedOn,
                 p.PublicationDate,
-                p.CreatedAt,
-                p.Researchers
-                    .OrderBy(pr => pr.Order)
-                    .Select(pr => new PublicationAuthorViewModel(
-                        context.Researchers
-                            .Where(r => r.Id == pr.ResearcherId)
-                            .Select(r => r.Name.FullName)
-                            .Single(),
-                        pr.Order))
-                    .ToList()))
+                EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .ToListAsync();
 
     public async Task<PublicationViewModel?> GetById(Guid id)
@@ -39,15 +29,7 @@ public class PublicationQueries(ResearchDbContext context)
                 p.PublicationDate,
                 p.PublishedOn,
                 p.PublishUrl,
-                p.Researchers
-                    .OrderBy(pr => pr.Order)
-                    .Select(pr => new PublicationAuthorViewModel(
-                        context.Researchers
-                            .Where(r => r.Id == pr.ResearcherId)
-                            .Select(r => r.Name.FullName)
-                            .Single(),
-                        pr.Order))
-                    .ToList(),
-                p.CreatedAt))
+                p.Researchers.Select(r => r.ResearcherId.Value).ToList(),
+                EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .FirstOrDefaultAsync();
 }

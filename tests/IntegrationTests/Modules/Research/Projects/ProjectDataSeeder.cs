@@ -4,8 +4,8 @@ using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using LabViroMol.Modules.Research.IntegrationTests.Partners;
 using LabViroMol.Modules.Research.IntegrationTests.Researchers;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Identity;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.IntegrationTests.Projects;
 
@@ -18,7 +18,6 @@ public static class ProjectDataSeeder
         var (researcherId, _) = await ResearcherDataSeeder.SeedResearcherAsync(dbContext);
 
         var project = Project.Create(
-            IdFactory.New<UserId>(),
             ResearcherId.From(researcherId),
             "Projeto de Pesquisa Virologica",
             "Descricao detalhada do projeto de pesquisa virologica",

@@ -1,6 +1,6 @@
 namespace LabViroMol.Modules.Research.Domain.Publications;
 
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 public record struct PublicationId(Guid Value) : IStrongId<PublicationId>
 {

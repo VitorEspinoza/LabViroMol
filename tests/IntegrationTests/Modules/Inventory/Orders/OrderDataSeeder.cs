@@ -2,10 +2,10 @@ using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Domain.References;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
+using LabViroMol.Modules.Shared.Kernel.Identity;
 
 using LabViroMol.Modules.Inventory.IntegrationTests.Materials;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Inventory.IntegrationTests.Orders;
 
@@ -18,7 +18,6 @@ public static class OrderDataSeeder
         var order = Order.Create(
             MaterialId.From(materialId),
             ProjectId.From(Guid.NewGuid()),
-            IdFactory.New<UserId>(),
             (Quantity)10m,
             "Pedido de teste");
 

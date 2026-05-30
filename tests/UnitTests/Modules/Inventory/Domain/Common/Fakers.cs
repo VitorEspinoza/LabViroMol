@@ -4,8 +4,8 @@ using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Domain.References;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Identity;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Inventory.Domain.UnitTests.Common;
 
@@ -26,15 +26,15 @@ internal static class Fakers
 
 
     #endregion
-   
+
     #region MaterialType
 
     public static MaterialType CreateMaterialType(string? name = null)
-        => MaterialType.Create(AnyUserId(), name ?? F.Commerce.Categories(1)[0]);
-    
+        => MaterialType.Create(name ?? F.Commerce.Categories(1)[0]);
+
     public static MaterialType CreateActiveMaterialType(string? name = null)
         => CreateMaterialType(name);
-    
+
     public static MaterialType CreateInactiveMaterialType(string? name = null)
     {
         var type = CreateMaterialType(name);
@@ -52,13 +52,11 @@ internal static class Fakers
         string? location = null,
         Quantity? minQuantity = null,
         Quantity? stockQuantity = null,
-        Unit? unit = null,
-        UserId? createdBy = null)
+        Unit? unit = null)
     {
         var resolvedType = type ?? CreateActiveMaterialType();
 
         return Material.Create(
-            createdBy ?? AnyUserId(),
             name ?? F.Commerce.ProductName(),
             location ?? F.Address.City(),
             minQuantity ?? QuantityOf(10),
@@ -72,7 +70,7 @@ internal static class Fakers
 
 
     #endregion
-   
+
     #region Kit
 
     public static KitItem AnyKitItem(MaterialId? materialId = null, Quantity? quantity = null)
@@ -86,7 +84,6 @@ internal static class Fakers
         string? description = null,
         List<KitItem>? items = null)
         => Kit.Create(
-            AnyUserId(),
             name ?? F.Commerce.ProductName(),
             description ?? F.Lorem.Sentence(),
             items ?? AnyKitItems());
@@ -99,16 +96,14 @@ internal static class Fakers
         MaterialId? materialId = null,
         ProjectId? projectId = null,
         Quantity? quantity = null,
-        string? description = null,
-        UserId? createdBy = null)
+        string? description = null)
         => Order.Create(
             materialId ?? AnyMaterialId(),
             projectId ?? AnyProjectId(),
-            createdBy ?? AnyUserId(),
             quantity ?? AnyQuantity(),
             description ?? F.Lorem.Sentence());
 
     #endregion
 
-   
+
 }

@@ -3,13 +3,11 @@ namespace LabViroMol.Modules.Research.Application.Publications.Commands.ReorderR
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Abstractions.Interfaces;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class ReorderPublicationResearchersHandler(
     IPublicationRepository publicationRepository,
-    ICurrentUser currentUser,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<ReorderPublicationResearchersCommand, Result>
 {
@@ -23,7 +21,7 @@ public class ReorderPublicationResearchersHandler(
             .Select(id => ResearcherId.From(id))
             .ToList();
 
-        var result = publication.ReorderResearchers(orderedIds, currentUser.Id);
+        var result = publication.ReorderResearchers(orderedIds);
         if (result.IsFailure)
             return result;
 

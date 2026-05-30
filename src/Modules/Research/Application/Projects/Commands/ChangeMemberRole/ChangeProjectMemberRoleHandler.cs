@@ -3,7 +3,7 @@ namespace LabViroMol.Modules.Research.Application.Projects.Commands.ChangeMember
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Projects;
 using LabViroMol.Modules.Research.Domain.Researchers;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 public class ChangeProjectMemberRoleHandler(

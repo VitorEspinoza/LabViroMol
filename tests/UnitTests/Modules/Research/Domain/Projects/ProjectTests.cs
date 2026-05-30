@@ -12,16 +12,14 @@ public class ProjectTests
         {
             // Arrange
             var leadId = Fakers.AnyResearcherId();
-            var createdBy = Fakers.AnyUserId();
 
             // Act
-            var project = Fakers.CreateProject(leadId, createdBy);
+            var project = Fakers.CreateProject(leadId);
 
             // Assert
             Assert.Equal(ProjectStatus.Planned, project.Status);
             Assert.Single(project.Members);
             Assert.Equal(ProjectRole.ResearchLead, project.Members.Single().Role);
-            Assert.Equal(createdBy, project.CreatedBy);
         }
     }
 
@@ -255,7 +253,7 @@ public class ProjectTests
     public class UpdateTests
     {
         [Fact]
-        public void Update_WhenByResearchLead_ShouldUpdatePropertiesAndAudit()
+        public void Update_WhenByResearchLead_ShouldUpdateProperties()
         {
             // Arrange
             var leadId = Fakers.AnyResearcherId();
@@ -270,7 +268,6 @@ public class ProjectTests
             Assert.True(result.IsSuccess);
             Assert.Equal(newTitle, project.Title);
             Assert.Equal(newDescription, project.Description);
-            Assert.NotNull(project.UpdatedBy);
         }
 
         [Fact]
@@ -321,7 +318,7 @@ public class ProjectTests
 
             // Assert
             Assert.True(result.IsSuccess);
-            Assert.Equal(2, project.Members.Count(m => !m.IsDeleted));
+            Assert.Equal(2, project.Members.Count(m => m.IsActive));
         }
 
         [Fact]
@@ -403,9 +400,9 @@ public class ProjectTests
 
             // Assert
             Assert.True(result.IsSuccess);
-            var restored = project.Members.Single(m => m.Id == memberId);
-            Assert.False(restored.IsDeleted);
-            Assert.Equal(ProjectRole.Manager, restored.Role);
+            var active = project.Members.Single(m => m.ResearcherId == memberId && m.IsActive);
+            Assert.Equal(ProjectRole.Manager, active.Role);
+            Assert.Equal(2, project.Members.Count(m => m.ResearcherId == memberId));
         }
 
         [Fact]
@@ -429,7 +426,7 @@ public class ProjectTests
     public class RemoveMemberTests
     {
         [Fact]
-        public void RemoveMember_ByLead_TargetIsCollaborator_ShouldSoftDeleteMember()
+        public void RemoveMember_ByLead_TargetIsCollaborator_ShouldSetLeftAt()
         {
             // Arrange
             var leadId = Fakers.AnyResearcherId();
@@ -442,8 +439,9 @@ public class ProjectTests
 
             // Assert
             Assert.True(result.IsSuccess);
-            var member = project.Members.Single(m => m.Id == collaboratorId);
-            Assert.True(member.IsDeleted);
+            var member = project.Members.Single(m => m.ResearcherId == collaboratorId);
+            Assert.False(member.IsActive);
+            Assert.NotNull(member.LeftAt);
         }
 
         [Fact]
@@ -510,8 +508,8 @@ public class ProjectTests
 
             // Assert
             Assert.True(result.IsSuccess);
-            var newLead = project.Members.Single(m => m.Id == collaboratorId);
-            var oldLead = project.Members.Single(m => m.Id == leadId);
+            var newLead = project.Members.Single(m => m.ResearcherId == collaboratorId && m.IsActive);
+            var oldLead = project.Members.Single(m => m.ResearcherId == leadId && m.IsActive);
             Assert.Equal(ProjectRole.ResearchLead, newLead.Role);
             Assert.Equal(ProjectRole.Manager, oldLead.Role);
         }
@@ -560,7 +558,7 @@ public class ProjectTests
 
             // Assert
             Assert.True(result.IsSuccess);
-            Assert.Equal(ProjectRole.ResearchLead, project.Members.Single(m => m.Id == leadId).Role);
+            Assert.Equal(ProjectRole.ResearchLead, project.Members.Single(m => m.ResearcherId == leadId && m.IsActive).Role);
         }
     }
 
@@ -580,7 +578,7 @@ public class ProjectTests
 
             // Assert
             Assert.True(result.IsSuccess);
-            var member = project.Members.Single(m => m.Id == collaboratorId);
+            var member = project.Members.Single(m => m.ResearcherId == collaboratorId && m.IsActive);
             Assert.Equal(ProjectRole.Manager, member.Role);
         }
 
@@ -629,7 +627,7 @@ public class ProjectTests
 
             // Assert
             Assert.True(result.IsSuccess);
-            var member = project.Members.Single(m => m.Id == collaboratorId);
+            var member = project.Members.Single(m => m.ResearcherId == collaboratorId && m.IsActive);
             Assert.Equal(ProjectRole.Collaborator, member.Role);
         }
 

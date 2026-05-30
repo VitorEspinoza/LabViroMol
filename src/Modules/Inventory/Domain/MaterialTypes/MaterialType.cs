@@ -1,14 +1,14 @@
-﻿using LabViroMol.Modules.Inventory.Domain.Materials;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Inventory.Domain.Materials;
+using LabViroMol.Modules.Shared.Kernel.Identity;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 
-public class MaterialType : AggregateRoot<MaterialTypeId>
+public class MaterialType : AggregateRoot<MaterialTypeId>, ICreationAuditable, IModificationAuditable
 {
     private MaterialType() { }
 
-    private MaterialType(MaterialTypeId id, UserId createdBy, string name) : base(id, createdBy)
+    private MaterialType(MaterialTypeId id, string name) : base(id)
     {
         Name = name;
         Active = true;
@@ -18,29 +18,26 @@ public class MaterialType : AggregateRoot<MaterialTypeId>
     public bool Active { get; private set; }
     public UserId? DeactivatedBy { get; private set; }
     public DateTimeOffset? DeactivatedAt { get; private set; }
-    
-    public static MaterialType Create(UserId createdBy, string name)
+
+    public static MaterialType Create(string name)
     {
-        return new MaterialType(IdFactory.New<MaterialTypeId>(), createdBy, name);
+        return new MaterialType(IdFactory.New<MaterialTypeId>(), name);
     }
 
     public void Deactivate(UserId userId)
     {
         if (!Active) return;
-        
+
         DeactivatedBy = userId;
         DeactivatedAt = DateTimeOffset.UtcNow;
         Active = false;
-        MarkAsUpdated(userId);
     }
 
     public void Activate(UserId userId)
     {
         if (Active) return;
         Active = true;
-        DeactivatedBy = null; 
+        DeactivatedBy = null;
         DeactivatedAt = null;
-
-        MarkAsUpdated(userId);
     }
 }

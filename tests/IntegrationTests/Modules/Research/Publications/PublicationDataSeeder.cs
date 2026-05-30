@@ -1,7 +1,7 @@
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Identity;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.IntegrationTests.Publications;
 
@@ -10,7 +10,6 @@ public static class PublicationDataSeeder
     public static async Task<Guid> SeedPublicationAsync(ResearchDbContext dbContext)
     {
         var publication = Publication.Create(
-            IdFactory.New<UserId>(),
             "Estudo de Virologia Molecular em Amostras Clinicas",
             "Descricao detalhada do estudo de virologia molecular",
             "10.1234/test",

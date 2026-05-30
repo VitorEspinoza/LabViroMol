@@ -17,7 +17,6 @@ public class ResearcherQueries(ResearchDbContext context)
                         r.Id.Value,
                         r.Name.PublicDisplayName,
                         r.AcademicBackground.DegreeLevel.Value,
-                        p.Name,
-                        r.LattesUrl))
+                        p.Name))
             .ToListAsync();
 }

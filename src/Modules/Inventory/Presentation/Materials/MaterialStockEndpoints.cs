@@ -4,8 +4,8 @@ using LabViroMol.Modules.Inventory.Application.Materials.Commands.ConsumeForProj
 using LabViroMol.Modules.Inventory.Application.Materials.Commands.RemoveStockException;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.References;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
-using LabViroMol.Modules.Shared.Presentation.Extensions;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

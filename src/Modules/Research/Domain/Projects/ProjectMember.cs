@@ -1,31 +1,35 @@
-using LabViroMol.Modules.Shared.Abstractions.Identity;
-using LabViroMol.Modules.Shared.Abstractions.Primitives;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.Domain.Projects;
 
 using Researchers;
 
-public class ProjectMember : AuditableEntity<ProjectMemberId>
+public class ProjectMember : BaseEntity<ProjectMemberId>, ICreationAuditable, IModificationAuditable
 {
+    public ResearcherId ResearcherId { get; private set; }
     public ProjectRole Role { get; private set; }
+    public DateTimeOffset JoinedAt { get; private set; }
+    public DateTimeOffset? LeftAt { get; private set; }
+    public bool IsActive => LeftAt is null;
+
     private ProjectMember() { }
-    internal ProjectMember(ResearcherId researcherId, ProjectRole role, UserId createdBy)
-        : base(ProjectMemberId.From(researcherId), createdBy)
+
+    internal ProjectMember(ResearcherId researcherId, ProjectRole role)
+        : base(IdFactory.New<ProjectMemberId>())
     {
+        ResearcherId = researcherId;
         Role = role;
+        JoinedAt = DateTimeOffset.UtcNow;
     }
 
-    internal void UpdateRole(ProjectRole newRole, UserId updatedBy)
+    internal void UpdateRole(ProjectRole newRole)
     {
         Role = newRole;
-        MarkAsUpdated(updatedBy);
     }
 
-    internal void UndoRemove(UserId restoredBy)
+    internal void RemoveFromProject()
     {
-        RemovedAt = null;
-        RemovedBy = null;
-        IsDeleted = false;
-        MarkAsUpdated(restoredBy);
+        if (LeftAt.HasValue) return;
+        LeftAt = DateTimeOffset.UtcNow;
     }
 }
