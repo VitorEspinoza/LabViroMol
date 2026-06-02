@@ -4,4 +4,5 @@ public record ResearcherSummaryViewModel(
     Guid Id,
     string DisplayName,
     string DegreeLevel,
-    string Position);
+    string Position,
+    string? LattesUrl);

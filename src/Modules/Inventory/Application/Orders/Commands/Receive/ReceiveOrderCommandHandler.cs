@@ -29,7 +29,7 @@ public class ReceiveOrderCommandHandler : ICommandHandler<ReceiveOrderCommand, R
         if (order is null)
             return Result.NotFound("Pedido não encontrado.");
 
-        var result = order.Receive(_currentUser.Id, _currentUser.Name, command.QuantityReceived, command.Notes);
+        var result = order.Receive(_currentUser.Id, _currentUser.FullName, command.QuantityReceived, command.Notes);
 
         if (result.IsFailure)
             return result;

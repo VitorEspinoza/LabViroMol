@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Identity.Infrastructure.Persistence;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -11,8 +12,22 @@ public class ResearchIntegrationTestWebAppFactory : WebApplicationFactory<Progra
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseSetting("Jwt:Key", "IntegrationTestSecretKeyThatIsLongEnoughForHmacSha256!!");
+        builder.UseSetting("Jwt:Issuer", "TestIssuer");
+        builder.UseSetting("Jwt:Audience", "TestAudience");
+
         builder.ConfigureServices(services =>
         {
+            var identityDescriptors = services
+                .Where(d => d.ServiceType == typeof(DbContextOptions<LabViroMolIdentityDbContext>)
+                            || d.ServiceType == typeof(LabViroMolIdentityDbContext)
+                            || (d.ServiceType.IsGenericType
+                                && d.ServiceType.GetGenericArguments().Length == 1
+                                && d.ServiceType.GetGenericArguments()[0] == typeof(LabViroMolIdentityDbContext)))
+                .ToList();
+            foreach (var descriptor in identityDescriptors) services.Remove(descriptor);
+            services.AddDbContext<LabViroMolIdentityDbContext>(options =>
+                options.UseInMemoryDatabase("LabViroMol_Identity_Research_Integration_Db"));
             var descriptorsToRemove = services
                 .Where(d => d.ServiceType == typeof(DbContextOptions<ResearchDbContext>)
                          || d.ServiceType == typeof(ResearchDbContext)

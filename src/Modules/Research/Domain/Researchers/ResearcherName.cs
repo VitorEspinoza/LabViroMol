@@ -16,7 +16,7 @@ public record ResearcherName
         FirstName = firstName.Trim();
         LastName = lastName.Trim();
         CitationName = citationName?.Trim();
-        DisplayName = DisplayName?.Trim();
+        DisplayName = displayName?.Trim();
     }
     
     public string FullName => $"{FirstName} {LastName}";

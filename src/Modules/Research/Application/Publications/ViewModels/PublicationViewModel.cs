@@ -8,5 +8,5 @@ public record PublicationViewModel(
     DateOnly PublicationDate,
     string PublishedOn,
     string PublishUrl,
-    IReadOnlyCollection<Guid> Researchers,
+    IReadOnlyCollection<PublicationAuthorViewModel> Authors,
     DateTimeOffset CreatedAt);

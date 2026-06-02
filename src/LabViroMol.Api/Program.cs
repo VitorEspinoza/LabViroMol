@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using LabViroMol.Modules.Assets.Presentation;
 using LabViroMol.Modules.Inventory.Presentation;
 using LabViroMol.Modules.Notify.Presentation;
+using LabViroMol.Modules.Identity.Presentation;
 using LabViroMol.Modules.Scheduling.Presentation;
 using LabViroMol.Modules.Research.Presentation;
 using LabViroMol.Modules.Shared.Infrastructure;
@@ -30,7 +31,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("http://localhost:4200")
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 
@@ -44,6 +46,7 @@ builder.Services.AddScoped(
 
 builder.Services
     .AddSharedModule()
+    .AddIdentityModule(builder.Configuration)
     .AddInventoryModule(builder.Configuration)
     .AddSchedulingModule(builder.Configuration)
     .AddAssetsModule(builder.Configuration)
@@ -72,6 +75,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
 app.UseStaticFiles(new StaticFileOptions
@@ -81,8 +85,10 @@ app.UseStaticFiles(new StaticFileOptions
 });
 app.UseCors("AngularApp");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapIdentityEndpoints();
 app.MapInventoryEndpoints();
 app.MapResearchEndpoints();
 app.MapSchedulingEndpoints();
