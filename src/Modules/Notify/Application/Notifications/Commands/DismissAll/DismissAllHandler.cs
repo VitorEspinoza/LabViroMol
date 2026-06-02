@@ -26,6 +26,7 @@ public class DismissAllHandler : ICommandHandler<DismissAllCommand, Result>
     {
         var notificationsNotReadedByUser = await _notificationRepository.GetNotificationsByUserNotDismissed(
             _currentUser.Id,
+            _currentUser.Permissions.ToList(),
             ct);
 
         if (notificationsNotReadedByUser.Count <= 0)

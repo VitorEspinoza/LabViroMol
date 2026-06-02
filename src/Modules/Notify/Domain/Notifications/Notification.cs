@@ -16,7 +16,7 @@ public class Notification : AggregateRoot<NotificationId>, ICreationAuditable
         string referenceId, 
         string referenceModule, 
         string type, 
-        Guid targetPermissionId, 
+        string targetPermission, 
         DateTimeOffset expiresOn) : base(id)
     {
         Title = title;
@@ -24,7 +24,7 @@ public class Notification : AggregateRoot<NotificationId>, ICreationAuditable
         ReferenceId = referenceId;
         ReferenceModule = referenceModule;
         Type = type;
-        TargetPermissionId = targetPermissionId;
+        TargetPermission = targetPermission;
         ExpiresOn = expiresOn;
     }
     
@@ -33,14 +33,14 @@ public class Notification : AggregateRoot<NotificationId>, ICreationAuditable
     public string ReferenceId { get; private set; }
     public string ReferenceModule { get; private set; }
     public string Type { get; private set; }
-    public Guid TargetPermissionId { get; private set; }
+    public string TargetPermission { get; private set; }
     public DateTimeOffset ExpiresOn  { get; private set; }
     
     
     
     public List<NotificationDismissal> NotificationDismissals { get; private set; } = [];
 
-    public static Result<Notification> Create(string title, string message, string targetPermissionId, string referenceId, string referenceModule, string type)
+    public static Result<Notification> Create(string title, string message, string targetPermission, string referenceId, string referenceModule, string type)
     {
         var creationDate = DateTimeOffset.Now;
         var notification = new Notification(
@@ -50,7 +50,7 @@ public class Notification : AggregateRoot<NotificationId>, ICreationAuditable
             referenceId,
             referenceModule,
             type,
-            Guid.Parse(targetPermissionId),
+            targetPermission,
             creationDate.AddDays(3));
         
         return Result<Notification>.Success(notification);

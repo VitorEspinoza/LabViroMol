@@ -19,6 +19,7 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
         Description = description;
         Status = ScheduleStatus.PENDING;
         Equipments = equipments;
+        AddEvent(new NewScheduleDomainEvent(this));
     }
 
     public Scheduler Scheduler { get; private set; }

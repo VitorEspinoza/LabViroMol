@@ -2,15 +2,16 @@ using LabViroMol.Modules.Notify.Application.Notifications.Commands.Dismiss;
 using LabViroMol.Modules.Notify.Application.Notifications.Commands.DismissAll;
 using LabViroMol.Modules.Notify.Application.Notifications.Commands.DismissBatch;
 using LabViroMol.Modules.Notify.Domain.Notifications;
+using LabViroMol.Modules.Notify.Infrastructure.Notifications;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
+using LabViroMol.Modules.Shared.Kernel.Interfaces;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
 namespace LabViroMol.Modules.Notify.Presentation.Notifications;
-
-record DismissBatchRequest(List<NotificationId> NotificationIds);
 
 internal static class NotificationEndpoints
 {
@@ -22,20 +23,26 @@ internal static class NotificationEndpoints
         {
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.NoContent());
-        });
+        }).RequireAuthorization();
 
-        group.MapPost("/dismiss/batch", async (DismissBatchRequest request, IMediator mediator, CancellationToken ct) =>
+        group.MapPost("/dismiss/batch", async (DismissBatchCommand command, IMediator mediator, CancellationToken ct) =>
         {
-            var command = new DismissBatchCommand(request.NotificationIds);
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.NoContent());
-        });
+        }).RequireAuthorization();
 
         group.MapPost("/dismiss/{id:guid}", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {
             var command = new DismissCommand(NotificationId.From(id));
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.NoContent());
-        });
+        }).RequireAuthorization();
+
+        group.MapGet("/", async (ICurrentUser currentUser, NotificationQueries queries) =>
+        {
+            var results = await queries.GetAllByPermissions(currentUser.Permissions.ToList());
+            return results;
+        }).RequireAuthorization();
+            
     }
 }

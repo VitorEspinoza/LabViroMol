@@ -53,8 +53,9 @@ namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<Guid>("TargetPermissionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("TargetPermission")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()

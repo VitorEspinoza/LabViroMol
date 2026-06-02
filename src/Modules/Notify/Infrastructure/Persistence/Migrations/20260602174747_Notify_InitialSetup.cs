@@ -25,7 +25,7 @@ namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Migrations
                     ReferenceId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ReferenceModule = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TargetPermissionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TargetPermission = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExpiresOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: false),

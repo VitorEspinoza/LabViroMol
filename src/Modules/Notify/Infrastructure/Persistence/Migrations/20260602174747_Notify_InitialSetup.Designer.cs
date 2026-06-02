@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotifyDbContext))]
-    [Migration("20260529232936_Notify_InitialSetup")]
+    [Migration("20260602174747_Notify_InitialSetup")]
     partial class Notify_InitialSetup
     {
         /// <inheritdoc />
@@ -56,8 +56,9 @@ namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<Guid>("TargetPermissionId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("TargetPermission")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()

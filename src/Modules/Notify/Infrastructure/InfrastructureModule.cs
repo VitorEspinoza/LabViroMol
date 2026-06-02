@@ -1,5 +1,7 @@
 using LabViroMol.Modules.Notify.Application.Shared;
+using LabViroMol.Modules.Notify.Contracts;
 using LabViroMol.Modules.Notify.Domain.Notifications;
+using LabViroMol.Modules.Notify.Infrastructure.Emails;
 using LabViroMol.Modules.Notify.Infrastructure.Notifications;
 using LabViroMol.Modules.Notify.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +16,7 @@ public static class InfrastructureModule
     {
         services
             .AddRepositories()
+            .AddQueries()
             .AddContext(configuration);
 
         return services;
@@ -24,6 +27,14 @@ public static class InfrastructureModule
         services
             .AddScoped<INotificationRepository, NotificationRepository>()
             .AddScoped<INotifyUnitOfWork, NotifyUnitOfWork>();
+        
+        return services;
+    }
+
+    public static IServiceCollection AddQueries(this IServiceCollection services)
+    {
+        services
+            .AddScoped<NotificationQueries>();
         
         return services;
     }
@@ -38,6 +49,11 @@ public static class InfrastructureModule
                 sqlOptions.MigrationsHistoryTable("__NotifyMigrationsHistory");
                 sqlOptions.MigrationsAssembly(typeof(NotifyDbContext).Assembly.FullName);
             }));
+
+        services.Configure<EmailOptions>(
+            configuration.GetSection("Email"));
+        
+        services.AddScoped<ISendEmail, SmtpEmailSender>();
 
         return services;
     }

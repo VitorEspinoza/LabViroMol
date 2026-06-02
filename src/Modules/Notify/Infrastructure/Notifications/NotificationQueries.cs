@@ -6,10 +6,10 @@ namespace LabViroMol.Modules.Notify.Infrastructure.Notifications;
 
 public class NotificationQueries(NotifyDbContext context)
 {
-    public async Task<IReadOnlyCollection<Notification>> GetAllByPermissionsId(List<Guid> ids, CancellationToken ct)
+    public async Task<IReadOnlyCollection<Notification>> GetAllByPermissions(List<string> permissions)
     {
         return await context.Notifications.AsNoTracking()
-            .Where(n => ids.Contains(n.Id))
-            .ToListAsync(ct);
+            .Where(n => permissions.Contains(n.TargetPermission))
+            .ToListAsync();
     }
 }

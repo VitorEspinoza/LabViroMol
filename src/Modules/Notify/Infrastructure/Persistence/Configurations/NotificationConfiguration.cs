@@ -1,6 +1,5 @@
 using LabViroMol.Modules.Notify.Domain.Notifications;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Configurations;
@@ -30,7 +29,7 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
         builder.Property(n => n.Type)
             .IsRequired();
         
-        builder.Property(n => n.TargetPermissionId)
+        builder.Property(n => n.TargetPermission)
             .IsRequired();
         
         builder.Property(n => n.ExpiresOn)
