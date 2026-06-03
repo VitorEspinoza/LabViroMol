@@ -79,7 +79,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scheduling", "Scheduling", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{00B9D33B-D4A2-49EB-AE75-7CDCA557D317}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Domain.UnitTests", "tests\UnitTests\Modules\Scheduling\LabViroMol.Modules.Scheduling.Domain.UnitTests\LabViroMol.Modules.Scheduling.Domain.UnitTests.csproj", "{67E4CC6D-9CD7-4EFA-9E4B-2986FCDB51E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Domain.UnitTests", "tests\UnitTests\Modules\Scheduling\LabViroMol.Modules.Scheduling.Domain.UnitTests.csproj", "{67E4CC6D-9CD7-4EFA-9E4B-2986FCDB51E1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{502CD62A-7DC4-4095-AABD-F69A71B89C25}"
 EndProject
