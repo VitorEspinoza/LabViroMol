@@ -4,8 +4,6 @@ using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.Equipments;
 using LabViroMol.Modules.Assets.Infrastructure.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.Persistence;
-using LabViroMol.Modules.Assets.Infrastructure.Storage;
-using LabViroMol.Modules.Assets.Infrastructure.Storage.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +19,6 @@ public static class InfrastructureModule
             services
                 .AddRepositories()
                 .AddQueries()
-                .AddStorages(configuration)
                 .AddContext(configuration);
             
             return services;
@@ -41,19 +38,6 @@ public static class InfrastructureModule
             services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
             services.AddScoped<IAssetsUnitOfWork, AssetsUnitOfWork>();
             
-            return services;
-        }
-
-        private IServiceCollection AddStorages(
-            IConfiguration configuration)
-        {
-            services.Configure<StorageSettings>(
-                configuration.GetSection("Storage"));
-
-            services.AddScoped<
-                IImageStorageService,
-                LocalImageStorageService>();
-
             return services;
         }
         

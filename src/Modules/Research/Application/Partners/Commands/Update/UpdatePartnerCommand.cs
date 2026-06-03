@@ -1,3 +1,5 @@
+using System;
+
 namespace LabViroMol.Modules.Research.Application.Partners.Commands.Update;
 
 using LabViroMol.Modules.Shared.Kernel.Primitives;

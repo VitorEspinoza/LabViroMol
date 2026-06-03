@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Text.Json.Serialization;
 using LabViroMol.Modules.Assets.Presentation;
 using LabViroMol.Modules.Inventory.Presentation;
@@ -9,7 +11,10 @@ using LabViroMol.Modules.Shared.Infrastructure;
 using LabViroMol.Modules.Shared.Infrastructure.Behaviors;
 using LabViroMol.Modules.Shared.Infrastructure.Converters;
 using Mediator;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Hosting;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,14 +56,15 @@ builder.Services
     .AddSchedulingModule(builder.Configuration)
     .AddAssetsModule(builder.Configuration)
     .AddResearchModule(builder.Configuration)
-    .AddNotifyModule(builder.Configuration);
+    .AddNotifyModule(builder.Configuration)
+    .AddStorages(builder.Configuration);
     
 builder.Services.AddAuthorization();
 
-var configPath = builder.Configuration["Storage:ImageFolderPath"];
+var configPath = builder.Configuration["Storage:RootFolder"];
 if (string.IsNullOrWhiteSpace(configPath))
 {
-    throw new InvalidOperationException("A configuração 'Storage:ImageFolderPath' não foi encontrada ou está vazia.");
+    throw new InvalidOperationException("A configuração 'Storage:RootFolder' não foi encontrada ou está vazia.");
 }
 
 var imagesPath = Path.IsPathRooted(configPath) 

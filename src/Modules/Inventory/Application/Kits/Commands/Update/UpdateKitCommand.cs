@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using LabViroMol.Modules.Inventory.Application.Kits.Commands.Shared;
 using LabViroMol.Modules.Inventory.Domain.Kits;
 using LabViroMol.Modules.Shared.Kernel.Primitives;

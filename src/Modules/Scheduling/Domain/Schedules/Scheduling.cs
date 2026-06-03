@@ -1,4 +1,5 @@
-﻿using LabViroMol.Modules.Scheduling.Domain.Schedules.Policies;
+﻿using System;
+using LabViroMol.Modules.Scheduling.Domain.Schedules.Policies;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Scheduling.Domain.Schedules;

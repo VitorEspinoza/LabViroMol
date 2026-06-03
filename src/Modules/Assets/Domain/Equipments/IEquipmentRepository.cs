@@ -1,4 +1,8 @@
-﻿namespace LabViroMol.Modules.Assets.Domain.Equipments;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace LabViroMol.Modules.Assets.Domain.Equipments;
 
 public interface IEquipmentRepository
 {

@@ -1,5 +1,7 @@
+using System.Linq;
 using LabViroMol.Modules.Research.Domain.Projects;
 using LabViroMol.Modules.Research.Domain.UnitTests.Common;
+using Xunit;
 
 namespace LabViroMol.Modules.Research.Domain.UnitTests.Projects;
 

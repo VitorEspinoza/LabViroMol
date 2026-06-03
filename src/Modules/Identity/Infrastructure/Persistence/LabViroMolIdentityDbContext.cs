@@ -1,3 +1,4 @@
+using System;
 using LabViroMol.Modules.Identity.Domain.Users;
 using LabViroMol.Modules.Identity.Infrastructure.Identity;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;

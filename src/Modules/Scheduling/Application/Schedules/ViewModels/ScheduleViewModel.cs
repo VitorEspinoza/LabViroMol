@@ -1,4 +1,5 @@
-﻿using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Shared;
+﻿using System;
+using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Shared;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.ViewModels;

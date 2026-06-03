@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace LabViroMol.Modules.Research.Application.Projects.Commands.AddMember;
 
 using FluentValidation;

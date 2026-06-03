@@ -1,4 +1,6 @@
 
+using System;
+using System.Collections.Generic;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Domain.References;

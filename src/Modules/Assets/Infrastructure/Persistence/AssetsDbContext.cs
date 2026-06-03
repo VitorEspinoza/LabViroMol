@@ -1,3 +1,4 @@
+using System.Linq;
 using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;

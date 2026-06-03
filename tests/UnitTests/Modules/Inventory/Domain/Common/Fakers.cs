@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Bogus;
 using LabViroMol.Modules.Inventory.Domain.Kits;
 using LabViroMol.Modules.Inventory.Domain.Materials;

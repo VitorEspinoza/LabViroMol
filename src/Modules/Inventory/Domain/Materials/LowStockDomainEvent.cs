@@ -1,4 +1,5 @@
-﻿using LabViroMol.Modules.Shared.Kernel.Messaging;
+﻿using System;
+using LabViroMol.Modules.Shared.Kernel.Messaging;
 
 namespace LabViroMol.Modules.Inventory.Domain.Materials;
 

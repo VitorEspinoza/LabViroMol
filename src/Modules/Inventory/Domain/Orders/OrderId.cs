@@ -1,4 +1,5 @@
-﻿using LabViroMol.Modules.Shared.Kernel.Primitives;
+﻿using System;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Inventory.Domain.Orders;
 

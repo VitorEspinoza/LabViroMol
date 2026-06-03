@@ -1,4 +1,7 @@
-﻿using LabViroMol.Modules.Scheduling.Domain.Schedules;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Domain.UnitTests.Common;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Xunit;

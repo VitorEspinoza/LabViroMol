@@ -1,4 +1,6 @@
-﻿namespace LabViroMol.Modules.Inventory.Application.Orders.ViewModels;
+﻿using System;
+
+namespace LabViroMol.Modules.Inventory.Application.Orders.ViewModels;
 
 public record OrderViewModel(
     Guid MaterialId,

@@ -1,4 +1,6 @@
-﻿namespace LabViroMol.Modules.Scheduling.Domain.Schedules;
+﻿using System;
+
+namespace LabViroMol.Modules.Scheduling.Domain.Schedules;
 
 public class ScheduleEquipment
 {

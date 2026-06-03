@@ -1,3 +1,4 @@
+using System;
 using LabViroMol.Modules.Shared.Kernel.Messaging;
 
 namespace LabViroMol.Modules.Scheduling.Domain.Schedules.Events;

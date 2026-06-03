@@ -1,3 +1,5 @@
+using System;
+
 namespace LabViroMol.Modules.Research.Presentation.Researchers;
 
 using LabViroMol.Modules.Research.Domain.Researchers;

@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using LabViroMol.Modules.Identity.Infrastructure.Identity;
 using LabViroMol.Modules.Identity.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace LabViroMol.Modules.Identity.IntegrationTests;
 

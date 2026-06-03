@@ -1,7 +1,10 @@
+using System;
 using System.Net;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
 using LabViroMol.Modules.Research.IntegrationTests.Researchers;
 using LabViroMol.Modules.Research.Presentation.Publications;
+using Xunit;
 
 namespace LabViroMol.Modules.Research.IntegrationTests.Publications;
 

@@ -1,5 +1,7 @@
+using System.Linq;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.UnitTests.Common;
+using Xunit;
 
 namespace LabViroMol.Modules.Inventory.Domain.UnitTests.Materials;
 

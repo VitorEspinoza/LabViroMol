@@ -1,3 +1,5 @@
+using System;
+
 namespace LabViroMol.Modules.Research.Application.Publications.Commands.RemoveResearcher;
 
 using LabViroMol.Modules.Shared.Kernel.Primitives;

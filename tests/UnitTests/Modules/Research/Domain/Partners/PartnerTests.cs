@@ -1,6 +1,7 @@
 using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Research.Domain.UnitTests.Common;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
+using Xunit;
 
 namespace LabViroMol.Modules.Research.Domain.UnitTests.Partners;
 

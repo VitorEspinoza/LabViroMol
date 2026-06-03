@@ -1,4 +1,9 @@
-﻿namespace LabViroMol.Modules.Scheduling.Domain.Schedules;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace LabViroMol.Modules.Scheduling.Domain.Schedules;
 
 public interface IScheduleRepository
 {

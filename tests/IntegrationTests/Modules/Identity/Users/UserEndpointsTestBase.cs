@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 
 namespace LabViroMol.Modules.Identity.IntegrationTests.Users;

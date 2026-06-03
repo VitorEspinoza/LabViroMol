@@ -1,5 +1,8 @@
+using System;
+using System.Net.Http;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace LabViroMol.Modules.Research.IntegrationTests;
 

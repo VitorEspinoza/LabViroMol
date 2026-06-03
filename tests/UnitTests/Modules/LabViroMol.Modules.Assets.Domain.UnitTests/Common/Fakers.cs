@@ -1,3 +1,4 @@
+using System;
 using Bogus;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 using LabViroMol.Modules.Assets.Domain.Equipments;

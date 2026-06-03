@@ -1,3 +1,5 @@
+using System;
+
 namespace LabViroMol.Modules.Research.Domain.Positions;
 
 using LabViroMol.Modules.Shared.Kernel.Primitives;

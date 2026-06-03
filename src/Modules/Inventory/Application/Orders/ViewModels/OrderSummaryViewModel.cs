@@ -1,3 +1,5 @@
+using System;
+
 namespace LabViroMol.Modules.Inventory.Application.Orders.ViewModels;
 
 public record OrderSummaryViewModel(

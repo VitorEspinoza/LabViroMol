@@ -1,3 +1,5 @@
+using System;
+
 namespace LabViroMol.Modules.Identity.Contracts;
 
 public record ResearchRegistrationData(

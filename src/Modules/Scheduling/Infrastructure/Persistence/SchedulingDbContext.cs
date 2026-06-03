@@ -1,4 +1,5 @@
-﻿using LabViroMol.Modules.Scheduling.Domain.Schedules;
+﻿using System.Linq;
+using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Converters;
 using LabViroMol.Modules.Shared.Kernel.Identity;

@@ -1,3 +1,5 @@
+using System;
+
 namespace LabViroMol.Modules.Research.Application.Publications.Commands.AddResearcher;
 
 using LabViroMol.Modules.Shared.Kernel.Primitives;

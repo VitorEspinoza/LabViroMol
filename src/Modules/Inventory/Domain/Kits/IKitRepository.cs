@@ -1,4 +1,8 @@
-﻿namespace LabViroMol.Modules.Inventory.Domain.Kits;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace LabViroMol.Modules.Inventory.Domain.Kits;
 
 public interface IKitRepository
 {

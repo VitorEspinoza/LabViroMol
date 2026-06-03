@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace LabViroMol.Modules.Research.Application.Projects.Commands.ChangeMemberRole;
 
 using FluentValidation;

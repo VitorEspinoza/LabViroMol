@@ -1,21 +1,47 @@
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using LabViroMol.Modules.Assets.Application.Shared;
 using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Shared.Infrastructure.Storage;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
+using Microsoft.Extensions.Options;
 
 namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.UploadImage;
 
-public class UploadImageHandler(
-    IImageStorageService storage,
-    IEquipmentRepository equipmentRepository,
-    IAssetsUnitOfWork unitOfWork) : ICommandHandler<UploadImageCommand, Result>
+public class UploadImageHandler : ICommandHandler<UploadImageCommand, Result>
 {
-    public async ValueTask<Result> Handle(UploadImageCommand command, CancellationToken ct)
+    private readonly IEquipmentRepository _equipmentRepository;
+    private readonly IAssetsUnitOfWork _unitOfWork;
+    private readonly IFileStorage _storage;
+    private readonly StorageSettings _storageSettings;
+
+    public UploadImageHandler(
+        IEquipmentRepository equipmentRepository,
+        IAssetsUnitOfWork unitOfWork,
+        IFileStorage storage,
+        IOptions<StorageSettings> storageSettings)
     {
-        var equipment = await equipmentRepository.GetByIdAsync(command.EquipmentId, ct);
+        _equipmentRepository = equipmentRepository;
+        _unitOfWork = unitOfWork;
+        _storage = storage;
+        _storageSettings = storageSettings.Value;
+    }
+    
+    public async ValueTask<Result> Handle(
+        UploadImageCommand command,
+        CancellationToken ct)
+    {
+        var equipment =
+            await _equipmentRepository.GetByIdAsync(
+                command.EquipmentId,
+                ct);
 
         if (equipment is null)
-            return Result.NotFound("Equipamento não encontrado");
+            return Result.NotFound(
+                "Equipamento não encontrado");
 
         var extension =
             Path.GetExtension(command.FileName);
@@ -34,16 +60,19 @@ public class UploadImageHandler(
                 "Invalid image extension");
         }
 
+        var fileName =
+            $"{equipment.Id.Value}{extension}";
+
         var imageUrl =
-            await storage.SaveEquipmentImageAsync(
-                equipment.Id.Value,
+            await _storage.SaveAsync(
                 command.Stream,
-                extension,
+                fileName,
+                _storageSettings.Folders.Equipments,
                 ct);
 
         equipment.AttachImageUrl(imageUrl);
 
-        await unitOfWork.CompleteAsync(ct);
+        await _unitOfWork.CompleteAsync(ct);
 
         return Result.Success();
     }

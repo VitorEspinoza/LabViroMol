@@ -1,4 +1,6 @@
-﻿using LabViroMol.Modules.Assets.Application.Equipments.Commands.Create;
+﻿using System;
+using System.Threading;
+using LabViroMol.Modules.Assets.Application.Equipments.Commands.Create;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.UploadImage;
 using LabViroMol.Modules.Assets.Domain.Equipments;
@@ -54,7 +56,7 @@ internal static class EquipmentEndpoints
             {
                 var result = await mediator.Send(
                     new UploadImageCommand(
-                        new EquipmentId(id),
+                        EquipmentId.From(id),
                         file.OpenReadStream(),
                         file.FileName));
 

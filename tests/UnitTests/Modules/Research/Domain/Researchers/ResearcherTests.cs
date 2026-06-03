@@ -1,5 +1,6 @@
 using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Research.Domain.UnitTests.Common;
+using Xunit;
 
 namespace LabViroMol.Modules.Research.Domain.UnitTests.Researchers;
 

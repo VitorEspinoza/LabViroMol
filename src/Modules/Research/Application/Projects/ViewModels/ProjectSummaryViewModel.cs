@@ -1,3 +1,5 @@
+using System;
+
 namespace LabViroMol.Modules.Research.Application.Projects.ViewModels;
 
 public record ProjectSummaryViewModel(

@@ -1,3 +1,4 @@
+using System;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Messaging;
 

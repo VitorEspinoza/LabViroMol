@@ -1,3 +1,4 @@
+using System;
 using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 

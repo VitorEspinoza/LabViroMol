@@ -1,4 +1,5 @@
-﻿using LabViroMol.Modules.Inventory.Domain.Orders;
+﻿using System;
+using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Domain.References;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;

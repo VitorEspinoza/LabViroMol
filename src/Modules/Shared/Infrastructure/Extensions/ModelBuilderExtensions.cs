@@ -1,3 +1,4 @@
+using System;
 using System.Linq.Expressions;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;

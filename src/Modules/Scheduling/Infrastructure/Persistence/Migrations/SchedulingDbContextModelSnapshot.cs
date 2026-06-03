@@ -64,6 +64,10 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("TermUrl")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("TermUrl");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 

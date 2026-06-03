@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Linq;
+using FluentValidation;
 
 namespace LabViroMol.Modules.Inventory.Application.Kits.Commands.Update;
 

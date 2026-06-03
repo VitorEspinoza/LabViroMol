@@ -1,6 +1,7 @@
 using LabViroMol.Modules.Identity.Domain.UnitTests.Common;
 using LabViroMol.Modules.Identity.Domain.Users;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
+using Xunit;
 
 namespace LabViroMol.Modules.Identity.Domain.UnitTests.Users;
 

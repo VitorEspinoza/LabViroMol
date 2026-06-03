@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 

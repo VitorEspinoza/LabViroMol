@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Primitives;

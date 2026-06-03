@@ -1,4 +1,5 @@
-﻿using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Shared;
+﻿using System.Collections.Generic;
+using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Shared;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;

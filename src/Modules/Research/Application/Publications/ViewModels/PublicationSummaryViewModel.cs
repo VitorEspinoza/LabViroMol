@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace LabViroMol.Modules.Research.Application.Publications.ViewModels;
 
 public record PublicationSummaryViewModel(

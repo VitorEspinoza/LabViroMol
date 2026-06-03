@@ -1,3 +1,4 @@
+using System.Linq;
 using LabViroMol.Modules.Identity.Infrastructure.Persistence;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;

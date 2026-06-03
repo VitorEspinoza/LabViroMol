@@ -1,3 +1,4 @@
+using System;
 using Bogus;
 using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Research.Domain.Positions;

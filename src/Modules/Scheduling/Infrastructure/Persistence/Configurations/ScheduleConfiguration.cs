@@ -1,4 +1,5 @@
-﻿using LabViroMol.Modules.Scheduling.Domain.Schedules;
+﻿using System;
+using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -58,6 +59,10 @@ public class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
         
         builder.Property(s => s.RefusedBy)
             .HasColumnName("RefusedBy");
+        
+        builder.Property(s => s.TermUrl)
+            .HasColumnName("TermUrl")
+            .IsRequired(false);
         
         builder.OwnsMany(s => s.Equipments, p =>
         {

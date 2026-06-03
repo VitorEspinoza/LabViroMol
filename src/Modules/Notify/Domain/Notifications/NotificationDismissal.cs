@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;

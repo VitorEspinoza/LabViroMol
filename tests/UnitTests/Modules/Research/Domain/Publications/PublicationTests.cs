@@ -1,5 +1,8 @@
+using System;
+using System.Linq;
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Domain.UnitTests.Common;
+using Xunit;
 
 namespace LabViroMol.Modules.Research.Domain.UnitTests.Publications;
 

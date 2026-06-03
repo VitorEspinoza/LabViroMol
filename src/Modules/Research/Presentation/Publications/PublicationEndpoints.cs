@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+
 namespace LabViroMol.Modules.Research.Presentation.Publications;
 
 using LabViroMol.Modules.Research.Application.Publications.Commands.AddResearcher;

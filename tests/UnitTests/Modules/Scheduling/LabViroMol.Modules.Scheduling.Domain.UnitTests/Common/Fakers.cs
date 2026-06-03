@@ -1,4 +1,7 @@
-﻿using Bogus;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Bogus;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;

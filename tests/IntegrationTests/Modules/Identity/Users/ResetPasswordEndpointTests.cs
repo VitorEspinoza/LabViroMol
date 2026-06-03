@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
 using LabViroMol.Modules.Identity.Application.Users.ResetPassword;
+using Xunit;
 
 namespace LabViroMol.Modules.Identity.IntegrationTests.Users;
 
