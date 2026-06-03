@@ -1,6 +1,6 @@
-﻿using LabViroMol.Modules.Shared.Infrastructure.Extensions;
+﻿using LabViroMol.Modules.Scheduling.Domain.Schedules;
+using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Converters;
-using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Microsoft.EntityFrameworkCore;

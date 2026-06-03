@@ -34,7 +34,7 @@ public class LowStockEventHandler : INotificationHandler<LowStockDomainEvent>
         await _sendNotification.SendNotification(
             "Estoque mínimo",
             message,
-            material?.Id.ToString(),
+            material?.Id.Value.ToString(),
             "Inventory",
             "LowStock",
             Permissions.Inventory.MaterialsManage,

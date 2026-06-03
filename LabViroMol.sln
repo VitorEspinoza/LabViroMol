@@ -61,19 +61,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scheduling", "Scheduling", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{593633F8-84CF-4FD6-A908-D7A88E6DC5A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Domain", "src\Modules\Scheduling\Domain\LabViroMol.Modules.Scheduling.Domain\LabViroMol.Modules.Scheduling.Domain.csproj", "{F4A14410-2A57-4A06-9A46-80D7318E0511}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Domain", "src\Modules\Scheduling\Domain\LabViroMol.Modules.Scheduling.Domain.csproj", "{F4A14410-2A57-4A06-9A46-80D7318E0511}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{9C14036B-8292-4FA8-BBC2-F1F3A01490CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Infrastructure", "src\Modules\Scheduling\Infrastructure\LabViroMol.Modules.Scheduling.Infrastructure\LabViroMol.Modules.Scheduling.Infrastructure.csproj", "{3BB58F69-DB52-467D-B81D-888F426C3DA7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Infrastructure", "src\Modules\Scheduling\Infrastructure\LabViroMol.Modules.Scheduling.Infrastructure.csproj", "{3BB58F69-DB52-467D-B81D-888F426C3DA7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{2E62F6DB-B673-45EB-BEA7-677B80FB43D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Presentation", "src\Modules\Scheduling\Presentation\LabViroMol.Modules.Scheduling.Presentation\LabViroMol.Modules.Scheduling.Presentation.csproj", "{E05E682C-4116-4DA7-B319-DB2892593D32}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Presentation", "src\Modules\Scheduling\Presentation\LabViroMol.Modules.Scheduling.Presentation.csproj", "{E05E682C-4116-4DA7-B319-DB2892593D32}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{6E4C84AC-074B-40E8-ADA3-D37F10DEE3CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Application", "src\Modules\Scheduling\Application\LabViroMol.Modules.Scheduling.Application\LabViroMol.Modules.Scheduling.Application.csproj", "{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Application", "src\Modules\Scheduling\Application\LabViroMol.Modules.Scheduling.Application.csproj", "{DDDE06F8-A7BC-49C8-8659-7B9831F8A12A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scheduling", "Scheduling", "{21301EEF-6450-424D-BF3F-63E66A0472A6}"
 EndProject

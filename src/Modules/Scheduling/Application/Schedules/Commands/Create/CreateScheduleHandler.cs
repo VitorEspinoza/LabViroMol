@@ -1,5 +1,4 @@
-﻿using LabViroMol.Modules.Notify.Contracts;
-using LabViroMol.Modules.Scheduling.Application.Shared;
+﻿using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
@@ -13,8 +12,7 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
 
     public CreateScheduleHandler(
         IScheduleRepository scheduleRepository,
-        ISchedulingUnitOfWork unitOfWork,
-        ISendNotification sendNotification)
+        ISchedulingUnitOfWork unitOfWork)
     {
         _scheduleRepository = scheduleRepository;
         _unitOfWork = unitOfWork;

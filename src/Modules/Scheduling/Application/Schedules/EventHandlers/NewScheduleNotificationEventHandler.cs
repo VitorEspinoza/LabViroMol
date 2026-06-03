@@ -1,15 +1,16 @@
 using LabViroMol.Modules.Notify.Contracts;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
+using LabViroMol.Modules.Scheduling.Domain.Schedules.Events;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using Mediator;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.EventHandlers;
 
-public class NewScheduleEventHandler : INotificationHandler<NewScheduleDomainEvent>
+public class NewScheduleNotificationEventHandler : INotificationHandler<NewScheduleDomainEvent>
 {
     private readonly ISendNotification _sendNotification;
 
-    public NewScheduleEventHandler(
+    public NewScheduleNotificationEventHandler(
         ISendNotification sendNotification)
     {
         _sendNotification = sendNotification;

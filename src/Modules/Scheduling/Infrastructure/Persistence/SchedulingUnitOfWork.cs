@@ -1,6 +1,6 @@
-﻿using LabViroMol.Modules.Shared.Infrastructure.Persistence;
+﻿using LabViroMol.Modules.Scheduling.Application.Shared;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
-using LabViroMol.Modules.Scheduling.Application.Shared;
 using Mediator;
 
 namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence;

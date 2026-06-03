@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Scheduling.Domain.Schedules.Events;
 using LabViroMol.Modules.Shared.Kernel.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
@@ -55,6 +56,7 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
 
         Status = ScheduleStatus.SCHEDULED;
         ApprovedBy = userId;
+        AddEvent(new ApprovedScheduleDomainEvent(this));
         return Result.Success();
     }
 
@@ -67,6 +69,7 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
 
         Status = ScheduleStatus.REFUSED;
         RefusedBy = userId;
+        AddEvent(new ReprovedScheduleDomainEvent(this));
         return Result.Success();
     }
 
