@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SchedulingDbContext))]
-    [Migration("20260527005457_Scheduling_InitialSetup")]
+    [Migration("20260603162424_Scheduling_InitialSetup")]
     partial class Scheduling_InitialSetup
     {
         /// <inheritdoc />
@@ -66,6 +66,10 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TermUrl")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("TermUrl");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");

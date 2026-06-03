@@ -33,6 +33,7 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApprovedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     RefusedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TermUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
                     UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: true)

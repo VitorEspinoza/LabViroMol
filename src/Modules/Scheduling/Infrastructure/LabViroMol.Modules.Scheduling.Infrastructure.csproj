@@ -19,8 +19,4 @@
       <ProjectReference Include="..\Domain\LabViroMol.Modules.Scheduling.Domain.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Persistence\Migrations\" />
-    </ItemGroup>
-
 </Project>
