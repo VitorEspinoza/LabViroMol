@@ -52,6 +52,6 @@ internal static class ScheduleEndpoints
                 var command = new UploadTermCommand(ScheduleId.From(id), file.OpenReadStream(), file.FileName);
                 var result = await mediator.Send(command, ct);
                 return result.ToHttpResult(Results.Accepted());
-            });
+            }).DisableAntiforgery();
     }
 }
