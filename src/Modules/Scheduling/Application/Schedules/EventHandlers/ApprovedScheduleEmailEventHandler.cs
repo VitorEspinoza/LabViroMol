@@ -22,6 +22,17 @@ public class ApprovedScheduleEmailEventHandler : INotificationHandler<ApprovedSc
 
         var subject = "Agendamento Confirmado";
 
+        var body = MountEmailBody(schedule);
+
+        await _emailSender.SendEmail(
+            schedule.Scheduler.Email,
+            subject,
+            body,
+            ct);
+    }
+
+    private string MountEmailBody(Schedule schedule)
+    {
         var body = $"""
                     <p>Olá, {schedule.Scheduler.Name}.</p>
 
@@ -53,11 +64,7 @@ public class ApprovedScheduleEmailEventHandler : INotificationHandler<ApprovedSc
                         Laboratório de Virologia Molecular - Hospital de Curitiba UFPR
                     </p>
                     """;
-
-        await _emailSender.SendEmail(
-            schedule.Scheduler.Email,
-            subject,
-            body,
-            ct);
+        
+        return body;
     }
 }

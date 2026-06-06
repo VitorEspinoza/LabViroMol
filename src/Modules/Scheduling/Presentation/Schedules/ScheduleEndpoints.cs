@@ -4,12 +4,15 @@ using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Refuse;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Infrastructure.Schedules;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
+using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Http;
 
 namespace LabViroMol.Modules.Scheduling.Presentation.Schedules;
+
+public record ReproveScheduleRequest(string Justification);
 
 internal static class ScheduleEndpoints
 {
@@ -38,9 +41,9 @@ internal static class ScheduleEndpoints
             });
 
         group.MapPost("/{id:guid}/refuse",
-            async (Guid id, IMediator mediator, CancellationToken ct) =>
+            async (Guid id, ReproveScheduleRequest request, IMediator mediator, CancellationToken ct) =>
             {
-                var command = new RefuseScheduleCommand(ScheduleId.From(id));
+                var command = new RefuseScheduleCommand(ScheduleId.From(id), request.Justification);
                 var result = await mediator.Send(command, ct);
                 return result.ToHttpResult(Results.Accepted());
             });

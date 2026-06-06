@@ -54,7 +54,7 @@ public class ApproveScheduleCommandHandler : ICommandHandler<ApproveScheduleComm
                      s.Id != schedule.Id && 
                      s.Status == ScheduleStatus.PENDING))
         {
-            conflict.Refuse(_currentUser.Id);
+            conflict.Refuse(_currentUser.Id, "Outro agendamento com horário conflitante foi aprovado.");
         }
     }
 }

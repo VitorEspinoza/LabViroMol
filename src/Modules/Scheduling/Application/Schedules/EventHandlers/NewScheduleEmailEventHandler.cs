@@ -23,6 +23,17 @@ public class NewScheduleEmailEventHandler : INotificationHandler<NewScheduleDoma
 
         var subject = "Solicitação de Agendamento Recebida";
 
+        var body = MountEmailBody(schedule);
+
+        await _emailSender.SendEmail(
+            schedule.Scheduler.Email,
+            subject,
+            body,
+            ct);
+    }
+
+    private string MountEmailBody(Schedule schedule)
+    {
         var body = $"""
                     <p>Olá, {schedule.Scheduler.Name}.</p>
 
@@ -43,10 +54,6 @@ public class NewScheduleEmailEventHandler : INotificationHandler<NewScheduleDoma
                     <p>Atenciosamente,<br />Laboratório de virologia molecular - Hospital de Curitiba UFPR</p>
                     """;
 
-        await _emailSender.SendEmail(
-            schedule.Scheduler.Email,
-            subject,
-            body,
-            ct);
+        return body;
     }
 }

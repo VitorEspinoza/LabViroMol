@@ -60,7 +60,7 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
         return Result.Success();
     }
 
-    public Result Refuse(UserId userId)
+    public Result Refuse(UserId userId, string justification)
     {
         var valid = EnsureCanBeApprovedOrRefused();
 
@@ -69,7 +69,7 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
 
         Status = ScheduleStatus.REFUSED;
         RefusedBy = userId;
-        AddEvent(new ReprovedScheduleDomainEvent(this));
+        AddEvent(new ReprovedScheduleDomainEvent(this, justification));
         return Result.Success();
     }
 

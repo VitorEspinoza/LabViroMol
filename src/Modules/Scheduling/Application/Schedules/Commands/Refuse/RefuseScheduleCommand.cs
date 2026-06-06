@@ -4,4 +4,4 @@ using Mediator;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Refuse;
 
-public record RefuseScheduleCommand(ScheduleId ScheduleId) : ICommand<Result>;
+public record RefuseScheduleCommand(ScheduleId ScheduleId, string Justification) : ICommand<Result>;

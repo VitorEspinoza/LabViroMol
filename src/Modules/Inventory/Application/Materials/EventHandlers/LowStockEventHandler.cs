@@ -20,21 +20,17 @@ public class LowStockEventHandler : INotificationHandler<LowStockDomainEvent>
     
     public async ValueTask Handle(LowStockDomainEvent notification, CancellationToken ct)
     {
-        var material = await _materialRepository.GetByIdAsync(notification.MaterialId, ct);
-        
-        var materialName = material?.Name ?? string.Empty;
-
         var message = $"""
                        Material abaixo do estoque mínimo.
                        
-                       Material: {materialName}
+                       Material: {notification.MaterialName}
                        Quantidade: {notification.CurrentQuantity}
                        """;
 
         await _sendNotification.SendNotification(
             "Estoque mínimo",
             message,
-            material?.Id.Value.ToString(),
+            notification.MaterialId.Value.ToString(),
             "Inventory",
             "LowStock",
             Permissions.Inventory.MaterialsManage,
