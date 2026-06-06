@@ -1,4 +1,5 @@
 using LabViroMol.Modules.Notify.Contracts;
+using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Domain.Schedules.Events;
 using Mediator;
 
@@ -21,6 +22,17 @@ public class ReprovedScheduleEmailEventHandler : INotificationHandler<ReprovedSc
 
         var subject = "Solicitação de Agendamento Não Aprovada";
 
+        var body = MountEmailBody(schedule, notification.Justification);
+
+        await _emailSender.SendEmail(
+            schedule.Scheduler.Email,
+            subject,
+            body,
+            cancellationToken);
+    }
+
+    private string MountEmailBody(Schedule schedule, string justification)
+    {
         var body = $"""
                     <p>Olá, {schedule.Scheduler.Name}.</p>
 
@@ -29,6 +41,10 @@ public class ReprovedScheduleEmailEventHandler : INotificationHandler<ReprovedSc
                         <strong>{schedule.ProjectTitle}</strong> foi analisada e,
                         neste momento, <strong>não foi aprovada</strong>.
                     </p>
+                    
+                    <p>
+                        Justificativa: {justification}
+                    <p>
 
                     <h3>Detalhes da solicitação</h3>
 
@@ -53,11 +69,7 @@ public class ReprovedScheduleEmailEventHandler : INotificationHandler<ReprovedSc
                         Laboratório de Virologia Molecular - Hospital de Curitiba UFPR
                     </p>
                     """;
-
-        await _emailSender.SendEmail(
-            schedule.Scheduler.Email,
-            subject,
-            body,
-            cancellationToken);
+        
+        return body;
     }
 }

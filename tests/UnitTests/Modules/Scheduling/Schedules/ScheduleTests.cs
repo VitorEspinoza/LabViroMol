@@ -97,9 +97,10 @@ public class ScheduleTests
             // Arrange
             var schedule = Fakers.CreateSchedule();
             var userId = Fakers.AnyUserId();
+            var justification = "test";
  
             // Act
-            schedule.Refuse(userId);
+            schedule.Refuse(userId, justification);
  
             // Assert
             Assert.Equal(ScheduleStatus.REFUSED, schedule.Status);
@@ -111,10 +112,12 @@ public class ScheduleTests
         {
             // Arrange
             var schedule = Fakers.CreateSchedule();
-            schedule.Refuse(Fakers.AnyUserId());
- 
+            var justification = "test";
+            schedule.Refuse(Fakers.AnyUserId(), justification);
+            
+            
             // Act & Assert
-            var result  = schedule.Refuse(Fakers.AnyUserId());
+            var result  = schedule.Refuse(Fakers.AnyUserId(), justification);
             Assert.True(result.IsFailure);
         }
     }

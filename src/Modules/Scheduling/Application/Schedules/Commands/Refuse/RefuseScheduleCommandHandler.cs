@@ -29,7 +29,7 @@ public class RefuseScheduleCommandHandler : ICommandHandler<RefuseScheduleComman
         if (schedule is null)
             return Result.NotFound("Agendamento não encontrado.");
         
-        schedule.Refuse(_currentUser.Id);
+        schedule.Refuse(_currentUser.Id, command.Justification);
         
         await _unitOfWork.CompleteAsync(ct);
         return Result.Success();

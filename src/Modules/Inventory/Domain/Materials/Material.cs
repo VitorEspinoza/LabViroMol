@@ -107,7 +107,7 @@ public class Material : AggregateRoot<MaterialId>, ICreationAuditable, IModifica
     {
         if (StockQuantity <= MinStock)
         {
-            AddEvent(new LowStockDomainEvent(Id, StockQuantity));
+            AddEvent(new LowStockDomainEvent(Id, Name, StockQuantity));
         }
     }
 
