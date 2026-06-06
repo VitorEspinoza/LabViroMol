@@ -7,7 +7,11 @@ namespace LabViroMol.Modules.Identity.IntegrationTests.Roles;
 
 public class CreateRoleTests : BaseIdentityIntegrationTest
 {
-    public CreateRoleTests(IdentityIntegrationTestWebAppFactory factory) : base(factory) { }
+    public CreateRoleTests(IdentityIntegrationTestWebAppFactory factory) : base(factory)
+    {
+        AuthenticateAs(Guid.NewGuid(), "admin@test.com", "Admin", "Test",
+            [Permissions.Identity.RolesManage]);
+    }
 
     [Fact]
     public async Task ShouldReturn201_WhenRequestIsValid()

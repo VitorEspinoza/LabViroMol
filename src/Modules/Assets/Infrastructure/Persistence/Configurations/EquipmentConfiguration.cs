@@ -36,5 +36,9 @@ public class EquipmentConfiguration : IEntityTypeConfiguration<Equipment>
 
         builder.Property(e => e.ImageUrl)
             .IsRequired(false);
+
+        builder.Property(e => e.Location)
+            .HasMaxLength(200)
+            .IsRequired(false);
     }
 }

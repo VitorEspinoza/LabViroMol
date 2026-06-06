@@ -6,6 +6,7 @@ using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.References;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
+using LabViroMol.Modules.Shared.Kernel.Authorization;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -29,7 +30,8 @@ internal static class MaterialStockEndpoints
             var result = await mediator.Send(command, ct);
 
             return result.ToHttpResult(Results.NoContent());
-        }).Accepts<AddStockMaterialRequest>("application/json");
+        }).Accepts<AddStockMaterialRequest>("application/json")
+          .RequireAuthorization(Permissions.Inventory.StockManage);
 
         group.MapPost("/{id:guid}/write-off", async (Guid id, WriteOffRequest request, IMediator mediator, CancellationToken ct) =>
         {
@@ -56,7 +58,7 @@ internal static class MaterialStockEndpoints
             }
 
             return result.ToHttpResult(Results.NoContent());
-        }).Accepts<WriteOffRequest>("application/json");
+        }).Accepts<WriteOffRequest>("application/json")
+          .RequireAuthorization(Permissions.Inventory.StockManage);
     }
-
 }

@@ -1,4 +1,4 @@
-﻿using LabViroMol.Modules.Assets.Application;
+using LabViroMol.Modules.Assets.Application;
 using LabViroMol.Modules.Assets.Infrastructure;
 using LabViroMol.Modules.Assets.Presentation.Equipments;
 using LabViroMol.Modules.Assets.Presentation.MaintenanceRequests;
@@ -25,10 +25,13 @@ public static class AssetsModule
     {
         var group = app.MapGroup("/api/assets")
             .WithTags("Assets");
-        
+
         group.MapEquipmentEndpoints();
         group.MapMaintenanceRequestsEndpoints();
-        
+
+        var publicGroup = group.MapGroup("/public").WithTags("Assets-Public");
+        publicGroup.MapInstitutionalEquipmentEndpoints();
+
         return app;
     }
 }

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using LabViroMol.Modules.Research.Application.Positions.Commands.Create;
 using LabViroMol.Modules.Research.Presentation.Positions;
 
 namespace LabViroMol.Modules.Research.IntegrationTests.Positions;
@@ -13,7 +14,7 @@ public class CreatePositionTests : PositionEndpointsTestBase
     {
         var response = await Client.PostAsJsonAsync(
             BaseRoute,
-            new CreatePositionRequest("Pesquisador Senior", "Cargo de pesquisador com experiencia avancada"));
+            new CreatePositionCommand("Pesquisador Senior", "Cargo de pesquisador com experiencia avancada"));
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
@@ -23,7 +24,7 @@ public class CreatePositionTests : PositionEndpointsTestBase
     {
         var response = await Client.PostAsJsonAsync(
             BaseRoute,
-            new CreatePositionRequest("", "Descrição válida"));
+            new CreatePositionCommand("", "Descrição válida"));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }

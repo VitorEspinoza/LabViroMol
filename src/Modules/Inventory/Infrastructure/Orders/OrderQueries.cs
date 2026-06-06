@@ -1,6 +1,7 @@
 using LabViroMol.Modules.Inventory.Application.Orders.ViewModels;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
+using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.Orders;
@@ -43,6 +44,39 @@ public class OrderQueries
             .FirstOrDefaultAsync();
     }
 
+    public async Task<PagedResponse<OrderSummaryViewModel>> GetAllAsync(PagedRequest request)
+    {
+        var all = await _context.Orders
+            .Join(_context.Materials,
+                o => o.MaterialId,
+                m => m.Id,
+                (order, material) =>
+                    new OrderSummaryViewModel(
+                        "MockProject",
+                        material.Name,
+                        material.Unit.ToString(),
+                        order.RequestedQuantity,
+                        (order.Receipt != null ? order.Receipt.Quantity : null)!,
+                        order.Status.ToString(),
+                        "Mock User",
+                        EF.Property<DateTimeOffset>(order, "CreatedAt"))
+            )
+            .ToListAsync();
+
+        var sorted = request.SortBy?.ToLower() switch
+        {
+            "status" => request.SortDirection == "desc"
+                ? all.OrderByDescending(o => o.Status).ToList()
+                : all.OrderBy(o => o.Status).ToList(),
+            "createdon" => request.SortDirection == "desc"
+                ? all.OrderByDescending(o => o.CreatedOn).ToList()
+                : all.OrderBy(o => o.CreatedOn).ToList(),
+            _ => all.OrderByDescending(o => o.CreatedOn).ToList()
+        };
+
+        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
+    }
+
     public async Task<List<OrderSummaryViewModel>> GetAll()
     {
         return await _context.Orders
@@ -59,7 +93,7 @@ public class OrderQueries
                         order.Status.ToString(),
                         "Mock User",
                         EF.Property<DateTimeOffset>(order, "CreatedAt"))
-                ) 
+            )
             .ToListAsync();
     }
 }

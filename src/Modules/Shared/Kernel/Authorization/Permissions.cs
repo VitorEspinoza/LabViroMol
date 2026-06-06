@@ -22,6 +22,10 @@ public static class Permissions
         public const string PublicationsManage = $"Research.Publications.{Manage}";
         public const string ResearchersView = $"Research.Researchers.{View}";
         public const string ResearchersManage = $"Research.Researchers.{Manage}";
+        public const string PartnersView = $"Research.Partners.{View}";
+        public const string PartnersManage = $"Research.Partners.{Manage}";
+        public const string PositionsView = $"Research.Positions.{View}";
+        public const string PositionsManage = $"Research.Positions.{Manage}";
     }
 
     public static class Inventory

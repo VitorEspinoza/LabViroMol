@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
+using LabViroMol.Modules.Shared.Kernel.Authorization;
+using LabViroMol.Modules.Shared.Kernel.Pagination;
 
 namespace LabViroMol.Modules.Inventory.Presentation.MaterialTypes;
 
@@ -23,10 +25,11 @@ internal static class MaterialTypeEndpoints
             var result = await mediator.Send(command, ct);
 
             return result.ToHttpResult(Results.Created());
-        });
+        }).RequireAuthorization(Permissions.Inventory.MaterialsManage);
 
-        group.MapGet("/", async (MaterialTypeQueries queries) =>
-            Results.Ok(await queries.GetAll()));
+        group.MapGet("/", async ([AsParameters] PagedRequest request, MaterialTypeQueries queries) =>
+            Results.Ok(await queries.GetAllAsync(request)))
+            .RequireAuthorization(Permissions.Inventory.MaterialsView);
 
         group.MapGet("/{id:guid}", async (Guid id, MaterialTypeQueries queries) =>
         {
@@ -35,20 +38,20 @@ internal static class MaterialTypeEndpoints
             return type is null
                 ? Results.NotFound()
                 : Results.Ok(type);
-        });
+        }).RequireAuthorization(Permissions.Inventory.MaterialsView);
 
         group.MapPost("/{id:guid}/activate", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {
             var result = await mediator.Send(new ActivateMaterialTypeCommand(MaterialTypeId.From(id)), ct);
 
             return result.ToHttpResult(Results.NoContent());
-        });
+        }).RequireAuthorization(Permissions.Inventory.MaterialsManage);
 
         group.MapPost("/{id:guid}/deactivate", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {
             var result = await mediator.Send(new DeactivateMaterialTypeCommand(MaterialTypeId.From(id)), ct);
 
             return result.ToHttpResult(Results.NoContent());
-        });
+        }).RequireAuthorization(Permissions.Inventory.MaterialsManage);
     }
 }

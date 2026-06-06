@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using LabViroMol.Modules.Research.Application.Projects.Commands.Create;
 using LabViroMol.Modules.Research.Domain.Projects;
 using LabViroMol.Modules.Research.IntegrationTests.Researchers;
 using LabViroMol.Modules.Research.IntegrationTests.Partners;
@@ -19,7 +20,7 @@ public class CreateProjectTests : ProjectEndpointsTestBase
 
         var response = await Client.PostAsJsonAsync(
             BaseRoute,
-            new CreateProjectRequest(researcherId, "Projeto de Pesquisa", "Descrição detalhada", partnerId));
+            new CreateProjectCommand(researcherId, "Projeto de Pesquisa", "Descrição detalhada", partnerId));
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
@@ -32,7 +33,7 @@ public class CreateProjectTests : ProjectEndpointsTestBase
 
         var response = await Client.PostAsJsonAsync(
             BaseRoute,
-            new CreateProjectRequest(researcherId, "", "Descrição válida", partnerId));
+            new CreateProjectCommand(researcherId, "", "Descrição válida", partnerId));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }

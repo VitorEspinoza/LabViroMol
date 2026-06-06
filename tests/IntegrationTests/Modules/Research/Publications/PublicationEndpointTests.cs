@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using LabViroMol.Modules.Research.Application.Publications.Commands.Create;
 using LabViroMol.Modules.Research.IntegrationTests.Researchers;
 using LabViroMol.Modules.Research.Presentation.Publications;
 
@@ -14,7 +15,7 @@ public class CreatePublicationTests : PublicationEndpointsTestBase
     {
         var response = await Client.PostAsJsonAsync(
             BaseRoute,
-            new CreatePublicationRequest(
+            new CreatePublicationCommand(
                 "Estudo de Virologia Molecular",
                 "Descrição do estudo",
                 "10.1234/test",
@@ -30,7 +31,7 @@ public class CreatePublicationTests : PublicationEndpointsTestBase
     {
         var response = await Client.PostAsJsonAsync(
             BaseRoute,
-            new CreatePublicationRequest(
+            new CreatePublicationCommand(
                 "",
                 "Descrição válida",
                 "10.1234/test",

@@ -4,6 +4,8 @@ using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 using LabViroMol.Modules.Inventory.Infrastructure.Materials;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
+using LabViroMol.Modules.Shared.Kernel.Authorization;
+using LabViroMol.Modules.Shared.Kernel.Pagination;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Unit = LabViroMol.Modules.Inventory.Domain.Materials.Unit;
 using Mediator;
@@ -34,10 +36,12 @@ internal static class MaterialCrudEndpoints
             var result = await mediator.Send(command, ct);
 
             return result.ToHttpResult(Results.Created());
-        }).Accepts<CreateMaterialRequest>("application/json");
+        }).Accepts<CreateMaterialRequest>("application/json")
+          .RequireAuthorization(Permissions.Inventory.MaterialsManage);
 
-        group.MapGet("/", async (MaterialQueries queries) =>
-            Results.Ok(await queries.GetAll()));
+        group.MapGet("/", async ([AsParameters] PagedRequest request, MaterialQueries queries) =>
+            Results.Ok(await queries.GetAllAsync(request)))
+            .RequireAuthorization(Permissions.Inventory.MaterialsView);
 
         group.MapGet("/{id:guid}", async (Guid id, MaterialQueries queries) =>
         {
@@ -46,7 +50,7 @@ internal static class MaterialCrudEndpoints
             return material is null
                 ? Results.NotFound()
                 : Results.Ok(material);
-        });
+        }).RequireAuthorization(Permissions.Inventory.MaterialsView);
 
         group.MapPut("/{id:guid}", async (Guid id, UpdateMaterialRequest request, IMediator mediator, CancellationToken ct) =>
         {
@@ -54,6 +58,7 @@ internal static class MaterialCrudEndpoints
             var result = await mediator.Send(command, ct);
 
             return result.ToHttpResult(Results.NoContent());
-        }).Accepts<UpdateMaterialRequest>("application/json");
+        }).Accepts<UpdateMaterialRequest>("application/json")
+          .RequireAuthorization(Permissions.Inventory.MaterialsManage);
     }
 }
