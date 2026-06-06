@@ -7,24 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Materials\Commands\RemoveStockException\" />
-      <Folder Include="MaterialTypes\Commands\" />
-      <Folder Include="Orders\Commands\Cancel\" />
-      <Folder Include="Orders\Commands\Process\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="FluentValidation" Version="12.1.1" />
       <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
       <PackageReference Include="Mediator.Abstractions" Version="3.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Notify\Contracts\LabViroMol.Modules.Notify.Contracts.csproj" />
-      <ProjectReference Include="..\..\Research\Contracts\LabViroMol.Modules.Research.Contracts.csproj" />
       <ProjectReference Include="..\..\Shared\Kernel\LabViroMol.Modules.Shared.Kernel.csproj" />
-      <ProjectReference Include="..\Domain\LabViroMol.Modules.Inventory.Domain.csproj" />
+      <ProjectReference Include="..\..\Notify\Contracts\LabViroMol.Modules.Notify.Contracts.csproj" />
+      <ProjectReference Include="..\Domain\LabViroMol.Modules.Scheduling.Domain.csproj" />
     </ItemGroup>
 
-  
 </Project>

@@ -57,7 +57,7 @@ internal static class UserEndpoints
                 return result.ToHttpResult(Results.Ok());
 
             return Results.Created("/api/identity/users", new { ResetToken = result.Data });
-        }).RequireAuthorization(Permissions.Identity.UsersManage)
+        }).RequireAuthorization()
           .Accepts<CreateUserCommand>("application/json");
 
         group.MapPut("/me", async (UpdateProfileRequest request, ICurrentUser currentUser, IMediator mediator, CancellationToken ct) =>

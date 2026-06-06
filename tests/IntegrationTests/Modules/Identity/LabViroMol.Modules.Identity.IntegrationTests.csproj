@@ -23,6 +23,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\..\src\Modules\Identity\Infrastructure\LabViroMol.Modules.Identity.Infrastructure.csproj" />
       <ProjectReference Include="..\..\..\..\src\LabViroMol.Api\LabViroMol.Api.csproj" />
+      <ProjectReference Include="..\..\..\..\src\Modules\Scheduling\Infrastructure\LabViroMol.Modules.Scheduling.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,9 +1,10 @@
 using System.Text.Json.Serialization;
 using LabViroMol.Modules.Assets.Presentation;
 using LabViroMol.Modules.Inventory.Presentation;
+using LabViroMol.Modules.Notify.Presentation;
 using LabViroMol.Modules.Identity.Presentation;
-using LabViroMol.Modules.Scheduling.Presentation;
 using LabViroMol.Modules.Research.Presentation;
+using LabViroMol.Modules.Scheduling.Presentation;
 using LabViroMol.Modules.Shared.Infrastructure;
 using LabViroMol.Modules.Shared.Infrastructure.Behaviors;
 using LabViroMol.Modules.Shared.Infrastructure.Converters;
@@ -49,7 +50,10 @@ builder.Services
     .AddInventoryModule(builder.Configuration)
     .AddSchedulingModule(builder.Configuration)
     .AddAssetsModule(builder.Configuration)
-    .AddResearchModule(builder.Configuration);
+    .AddResearchModule(builder.Configuration)
+    .AddNotifyModule(builder.Configuration);
+    
+builder.Services.AddAuthorization();
 
 var configPath = builder.Configuration["Storage:ImageFolderPath"];
 if (string.IsNullOrWhiteSpace(configPath))
@@ -89,6 +93,7 @@ app.MapInventoryEndpoints();
 app.MapResearchEndpoints();
 app.MapSchedulingEndpoints();
 app.MapAssetsEndpoints();
+app.MapNotifyEndpoints();
 
 app.Run();
 
