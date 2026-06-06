@@ -22,6 +22,7 @@ public static class ScheduleMapper
             sched.ProjectTitle,
             sched.Description,
             sched.AdvisorProfessor,
-            sched.Status.ToString());
+            sched.Status.ToString(),
+            sched.TermUrl);
     }
 }

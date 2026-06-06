@@ -33,6 +33,7 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
     public List<ScheduleEquipment> Equipments { get; private set; }
     public UserId? ApprovedBy { get; private set; }
     public UserId? RefusedBy { get; private set; }
+    public string TermUrl { get; private set; }
 
     public static Result<Schedule> Create(Scheduler scheduler, Scheduling scheduling, bool acceptTerm, string advisorProfessor,
         string projectTitle, string description, List<ScheduleEquipment> equipments)
@@ -82,5 +83,10 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
             return Result.BusinessRule("Não é possível alterar agendamento com data passada.");
 
         return Result.Success();
+    }
+    
+    public void AttachTermUrl(string url)
+    {
+        TermUrl = url;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Approve;
 using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Create;
 using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Refuse;
+using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.UploadTerm;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Infrastructure.Schedules;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
@@ -47,5 +48,13 @@ internal static class ScheduleEndpoints
                 var result = await mediator.Send(command, ct);
                 return result.ToHttpResult(Results.Accepted());
             });
+        
+        group.MapPost("/{id:guid}/term",
+            async (Guid id, IFormFile file, IMediator mediator, CancellationToken ct) =>
+            {
+                var command = new UploadTermCommand(ScheduleId.From(id), file.OpenReadStream(), file.FileName);
+                var result = await mediator.Send(command, ct);
+                return result.ToHttpResult(Results.Accepted());
+            }).DisableAntiforgery();
     }
 }

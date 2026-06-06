@@ -17,4 +17,8 @@
     <ProjectReference Include="..\..\Shared\Infrastructure\LabViroMol.Modules.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Persistence\Migrations\" />
+  </ItemGroup>
+
 </Project>

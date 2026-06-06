@@ -51,14 +51,15 @@ builder.Services
     .AddSchedulingModule(builder.Configuration)
     .AddAssetsModule(builder.Configuration)
     .AddResearchModule(builder.Configuration)
-    .AddNotifyModule(builder.Configuration);
+    .AddNotifyModule(builder.Configuration)
+    .AddStorages(builder.Configuration);
     
 builder.Services.AddAuthorization();
 
-var configPath = builder.Configuration["Storage:ImageFolderPath"];
+var configPath = builder.Configuration["Storage:RootFolder"];
 if (string.IsNullOrWhiteSpace(configPath))
 {
-    throw new InvalidOperationException("A configuração 'Storage:ImageFolderPath' não foi encontrada ou está vazia.");
+    throw new InvalidOperationException("A configuração 'Storage:RootFolder' não foi encontrada ou está vazia.");
 }
 
 var imagesPath = Path.IsPathRooted(configPath) 

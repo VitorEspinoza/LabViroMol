@@ -14,7 +14,7 @@ public class ProjectQueries(ResearchDbContext context)
                 p.Id.Value,
                 p.Title,
                 p.Description,
-                p.Status.ToString(),
+                p.Status.Value,
                 context.Researchers
                     .Where(r => p.Members.Any(m => m.Role == ProjectRole.ResearchLead
                                                    && m.LeftAt == null
