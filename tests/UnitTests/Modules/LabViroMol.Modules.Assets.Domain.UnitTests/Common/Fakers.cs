@@ -33,7 +33,8 @@ public class Fakers
             Model: Faker.Commerce.Product(),
             Brand: Faker.Company.CompanyName(),
             Code: Faker.Random.AlphaNumeric(8).ToUpper(),
-            Description: Faker.Lorem.Sentence()
+            Description: Faker.Lorem.Sentence(),
+            Location: null
         );
     }
 

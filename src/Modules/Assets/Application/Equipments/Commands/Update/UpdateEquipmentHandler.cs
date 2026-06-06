@@ -26,7 +26,8 @@ public class UpdateEquipmentHandler(
             command.Brand,
             command.Model,
             command.Code,
-            command.Description);
+            command.Description,
+            command.Location);
 
         await unitOfWork.CompleteAsync(ct);
         return Result.Success();

@@ -4,6 +4,7 @@ using LabViroMol.Modules.Identity.Infrastructure;
 using LabViroMol.Modules.Identity.Infrastructure.Roles;
 using LabViroMol.Modules.Identity.Presentation.Users;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
+using LabViroMol.Modules.Shared.Kernel.Authorization;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -32,16 +33,18 @@ public static class IdentityModule
         group.MapUserEndpoints();
 
         group.MapGet("/permissions", (PermissionQueries queries) =>
-            Results.Ok(queries.GetAll()));
+            Results.Ok(queries.GetAll()))
+            .RequireAuthorization(Permissions.Identity.RolesView);
 
         group.MapGet("/roles", async (RoleQueries queries) =>
-            Results.Ok(await queries.GetAllWithPermissions()));
+            Results.Ok(await queries.GetAllWithPermissions()))
+            .RequireAuthorization(Permissions.Identity.RolesView);
 
         group.MapPost("/roles", async (CreateRoleCommand command, IMediator mediator, CancellationToken ct) =>
         {
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Created());
-        });
+        }).RequireAuthorization(Permissions.Identity.RolesManage);
 
         return app;
     }

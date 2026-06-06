@@ -35,6 +35,11 @@ public static class ResearchModule
         group.MapPositionEndpoints();
         group.MapPublicationEndpoints();
 
+        var publicGroup = group.MapGroup("/public").WithTags("Research-Public");
+        publicGroup.MapInstitutionalPublicationEndpoints();
+        publicGroup.MapInstitutionalPartnerEndpoints();
+        publicGroup.MapInstitutionalProjectEndpoints();
+
         return app;
     }
 }

@@ -12,6 +12,7 @@ public class Equipment : AggregateRoot<EquipmentId>, IFullAuditable
     public string Code { get; private set; }
     public string Description { get; private set; }
     public string ImageUrl { get; private set; }
+    public string? Location { get; private set; }
 
     private Equipment(EquipmentId id, string name, string brand, string model, string code, string description) : base(id)
     {
@@ -34,13 +35,14 @@ public class Equipment : AggregateRoot<EquipmentId>, IFullAuditable
             description: description);
     }
 
-    public void Update(string name, string brand, string model, string code, string description)
+    public void Update(string name, string brand, string model, string code, string description, string? location = null)
     {
         Name = name;
         Brand = brand;
         Model = model;
         Code = code;
         Description = description;
+        Location = location;
     }
 
     public void AttachImageUrl(string imageUrl)

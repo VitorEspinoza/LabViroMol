@@ -8,6 +8,8 @@ using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Domain.References;
 using LabViroMol.Modules.Inventory.Infrastructure.Orders;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
+using LabViroMol.Modules.Shared.Kernel.Authorization;
+using LabViroMol.Modules.Shared.Kernel.Pagination;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
@@ -38,10 +40,11 @@ internal static class OrderEndpoints
             var result = await mediator.Send(command, ct);
 
             return result.ToHttpResult(Results.Created());
-        });
+        }).RequireAuthorization(Permissions.Inventory.OrdersManage);
 
-        group.MapGet("/", async (OrderQueries queries) =>
-            Results.Ok(await queries.GetAll()));
+        group.MapGet("/", async ([AsParameters] PagedRequest request, OrderQueries queries) =>
+            Results.Ok(await queries.GetAllAsync(request)))
+            .RequireAuthorization(Permissions.Inventory.OrdersView);
 
         group.MapGet("/{id:guid}", async (Guid id, OrderQueries queries) =>
         {
@@ -50,7 +53,7 @@ internal static class OrderEndpoints
             return order is null
                 ? Results.NotFound()
                 : Results.Ok(order);
-        });
+        }).RequireAuthorization(Permissions.Inventory.OrdersView);
 
         group.MapPut("/{id:guid}/fix-details", async (Guid id, FixOrderDetailsRequest request, IMediator mediator, CancellationToken ct) =>
         {
@@ -63,14 +66,16 @@ internal static class OrderEndpoints
             var result = await mediator.Send(command, ct);
 
             return result.ToHttpResult(Results.NoContent());
-        }).Accepts<FixOrderDetailsRequest>("application/json");
+        }).Accepts<FixOrderDetailsRequest>("application/json")
+          .RequireAuthorization(Permissions.Inventory.OrdersManage);
 
         group.MapPost("/{id:guid}/process", async (Guid id, ProcessOrderRequest request, IMediator mediator, CancellationToken ct) =>
         {
             var command = new ProcessOrderCommand(OrderId.From(id), request.Notes);
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.NoContent());
-        }).Accepts<ProcessOrderRequest>("application/json");
+        }).Accepts<ProcessOrderRequest>("application/json")
+          .RequireAuthorization(Permissions.Inventory.OrdersManage);
 
         group.MapPost("/{id:guid}/receive", async (Guid id, ReceiveOrderRequest request, IMediator mediator, CancellationToken ct) =>
         {
@@ -80,13 +85,14 @@ internal static class OrderEndpoints
                 request.Notes);
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.NoContent());
-        }).Accepts<ReceiveOrderRequest>("application/json");
+        }).Accepts<ReceiveOrderRequest>("application/json")
+          .RequireAuthorization(Permissions.Inventory.OrdersManage);
 
         group.MapPost("/{id:guid}/cancel", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {
             var command = new CancelOrderCommand(OrderId.From(id));
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.NoContent());
-        });
+        }).RequireAuthorization(Permissions.Inventory.OrdersManage);
     }
 }

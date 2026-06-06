@@ -4,6 +4,8 @@ using LabViroMol.Modules.Inventory.Application.Kits.Commands.Update;
 using LabViroMol.Modules.Inventory.Domain.Kits;
 using LabViroMol.Modules.Inventory.Infrastructure.Kits;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
+using LabViroMol.Modules.Shared.Kernel.Authorization;
+using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -24,9 +26,11 @@ internal static class KitEndpoints
             var result = await mediator.Send(command, ct);
 
             return result.ToHttpResult(Results.Created());
-        });
+        }).RequireAuthorization(Permissions.Inventory.KitsManage);
 
-        group.MapGet("/", async (KitQueries kitQueries, CancellationToken ct) => Results.Ok(await kitQueries.GetAllKits()));
+        group.MapGet("/", async ([AsParameters] PagedRequest request, KitQueries kitQueries) =>
+            Results.Ok(await kitQueries.GetAllAsync(request)))
+            .RequireAuthorization(Permissions.Inventory.KitsView);
 
         group.MapGet("/{id:guid}", async (Guid id, KitQueries kitQueries) =>
         {
@@ -35,7 +39,7 @@ internal static class KitEndpoints
             return kit is null
                 ? Results.NotFound()
                 : Results.Ok(kit);
-        });
+        }).RequireAuthorization(Permissions.Inventory.KitsView);
 
         group.MapPut("/{id:guid}", async (Guid id, UpdateKitRequest request, IMediator mediator, CancellationToken ct) =>
         {
@@ -43,6 +47,7 @@ internal static class KitEndpoints
             var result = await mediator.Send(command, ct);
 
             return result.ToHttpResult(Results.NoContent());
-        }).Accepts<UpdateKitRequest>("application/json");
+        }).Accepts<UpdateKitRequest>("application/json")
+          .RequireAuthorization(Permissions.Inventory.KitsManage);
     }
 }

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using LabViroMol.Modules.Research.Application.Partners.Commands.Create;
 using LabViroMol.Modules.Research.Presentation.Partners;
 
 namespace LabViroMol.Modules.Research.IntegrationTests.Partners;
@@ -13,7 +14,7 @@ public class CreatePartnerTests : PartnerEndpointsTestBase
     {
         var response = await Client.PostAsJsonAsync(
             BaseRoute,
-            new CreatePartnerRequest("Instituto de Pesquisa Válido", "Descrição válida"));
+            new CreatePartnerCommand("Instituto de Pesquisa Válido", "Descrição válida"));
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
@@ -23,7 +24,7 @@ public class CreatePartnerTests : PartnerEndpointsTestBase
     {
         var response = await Client.PostAsJsonAsync(
             BaseRoute,
-            new CreatePartnerRequest("", "Descrição válida"));
+            new CreatePartnerCommand("", "Descrição válida"));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
