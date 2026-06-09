@@ -36,4 +36,8 @@
     <ProjectReference Include="..\Modules\Shared\Infrastructure\LabViroMol.Modules.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Upload\Images\schedule-terms\" />
+  </ItemGroup>
+
 </Project>

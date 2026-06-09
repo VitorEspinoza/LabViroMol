@@ -15,84 +15,39 @@ public class CreatePositionHandler(
     IPositionRepository repository,
     IResearchUnitOfWork unitOfWork,
     IBackgroundJobQueue backgroundJobQueue,
-    ILogger<CreatePositionHandler> logger)
+    ILogger<CreatePositionHandler> _logger)
     : ICommandHandler<CreatePositionCommand, Result>
 {
     public async ValueTask<Result> Handle(CreatePositionCommand command, CancellationToken ct)
     {
-        _logger.LogInformation(
-            "Tracked entities: {count}",
-            context.ChangeTracker.Entries().Count());
-
+        var result = Position.Create(command.Name, command.Description);
+        if (result.IsFailure)
+            return result;
+        
         var sw = Stopwatch.StartNew();
-
-        context.Positions.Add(position);
-
-        _logger.LogInformation(
-            "Add: {ms}",
-            sw.ElapsedMilliseconds);
-
-        sw.Restart();
-
-        context.ChangeTracker.DetectChanges();
-
-        _logger.LogInformation(
-            "DetectChanges: {ms}",
-            sw.ElapsedMilliseconds);
 
         await repository.AddAsync(result.Data!, ct);
 
-        logger.LogInformation(
-            "Repository AddAsync took {ms}",
+        _logger.LogInformation(
+            "AddAsync: {ms}",
             sw.ElapsedMilliseconds);
 
         sw.Restart();
 
         await unitOfWork.CompleteAsync(ct);
 
-        logger.LogInformation(
-            "CompleteAsync took {ms}",
+        _logger.LogInformation(
+            "CompleteAsync: {ms}",
             sw.ElapsedMilliseconds);
-        
+
+        sw.Restart();
+
         await backgroundJobQueue.QueueAsync(
-            async (sp, token) =>
-            {
-                var repository =
-                    sp.GetRequiredService<IPositionRepository>();
+            async (_, _) => { });
 
-                var translator =
-                    sp.GetRequiredService<ITextTranslator>();
-
-                var unitOfWork =
-                    sp.GetRequiredService<IResearchUnitOfWork>();
-
-                var position =
-                    await repository.GetByIdAsync(
-                        result.Data!.Id,
-                        token);
-
-                if (position is null)
-                    return;
-
-                var englishName =
-                    await translator.TranslateAsync(
-                        "pt",
-                        "en",
-                        position.Name);
-
-                var englishDescription =
-                    await translator.TranslateAsync(
-                        "pt",
-                        "en",
-                        position.Description);
-
-                position.AddTranslation(
-                    "en",
-                    englishName,
-                    englishDescription);
-
-                await unitOfWork.CompleteAsync(token);
-            });
+        _logger.LogInformation(
+            "QueueAsync: {ms}",
+            sw.ElapsedMilliseconds);
 
         return Result.Success();
     }
