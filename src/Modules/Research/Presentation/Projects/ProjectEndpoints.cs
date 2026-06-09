@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace LabViroMol.Modules.Research.Presentation.Projects;
 
 using LabViroMol.Modules.Research.Application.Projects.Commands.AddMember;
@@ -109,7 +111,7 @@ internal static class ProjectEndpoints
     {
         var group = app.MapGroup("/projects").WithTags("Projects-Public");
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, ProjectQueries queries) =>
-            Results.Ok(await queries.GetAllInstitutionalAsync(request)));
+        group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, ProjectQueries queries) =>
+            Results.Ok(await queries.GetAllInstitutionalAsync(request, language)));
     }
 }

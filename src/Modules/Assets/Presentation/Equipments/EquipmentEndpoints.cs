@@ -9,6 +9,7 @@ using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
 namespace LabViroMol.Modules.Assets.Presentation.Equipments;
@@ -25,7 +26,7 @@ internal static class EquipmentEndpoints
         {
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Created());
-        }).RequireAuthorization(Permissions.Assets.EquipmentsManage);
+        });
 
         group.MapPut("{id:guid}", async (Guid id, UpdateEquipmentRequest request, IMediator mediator, CancellationToken ct) =>
         {
@@ -66,12 +67,12 @@ internal static class EquipmentEndpoints
     {
         var group = app.MapGroup("/equipments").WithTags("Equipment-Public");
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, EquipmentQueries equipmentQueries) =>
-            Results.Ok(await equipmentQueries.GetAllInstitutionalAsync(request)));
+        group.MapGet("/", async ([AsParameters] PagedRequest request, [FromQuery] string? language, EquipmentQueries equipmentQueries) =>
+            Results.Ok(await equipmentQueries.GetAllInstitutionalAsync(request, language)));
 
-        group.MapGet("{id:guid}", async (Guid id, EquipmentQueries equipmentQueries) =>
+        group.MapGet("{id:guid}", async (Guid id, [FromQuery] string? language, EquipmentQueries equipmentQueries) =>
         {
-            var equipment = await equipmentQueries.GetEquipmentById(id);
+            var equipment = await equipmentQueries.GetEquipmentByIdInstitutional(id, language);
             return equipment is null
                 ? Results.NotFound()
                 : Results.Ok(equipment);

@@ -3,7 +3,7 @@ using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.Domain.Publications;
 
-public class Publication : AggregateRoot<PublicationId>, IFullAuditable
+public class Publication : AggregateRoot<PublicationId>, IFullAuditable, ITranslatable<PublicationTranslation>
 {
     private Publication() { }
 
@@ -25,6 +25,7 @@ public class Publication : AggregateRoot<PublicationId>, IFullAuditable
     public DateOnly PublicationDate { get; private set; }
     public string PublishedOn { get; private set; }
     public string PublishUrl { get; private set; }
+    public Dictionary<string, PublicationTranslation> Translations { get; private set; } = new();
 
     private readonly List<PublicationResearcher> _researchers = new();
     public IReadOnlyCollection<PublicationResearcher> Researchers => _researchers.AsReadOnly();
@@ -104,5 +105,36 @@ public class Publication : AggregateRoot<PublicationId>, IFullAuditable
             _researchers.Add(new PublicationResearcher(orderedIds[i], i + 1));
 
         return Result.Success();
+    }
+    
+    public void AddTranslation(string languageCode, string title, string description)
+    {
+        if (string.IsNullOrWhiteSpace(languageCode)) return;
+        
+        Translations[languageCode.ToLower()] = new PublicationTranslation(title, description);
+    }
+    
+    public string GetTitle(string? language)
+    {
+        if (language == "en"
+            && Translations.TryGetValue("en", out var translation)
+            && !string.IsNullOrWhiteSpace(translation.Title))
+        {
+            return translation.Title;
+        }
+
+        return Title;
+    }
+
+    public string GetDescription(string? language)
+    {
+        if (language == "en"
+            && Translations.TryGetValue("en", out var translation)
+            && !string.IsNullOrWhiteSpace(translation.Description))
+        {
+            return translation.Description;
+        }
+
+        return Description;
     }
 }

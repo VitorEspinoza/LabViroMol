@@ -8,12 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 public class PublicationQueries(ResearchDbContext context)
 {
-    public async Task<PagedResponse<PublicationSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request)
+    public async Task<PagedResponse<PublicationSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {
         var all = await context.Publications.AsNoTracking()
             .Select(p => new PublicationSummaryViewModel(
                 p.Id.Value,
-                p.Title,
+                p.GetTitle(language),
                 p.Doi,
                 p.PublishedOn,
                 p.PublicationDate,

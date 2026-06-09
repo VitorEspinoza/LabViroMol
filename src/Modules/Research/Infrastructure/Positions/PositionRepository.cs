@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace LabViroMol.Modules.Research.Infrastructure.Positions;
 
 using LabViroMol.Modules.Research.Domain.Positions;
@@ -10,7 +12,14 @@ public class PositionRepository(ResearchDbContext context) : IPositionRepository
         => await context.Positions.FirstOrDefaultAsync(p => p.Id == id, ct);
 
     public async Task AddAsync(Position position, CancellationToken ct)
-        => await context.Positions.AddAsync(position, ct);
+    {
+        var sw = Stopwatch.StartNew();
+
+        await context.Positions.AddAsync(position, ct);
+
+        Console.WriteLine(
+            $"REAL EF ADD: {sw.ElapsedMilliseconds}ms");
+    }
 
     public void Delete(Position position)
         => context.Positions.Remove(position);

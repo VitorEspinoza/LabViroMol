@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace LabViroMol.Modules.Research.Presentation.Researchers;
 
 using LabViroMol.Modules.Research.Infrastructure.Researchers;
@@ -13,7 +15,7 @@ internal static class ResearcherEndpoints
     {
         var group = app.MapGroup("/researchers").WithTags("Researchers");
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, ResearcherQueries queries) =>
-            Results.Ok(await queries.GetAllInstitutionalAsync(request)));
+        group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, ResearcherQueries queries) =>
+            Results.Ok(await queries.GetAllInstitutionalAsync(request, language)));
     }
 }

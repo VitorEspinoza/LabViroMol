@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 public class ResearcherQueries(ResearchDbContext context)
 {
-    public async Task<PagedResponse<ResearcherSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request)
+    public async Task<PagedResponse<ResearcherSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {
         var all = await context.Researchers.AsNoTracking()
             .Join(context.Positions,
@@ -19,7 +19,7 @@ public class ResearcherQueries(ResearchDbContext context)
                         r.Id.Value,
                         r.Name.PublicDisplayName,
                         r.AcademicBackground.DegreeLevel.Value,
-                        p.Name,
+                        p.GetName(language),
                         r.LattesUrl))
             .ToListAsync();
 

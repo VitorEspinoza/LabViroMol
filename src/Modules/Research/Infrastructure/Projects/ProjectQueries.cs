@@ -8,13 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 public class ProjectQueries(ResearchDbContext context)
 {
-    public async Task<PagedResponse<PublicProjectViewModel>> GetAllInstitutionalAsync(PagedRequest request)
+    public async Task<PagedResponse<PublicProjectViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {
         var all = await context.Projects
             .AsNoTracking()
             .Select(p => new PublicProjectViewModel(
-                p.Title,
-                p.Description,
+                p.GetTitle(language),
+                p.GetDescription(language),
                 p.Status.Value,
                 context.Researchers
                     .Where(r => p.Members.Any(m => m.Role == ProjectRole.ResearchLead

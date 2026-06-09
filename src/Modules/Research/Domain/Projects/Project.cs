@@ -4,7 +4,7 @@ using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.Domain.Projects;
 
-public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificationAuditable
+public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificationAuditable, ITranslatable<ProjectTranslation>
 {
     private Project() { }
 
@@ -21,6 +21,7 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
     public string Description { get; private set; }
     public ProjectStatus Status { get; private set; }
     public PartnerId PartnerId { get; private set; }
+    public Dictionary<string, ProjectTranslation> Translations { get; private set; } = new();
 
     private readonly List<ProjectMember> _members = new();
     public IReadOnlyCollection<ProjectMember> Members => _members.AsReadOnly();
@@ -154,5 +155,35 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
         member.RemoveFromProject();
         return Result.Success();
     }
+    
+    public void AddTranslation(string languageCode, string title, string description)
+    {
+        if (string.IsNullOrWhiteSpace(languageCode)) return;
+        
+        Translations[languageCode.ToLower()] = new ProjectTranslation(title, description);
+    }
+    
+    public string GetTitle(string? language)
+    {
+        if (language == "en"
+            && Translations.TryGetValue("en", out var translation)
+            && !string.IsNullOrWhiteSpace(translation.Title))
+        {
+            return translation.Title;
+        }
 
+        return Title;
+    }
+
+    public string GetDescription(string? language)
+    {
+        if (language == "en"
+            && Translations.TryGetValue("en", out var translation)
+            && !string.IsNullOrWhiteSpace(translation.Description))
+        {
+            return translation.Description;
+        }
+
+        return Description;
+    }
 }
