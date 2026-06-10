@@ -34,6 +34,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         });
 
         builder.Property(u => u.PhoneNumber).HasMaxLength(20);
-        builder.Property(u => u.EmergencyContactNumber).HasMaxLength(20);
+
+        builder.OwnsOne(u => u.EmergencyContact, ec =>
+        {
+            ec.Property(c => c.Name)
+                .HasColumnName("EmergencyContactName")
+                .HasMaxLength(100);
+            ec.Property(c => c.Number)
+                .HasColumnName("EmergencyContactNumber")
+                .HasMaxLength(20);
+        });
     }
 }

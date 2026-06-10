@@ -1,5 +1,6 @@
 using LabViroMol.Modules.Identity.Application;
 using LabViroMol.Modules.Identity.Application.Roles.CreateRole;
+using LabViroMol.Modules.Identity.Application.Roles.UpdateRolePermissions;
 using LabViroMol.Modules.Identity.Infrastructure;
 using LabViroMol.Modules.Identity.Infrastructure.Roles;
 using LabViroMol.Modules.Identity.Presentation.Users;
@@ -13,6 +14,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LabViroMol.Modules.Identity.Presentation;
+
+public record UpdateRolePermissionsRequest(List<string> Permissions);
 
 public static class IdentityModule
 {
@@ -33,18 +36,24 @@ public static class IdentityModule
         group.MapUserEndpoints();
 
         group.MapGet("/permissions", (PermissionQueries queries) =>
-            Results.Ok(queries.GetAll()))
-            .RequireAuthorization(Permissions.Identity.RolesView);
+            Results.Ok(queries.GetAll()));
 
         group.MapGet("/roles", async (RoleQueries queries) =>
-            Results.Ok(await queries.GetAllWithPermissions()))
-            .RequireAuthorization(Permissions.Identity.RolesView);
+            Results.Ok(await queries.GetAllWithPermissions()));
 
         group.MapPost("/roles", async (CreateRoleCommand command, IMediator mediator, CancellationToken ct) =>
         {
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Created());
-        }).RequireAuthorization(Permissions.Identity.RolesManage);
+        });
+
+        group.MapPut("/roles/{id:guid}/permissions", async (Guid id, UpdateRolePermissionsRequest request, IMediator mediator, CancellationToken ct) =>
+        {
+            var command = new UpdateRolePermissionsCommand(id, request.Permissions);
+            var result = await mediator.Send(command, ct);
+            return result.ToHttpResult(Results.Ok());
+        }).RequireAuthorization(Permissions.Identity.RolesManage)
+          .Accepts<UpdateRolePermissionsRequest>("application/json");
 
         return app;
     }

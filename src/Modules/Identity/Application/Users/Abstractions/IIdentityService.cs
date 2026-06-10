@@ -15,4 +15,5 @@ public interface IIdentityService
     Task<Result> UpdateUserRolesAsync(Guid userId, List<Guid> roleIds, CancellationToken ct);
     Task<Result> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken ct);
     Task<Result> CreateRoleAsync(string name, List<string> permissions, CancellationToken ct);
+    Task<Result> UpdateRolePermissionsAsync(Guid roleId, List<string> permissions, CancellationToken ct);
 }

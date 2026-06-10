@@ -24,5 +24,13 @@ public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
         RuleFor(x => x.UserData.EmergencyContactNumber)
             .Matches(@"^\+?\d+$").WithMessage("Contato de emergência deve conter apenas dígitos (opcionalmente precedido por '+').")
             .When(x => !string.IsNullOrEmpty(x.UserData.EmergencyContactNumber));
+
+        RuleFor(x => x.UserData.EmergencyContactName)
+            .NotEmpty().WithMessage("O nome do contato de emergência é obrigatório quando um número é informado.")
+            .When(x => !string.IsNullOrEmpty(x.UserData.EmergencyContactNumber));
+
+        RuleFor(x => x.UserData.EmergencyContactNumber)
+            .NotEmpty().WithMessage("O número do contato de emergência é obrigatório quando um nome é informado.")
+            .When(x => !string.IsNullOrEmpty(x.UserData.EmergencyContactName));
     }
 }

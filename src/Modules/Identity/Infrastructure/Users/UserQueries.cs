@@ -75,7 +75,8 @@ public class UserQueries(LabViroMolIdentityDbContext context)
                 user.Name.FirstName,
                 user.Name.LastName,
                 user.PhoneNumber,
-                user.EmergencyContactNumber,
+                user.EmergencyContact?.Name,
+                user.EmergencyContact?.Number,
                 null),
             user.IsActive,
             roles);

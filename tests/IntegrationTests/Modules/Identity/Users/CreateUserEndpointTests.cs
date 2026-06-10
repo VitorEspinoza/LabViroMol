@@ -15,7 +15,7 @@ public class CreateUserTests : UserEndpointsTestBase
         // Arrange
         await SeedAuthenticatedAdmin();
         var command = new CreateUserCommand(
-            new UserInfo("João", "Silva", null, null, null),
+            new UserInfo("João", "Silva", null, null, null, null),
             "joao@labviromol.com",
             []);
 
@@ -34,7 +34,7 @@ public class CreateUserTests : UserEndpointsTestBase
         // Arrange
         await SeedAuthenticatedAdmin();
         var command = new CreateUserCommand(
-            new UserInfo("João", "Silva", null, null, null),
+            new UserInfo("João", "Silva", null, null, null, null),
             "",
             []);
 
@@ -51,7 +51,7 @@ public class CreateUserTests : UserEndpointsTestBase
         // Arrange
         ClearAuthentication();
         var command = new CreateUserCommand(
-            new UserInfo("João", "Silva", null, null, null),
+            new UserInfo("João", "Silva", null, null, null, null),
             "joao@labviromol.com",
             []);
 
