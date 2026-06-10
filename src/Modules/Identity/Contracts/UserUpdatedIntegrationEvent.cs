@@ -8,6 +8,7 @@ public record UserUpdatedIntegrationEvent(
     string FirstName,
     string LastName,
     string? PhoneNumber,
+    string? EmergencyContactName,
     string? EmergencyContactNumber,
     List<Guid> RoleIds,
     ResearchRegistrationData? ResearchData) : IIntegrationEvent

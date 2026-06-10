@@ -17,7 +17,7 @@ public class UpdateUserTests : UserEndpointsTestBase
         var (targetId, _) = await SeedBasicUser();
 
         var request = new UpdateUserRequest(
-            new UserInfo("Atualizado", "Nome", null, null, null),
+            new UserInfo("Atualizado", "Nome", null, null, null, null),
             []);
 
         // Act
@@ -35,7 +35,7 @@ public class UpdateUserTests : UserEndpointsTestBase
         var (targetId, _) = await SeedBasicUser();
 
         var request = new UpdateUserRequest(
-            new UserInfo("", "Nome", null, null, null),
+            new UserInfo("", "Nome", null, null, null, null),
             []);
 
         // Act
@@ -51,7 +51,7 @@ public class UpdateUserTests : UserEndpointsTestBase
         // Arrange
         ClearAuthentication();
         var request = new UpdateUserRequest(
-            new UserInfo("Atualizado", "Nome", null, null, null),
+            new UserInfo("Atualizado", "Nome", null, null, null, null),
             []);
 
         // Act

@@ -38,10 +38,6 @@ namespace LabViroMol.Modules.Identity.Infrastructure.Persistence.Migrations
                     b.Property<DateTimeOffset?>("DeactivatedAt")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<string>("EmergencyContactNumber")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -281,6 +277,31 @@ namespace LabViroMol.Modules.Identity.Infrastructure.Persistence.Migrations
                                 .HasForeignKey("UserId");
                         });
 
+                    b.OwnsOne("LabViroMol.Modules.Identity.Domain.Users.EmergencyContact", "EmergencyContact", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Name")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("EmergencyContactName");
+
+                            b1.Property<string>("Number")
+                                .IsRequired()
+                                .HasMaxLength(20)
+                                .HasColumnType("nvarchar(20)")
+                                .HasColumnName("EmergencyContactNumber");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users", "Identity");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
                     b.OwnsOne("LabViroMol.Modules.Identity.Domain.Users.UserName", "Name", b1 =>
                         {
                             b1.Property<Guid>("UserId")
@@ -308,6 +329,8 @@ namespace LabViroMol.Modules.Identity.Infrastructure.Persistence.Migrations
 
                     b.Navigation("Email")
                         .IsRequired();
+
+                    b.Navigation("EmergencyContact");
 
                     b.Navigation("Name")
                         .IsRequired();

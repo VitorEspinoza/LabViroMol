@@ -33,8 +33,9 @@ public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, Resul
 
         var data = command.UserData;
         var name = new UserName(data.FirstName, data.LastName);
+        var emergencyContact = EmergencyContact.FromNullable(data.EmergencyContactName, data.EmergencyContactNumber);
 
-        user.Update(name, user.Email, data.PhoneNumber, data.EmergencyContactNumber);
+        user.Update(name, user.Email, data.PhoneNumber, emergencyContact);
 
         var rolesResult = await _identityService.UpdateUserRolesAsync(command.TargetUserId, command.RoleIds, ct);
         if (rolesResult.IsFailure)
@@ -45,6 +46,7 @@ public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, Resul
             data.FirstName,
             data.LastName,
             data.PhoneNumber,
+            data.EmergencyContactName,
             data.EmergencyContactNumber,
             command.RoleIds,
             data.ResearchData));

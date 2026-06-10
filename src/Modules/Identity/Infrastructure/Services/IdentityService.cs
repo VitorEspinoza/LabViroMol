@@ -249,6 +249,22 @@ public class IdentityService : IIdentityService
         return Result.Success();
     }
 
+    public async Task<Result> UpdateRolePermissionsAsync(Guid roleId, List<string> permissions, CancellationToken ct)
+    {
+        var role = await _roleManager.FindByIdAsync(roleId.ToString());
+        if (role is null)
+            return Result.NotFound("Perfil não encontrado.");
+
+        var currentClaims = await _roleManager.GetClaimsAsync(role);
+        foreach (var claim in currentClaims.Where(c => c.Type == "permission"))
+            await _roleManager.RemoveClaimAsync(role, claim);
+
+        foreach (var permission in permissions)
+            await _roleManager.AddClaimAsync(role, new Claim("permission", permission));
+
+        return Result.Success();
+    }
+
     private async Task<List<Claim>> GetRolePermissionClaims(IList<string> roleNames)
     {
         var permissionClaims = new List<Claim>();

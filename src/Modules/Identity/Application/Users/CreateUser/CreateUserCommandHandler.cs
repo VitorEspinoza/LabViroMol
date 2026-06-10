@@ -37,12 +37,14 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Resul
         var name = new UserName(data.FirstName, data.LastName);
         var email = new Email(command.Email);
 
+        var emergencyContact = EmergencyContact.FromNullable(data.EmergencyContactName, data.EmergencyContactNumber);
+
         var user = User.Create(
             userId,
             name,
             email,
             data.PhoneNumber,
-            data.EmergencyContactNumber);
+            emergencyContact);
 
         await _userRepository.AddAsync(user, ct);
 
