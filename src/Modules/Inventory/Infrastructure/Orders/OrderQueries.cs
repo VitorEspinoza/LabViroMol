@@ -46,7 +46,10 @@ public class OrderQueries
 
     public async Task<PagedResponse<OrderSummaryViewModel>> GetAllAsync(PagedRequest request)
     {
-        var all = await _context.Orders
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
+
+        IQueryable<OrderSummaryViewModel> query = _context.Orders
             .Join(_context.Materials,
                 o => o.MaterialId,
                 m => m.Id,
@@ -60,40 +63,25 @@ public class OrderQueries
                         order.Status.ToString(),
                         "Mock User",
                         EF.Property<DateTimeOffset>(order, "CreatedAt"))
-            )
-            .ToListAsync();
+            );
 
-        var sorted = request.SortBy?.ToLower() switch
+        query = query.WhereSearch(request.Search, x => x.MaterialName, x => x.MaterialUnit, x => x.Status);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
         {
             "status" => request.SortDirection == "desc"
-                ? all.OrderByDescending(o => o.Status).ToList()
-                : all.OrderBy(o => o.Status).ToList(),
+                ? query.OrderByDescending(o => o.Status)
+                : query.OrderBy(o => o.Status),
             "createdon" => request.SortDirection == "desc"
-                ? all.OrderByDescending(o => o.CreatedOn).ToList()
-                : all.OrderBy(o => o.CreatedOn).ToList(),
-            _ => all.OrderByDescending(o => o.CreatedOn).ToList()
+                ? query.OrderByDescending(o => o.CreatedOn)
+                : query.OrderBy(o => o.CreatedOn),
+            _ => query.OrderByDescending(o => o.CreatedOn)
         };
 
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
-    }
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
-    public async Task<List<OrderSummaryViewModel>> GetAll()
-    {
-        return await _context.Orders
-            .Join(_context.Materials,
-                o => o.MaterialId,
-                m => m.Id,
-                (order, material) =>
-                    new OrderSummaryViewModel(
-                        "MockProject",
-                        material.Name,
-                        material.Unit.ToString(),
-                        order.RequestedQuantity,
-                        (order.Receipt != null ? order.Receipt.Quantity : null)!,
-                        order.Status.ToString(),
-                        "Mock User",
-                        EF.Property<DateTimeOffset>(order, "CreatedAt"))
-            )
-            .ToListAsync();
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 }

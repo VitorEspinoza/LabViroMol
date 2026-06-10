@@ -10,7 +10,10 @@ public class PublicationQueries(ResearchDbContext context)
 {
     public async Task<PagedResponse<PublicationSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request)
     {
-        var all = await context.Publications.AsNoTracking()
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
+
+        IQueryable<PublicationSummaryViewModel> query = context.Publications.AsNoTracking()
             .Select(p => new PublicationSummaryViewModel(
                 p.Id.Value,
                 p.Title,
@@ -28,28 +31,34 @@ public class PublicationQueries(ResearchDbContext context)
                                 : r.Name.LastName.ToUpper() + ", " + r.Name.FirstName.Substring(0, 1) + ".")
                             .Single(),
                         pr.Order))
-                    .ToList()))
-            .ToListAsync();
+                    .ToList()));
 
-        var sorted = request.SortBy?.ToLower() switch
+        query = query.WhereSearch(request.Search, x => x.Title, x => x.Doi, x => x.PublishedOn);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
         {
             "title" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.Title).ToList()
-                : all.OrderBy(p => p.Title).ToList(),
+                ? query.OrderByDescending(p => p.Title)
+                : query.OrderBy(p => p.Title),
             "doi" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.Doi).ToList()
-                : all.OrderBy(p => p.Doi).ToList(),
-            _ => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.PublicationDate).ToList()
-                : all.OrderByDescending(p => p.PublicationDate).ToList()
+                ? query.OrderByDescending(p => p.Doi)
+                : query.OrderBy(p => p.Doi),
+            _ => query.OrderByDescending(p => p.PublicationDate)
         };
 
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 
     public async Task<PagedResponse<PublicationAdminSummaryViewModel>> GetAllAdminAsync(PagedRequest request)
     {
-        var all = await context.Publications.AsNoTracking()
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
+
+        IQueryable<PublicationAdminSummaryViewModel> query = context.Publications.AsNoTracking()
             .Select(p => new PublicationAdminSummaryViewModel(
                 p.Id.Value,
                 p.Title,
@@ -63,44 +72,27 @@ public class PublicationQueries(ResearchDbContext context)
                             ? r.Name.CitationName
                             : r.Name.LastName.ToUpper() + ", " + r.Name.FirstName.Substring(0, 1) + ".")
                         .Single())
-                    .FirstOrDefault() ?? string.Empty))
-            .ToListAsync();
+                    .FirstOrDefault() ?? string.Empty));
 
-        var sorted = request.SortBy?.ToLower() switch
+        query = query.WhereSearch(request.Search, x => x.Title, x => x.Doi, x => x.CitationName);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
         {
             "title" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.Title).ToList()
-                : all.OrderBy(p => p.Title).ToList(),
+                ? query.OrderByDescending(p => p.Title)
+                : query.OrderBy(p => p.Title),
             "doi" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.Doi).ToList()
-                : all.OrderBy(p => p.Doi).ToList(),
-            _ => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.PublicationDate).ToList()
-                : all.OrderByDescending(p => p.PublicationDate).ToList()
+                ? query.OrderByDescending(p => p.Doi)
+                : query.OrderBy(p => p.Doi),
+            _ => query.OrderByDescending(p => p.PublicationDate)
         };
 
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
-    }
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
-    public async Task<IReadOnlyCollection<PublicationSummaryViewModel>> GetAll()
-        => await context.Publications.AsNoTracking()
-            .Select(p => new PublicationSummaryViewModel(
-                p.Id.Value,
-                p.Title,
-                p.Doi,
-                p.PublishedOn,
-                p.PublicationDate,
-                EF.Property<DateTimeOffset>(p, "CreatedAt"),
-                p.Researchers
-                    .OrderBy(pr => pr.Order)
-                    .Select(pr => new PublicationAuthorViewModel(
-                        context.Researchers
-                            .Where(r => r.Id == pr.ResearcherId)
-                            .Select(r => r.Name.FullName)
-                            .Single(),
-                        pr.Order))
-                    .ToList()))
-            .ToListAsync();
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
+    }
 
     public async Task<PublicationViewModel?> GetById(Guid id)
         => await context.Publications.AsNoTracking()

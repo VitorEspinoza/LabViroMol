@@ -14,6 +14,7 @@ using LabViroMol.Modules.Identity.Infrastructure.Users;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
+using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -31,11 +32,9 @@ internal static class UserEndpoints
     {
         var group = app.MapGroup("/users");
 
-        group.MapGet("/", async (UserQueries queries) =>
-        {
-            var users = await queries.GetAllAsync();
-            return Results.Ok(users);
-        }).RequireAuthorization(Permissions.Identity.UsersView);
+        group.MapGet("/", async ([AsParameters] PagedRequest request, UserQueries queries) =>
+            Results.Ok(await queries.GetAllAsync(request)))
+            .RequireAuthorization(Permissions.Identity.UsersView);
 
         group.MapGet("/me", async (ICurrentUser currentUser, UserQueries queries) =>
         {

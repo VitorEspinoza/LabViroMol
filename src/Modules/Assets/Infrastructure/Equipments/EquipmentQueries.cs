@@ -18,7 +18,10 @@ public class EquipmentQueries
 
     public async Task<PagedResponse<EquipmentViewModel>> GetAllInstitutionalAsync(PagedRequest request)
     {
-        var all = await _context.Equipments
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
+
+        IQueryable<EquipmentViewModel> query = _context.Equipments
             .Select(e => new EquipmentViewModel(
                 e.Id.Value,
                 e.Name,
@@ -26,77 +29,80 @@ public class EquipmentQueries
                 e.Brand,
                 e.Code,
                 e.Description,
-                e.ImageUrl))
-            .ToListAsync();
+                e.ImageUrl));
 
-        var sorted = request.SortBy?.ToLower() switch
+        query = query.WhereSearch(request.Search,
+            x => x.Name, x => x.Model, x => x.Brand, x => x.Code, x => x.Description);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
         {
             "code" => request.SortDirection == "desc"
-                ? all.OrderByDescending(e => e.Code).ToList()
-                : all.OrderBy(e => e.Code).ToList(),
+                ? query.OrderByDescending(e => e.Code)
+                : query.OrderBy(e => e.Code),
             "brand" => request.SortDirection == "desc"
-                ? all.OrderByDescending(e => e.Brand).ToList()
-                : all.OrderBy(e => e.Brand).ToList(),
+                ? query.OrderByDescending(e => e.Brand)
+                : query.OrderBy(e => e.Brand),
             "model" => request.SortDirection == "desc"
-                ? all.OrderByDescending(e => e.Model).ToList()
-                : all.OrderBy(e => e.Model).ToList(),
+                ? query.OrderByDescending(e => e.Model)
+                : query.OrderBy(e => e.Model),
             _ => request.SortDirection == "desc"
-                ? all.OrderByDescending(e => e.Name).ToList()
-                : all.OrderBy(e => e.Name).ToList()
+                ? query.OrderByDescending(e => e.Name)
+                : query.OrderBy(e => e.Name)
         };
 
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 
     public async Task<PagedResponse<EquipmentAdminSummaryViewModel>> GetAllAdminAsync(PagedRequest request)
     {
-        var equipments = await _context.Equipments
-            .Select(e => new
-            {
-                e.Id,
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
+
+        IQueryable<EquipmentAdminSummaryViewModel> query = _context.Equipments
+            .Select(e => new EquipmentAdminSummaryViewModel(
+                e.Id.Value,
                 e.Code,
                 e.Name,
                 e.Model,
                 e.Brand,
                 e.Location,
-                HasInProgress = _context.MaintenanceRequests
-                    .Any(mr => mr.EquipmentId == e.Id && mr.Status == MaintenanceRequestStatus.InProgress),
-                HasRequested = _context.MaintenanceRequests
-                    .Any(mr => mr.EquipmentId == e.Id && mr.Status == MaintenanceRequestStatus.Requested)
-            })
-            .ToListAsync();
+                _context.MaintenanceRequests.Any(mr => mr.EquipmentId == e.Id && mr.Status == MaintenanceRequestStatus.InProgress)
+                    ? "UnderMaintenance"
+                    : _context.MaintenanceRequests.Any(mr => mr.EquipmentId == e.Id && mr.Status == MaintenanceRequestStatus.Requested)
+                        ? "MaintenancePending"
+                        : "Available"));
 
-        var all = equipments.Select(e => new EquipmentAdminSummaryViewModel(
-            e.Id.Value,
-            e.Code,
-            e.Name,
-            e.Model,
-            e.Brand,
-            e.Location,
-            e.HasInProgress ? "UnderMaintenance"
-                : e.HasRequested ? "MaintenancePending"
-                : "Available")).ToList();
+        query = query.WhereSearch(request.Search,
+            x => x.Code, x => x.Name, x => x.Model, x => x.Brand, x => x.Location, x => x.Status);
 
-        var sorted = request.SortBy?.ToLower() switch
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
         {
             "code" => request.SortDirection == "desc"
-                ? all.OrderByDescending(e => e.Code).ToList()
-                : all.OrderBy(e => e.Code).ToList(),
+                ? query.OrderByDescending(e => e.Code)
+                : query.OrderBy(e => e.Code),
             "brand" => request.SortDirection == "desc"
-                ? all.OrderByDescending(e => e.Brand).ToList()
-                : all.OrderBy(e => e.Brand).ToList(),
+                ? query.OrderByDescending(e => e.Brand)
+                : query.OrderBy(e => e.Brand),
             "model" => request.SortDirection == "desc"
-                ? all.OrderByDescending(e => e.Model).ToList()
-                : all.OrderBy(e => e.Model).ToList(),
+                ? query.OrderByDescending(e => e.Model)
+                : query.OrderBy(e => e.Model),
             "status" => request.SortDirection == "desc"
-                ? all.OrderByDescending(e => e.Status).ToList()
-                : all.OrderBy(e => e.Status).ToList(),
+                ? query.OrderByDescending(e => e.Status)
+                : query.OrderBy(e => e.Status),
             _ => request.SortDirection == "desc"
-                ? all.OrderByDescending(e => e.Name).ToList()
-                : all.OrderBy(e => e.Name).ToList()
+                ? query.OrderByDescending(e => e.Name)
+                : query.OrderBy(e => e.Name)
         };
 
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 
     public async Task<EquipmentAdminDetailViewModel?> GetAdminByIdAsync(Guid id)
@@ -113,20 +119,6 @@ public class EquipmentQueries
                 e.Description,
                 e.ImageUrl))
             .FirstOrDefaultAsync();
-    }
-
-    public async Task<List<EquipmentViewModel>> GetAllEquipments()
-    {
-        return await _context.Equipments
-            .Select(e => new EquipmentViewModel(
-                e.Id.Value,
-                e.Name,
-                e.Model,
-                e.Brand,
-                e.Code,
-                e.Description,
-                e.ImageUrl))
-            .ToListAsync();
     }
 
     public async Task<EquipmentViewModel?> GetEquipmentById(Guid id)

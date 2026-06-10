@@ -18,37 +18,24 @@ public class KitQueries
 
     public async Task<PagedResponse<KitViewModel>> GetAllAsync(PagedRequest request)
     {
-        var all = await _context.Kits
-            .Select(kit => new KitViewModel(
-                kit.Id.Value,
-                kit.Name,
-                kit.Description,
-                kit.Materials.Join(
-                    _context.Materials,
-                    item => item.MaterialId,
-                    material => material.Id,
-                    (item, material) => new KitItemViewModel(
-                        item.MaterialId.Value,
-                        material.Name,
-                        item.Quantity.Value,
-                        material.Unit.ToString())
-                ).ToList()
-            )).ToListAsync();
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
 
-        var sorted = request.SortBy?.ToLower() switch
+        IQueryable<Kit> query = _context.Kits;
+
+        query = query.WhereSearch(request.Search, x => x.Name, x => x.Description);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
         {
             "name" => request.SortDirection == "desc"
-                ? all.OrderByDescending(k => k.Name).ToList()
-                : all.OrderBy(k => k.Name).ToList(),
-            _ => all.OrderBy(k => k.Name).ToList()
+                ? query.OrderByDescending(k => k.Name)
+                : query.OrderBy(k => k.Name),
+            _ => query.OrderBy(k => k.Name)
         };
 
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
-    }
-
-    public async Task<List<KitViewModel>> GetAllKits()
-    {
-        return await _context.Kits
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
             .Select(kit => new KitViewModel(
                 kit.Id.Value,
                 kit.Name,
@@ -63,7 +50,10 @@ public class KitQueries
                         item.Quantity.Value,
                         material.Unit.ToString())
                 ).ToList()
-            )).ToListAsync();
+            ))
+            .ToListAsync();
+
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 
     public async Task<KitViewModel?> GetKitById(Guid id)

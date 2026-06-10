@@ -10,7 +10,10 @@ public class ProjectQueries(ResearchDbContext context)
 {
     public async Task<PagedResponse<PublicProjectViewModel>> GetAllInstitutionalAsync(PagedRequest request)
     {
-        var all = await context.Projects
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
+
+        IQueryable<PublicProjectViewModel> query = context.Projects
             .AsNoTracking()
             .Select(p => new PublicProjectViewModel(
                 p.Title,
@@ -22,27 +25,58 @@ public class ProjectQueries(ResearchDbContext context)
                                                    && m.ResearcherId == r.Id))
                     .Select(r => r.Name.FullName)
                     .Single(),
-                context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single()))
-            .ToListAsync();
+                context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single()));
 
-        var sorted = request.SortBy?.ToLower() switch
+        query = query.WhereSearch(request.Search,
+            x => x.Title, x => x.Description, x => x.Status, x => x.ResearchLead, x => x.Partner);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
         {
             "title" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.Title).ToList()
-                : all.OrderBy(p => p.Title).ToList(),
+                ? query.OrderByDescending(p => p.Title)
+                : query.OrderBy(p => p.Title),
             "status" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.Status).ToList()
-                : all.OrderBy(p => p.Status).ToList(),
-            _ => all.OrderBy(p => p.Title).ToList()
+                ? query.OrderByDescending(p => p.Status)
+                : query.OrderBy(p => p.Status),
+            _ => query.OrderBy(p => p.Title)
         };
 
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 
     public async Task<PagedResponse<ProjectAdminSummaryViewModel>> GetAllAdminAsync(PagedRequest request)
     {
-        var all = await context.Projects
-            .AsNoTracking()
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
+
+        IQueryable<Project> query = context.Projects.AsNoTracking();
+
+        query = query.WhereSearch(request.Search,
+            p => p.Title,
+            p => context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single(),
+            p => p.Status.Value);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
+        {
+            "title" => request.SortDirection == "desc"
+                ? query.OrderByDescending(p => p.Title)
+                : query.OrderBy(p => p.Title),
+            "status" => request.SortDirection == "desc"
+                ? query.OrderByDescending(p => p.Status)
+                : query.OrderBy(p => p.Status),
+            "createdat" => request.SortDirection == "desc"
+                ? query.OrderByDescending(p => EF.Property<DateTimeOffset>(p, "CreatedAt"))
+                : query.OrderBy(p => EF.Property<DateTimeOffset>(p, "CreatedAt")),
+            _ => query.OrderByDescending(p => EF.Property<DateTimeOffset>(p, "CreatedAt"))
+        };
+
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
             .Select(p => new ProjectAdminSummaryViewModel(
                 p.Id.Value,
                 p.Title,
@@ -57,40 +91,8 @@ public class ProjectQueries(ResearchDbContext context)
                 EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .ToListAsync();
 
-        var sorted = request.SortBy?.ToLower() switch
-        {
-            "title" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.Title).ToList()
-                : all.OrderBy(p => p.Title).ToList(),
-            "status" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.Status).ToList()
-                : all.OrderBy(p => p.Status).ToList(),
-            "createdat" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.CreatedAt).ToList()
-                : all.OrderBy(p => p.CreatedAt).ToList(),
-            _ => all.OrderByDescending(p => p.CreatedAt).ToList()
-        };
-
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
-
-    public async Task<IReadOnlyCollection<ProjectSummaryViewModel>> GetAll()
-        => await context.Projects
-            .AsNoTracking()
-            .Select(p => new ProjectSummaryViewModel(
-                p.Id.Value,
-                p.Title,
-                p.Description,
-                p.Status.Value,
-                context.Researchers
-                    .Where(r => p.Members.Any(m => m.Role == ProjectRole.ResearchLead
-                                                   && m.LeftAt == null
-                                                   && m.ResearcherId == r.Id))
-                    .Select(r => r.Name.FullName)
-                    .Single(),
-                context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single(),
-                EF.Property<DateTimeOffset>(p, "CreatedAt")))
-            .ToListAsync();
 
     public async Task<ProjectViewModel?> GetById(Guid id)
         => await context.Projects.AsNoTracking()
