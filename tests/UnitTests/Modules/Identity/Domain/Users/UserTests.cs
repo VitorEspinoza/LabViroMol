@@ -34,13 +34,15 @@ public class UserTests
             var id = Fakers.AnyUserId();
             var name = Fakers.AnyUserName();
             var email = Fakers.AnyEmail();
+            var emergencyContact = new EmergencyContact("  Maria  ", "  789012  ");
 
             // Act
-            var user = User.Create(id, name, email, "  123456  ", "  789012  ");
+            var user = User.Create(id, name, email, "  123456  ", emergencyContact);
 
             // Assert
             Assert.Equal("123456", user.PhoneNumber);
-            Assert.Equal("789012", user.EmergencyContactNumber);
+            Assert.Equal("Maria", user.EmergencyContact!.Name);
+            Assert.Equal("789012", user.EmergencyContact.Number);
         }
     }
 
@@ -53,15 +55,17 @@ public class UserTests
             var user = Fakers.CreateUser();
             var newName = Fakers.AnyUserName();
             var newEmail = Fakers.AnyEmail();
+            var emergencyContact = new EmergencyContact("Maria", "222222");
 
             // Act
-            user.Update(newName, newEmail, "111111", "222222");
+            user.Update(newName, newEmail, "111111", emergencyContact);
 
             // Assert
             Assert.Equal(newName, user.Name);
             Assert.Equal(newEmail, user.Email);
             Assert.Equal("111111", user.PhoneNumber);
-            Assert.Equal("222222", user.EmergencyContactNumber);
+            Assert.Equal("Maria", user.EmergencyContact!.Name);
+            Assert.Equal("222222", user.EmergencyContact.Number);
         }
 
         [Fact]
@@ -69,13 +73,15 @@ public class UserTests
         {
             // Arrange
             var user = Fakers.CreateUser();
+            var emergencyContact = new EmergencyContact("  Maria  ", "  222  ");
 
             // Act
-            user.Update(Fakers.AnyUserName(), Fakers.AnyEmail(), "  111  ", "  222  ");
+            user.Update(Fakers.AnyUserName(), Fakers.AnyEmail(), "  111  ", emergencyContact);
 
             // Assert
             Assert.Equal("111", user.PhoneNumber);
-            Assert.Equal("222", user.EmergencyContactNumber);
+            Assert.Equal("Maria", user.EmergencyContact!.Name);
+            Assert.Equal("222", user.EmergencyContact.Number);
         }
     }
 

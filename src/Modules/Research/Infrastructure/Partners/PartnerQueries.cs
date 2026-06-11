@@ -11,42 +11,55 @@ public class PartnerQueries(ResearchDbContext context)
 {
     public async Task<PagedResponse<PartnerSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request)
     {
-        var all = await context.Partners.AsNoTracking()
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
+
+        IQueryable<Partner> query = context.Partners.AsNoTracking();
+
+        query = query.WhereSearch(request.Search, x => x.Name);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
+        {
+            "name" => request.SortDirection == "desc"
+                ? query.OrderByDescending(p => p.Name)
+                : query.OrderBy(p => p.Name),
+            _ => query.OrderBy(p => p.Name)
+        };
+
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
             .Select(p => new PartnerSummaryViewModel(p.Id.Value, p.Name, EF.Property<DateTimeOffset>(p, "CreatedAt")))
             .ToListAsync();
 
-        var sorted = request.SortBy?.ToLower() switch
-        {
-            "name" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.Name).ToList()
-                : all.OrderBy(p => p.Name).ToList(),
-            _ => all.OrderBy(p => p.Name).ToList()
-        };
-
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 
     public async Task<PagedResponse<PartnerAdminSummaryViewModel>> GetAllAdminAsync(PagedRequest request)
     {
-        var all = await context.Partners.AsNoTracking()
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
+
+        IQueryable<Partner> query = context.Partners.AsNoTracking();
+
+        query = query.WhereSearch(request.Search, x => x.Name, x => x.Description);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
+        {
+            "name" => request.SortDirection == "desc"
+                ? query.OrderByDescending(p => p.Name)
+                : query.OrderBy(p => p.Name),
+            _ => query.OrderBy(p => p.Name)
+        };
+
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
             .Select(p => new PartnerAdminSummaryViewModel(p.Id.Value, p.Name, p.Description))
             .ToListAsync();
 
-        var sorted = request.SortBy?.ToLower() switch
-        {
-            "name" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.Name).ToList()
-                : all.OrderBy(p => p.Name).ToList(),
-            _ => all.OrderBy(p => p.Name).ToList()
-        };
-
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
-
-    public async Task<IReadOnlyCollection<PartnerSummaryViewModel>> GetAll()
-        => await context.Partners.AsNoTracking()
-            .Select(p => new PartnerSummaryViewModel(p.Id.Value, p.Name, EF.Property<DateTimeOffset>(p, "CreatedAt")))
-            .ToListAsync();
 
     public async Task<PartnerViewModel?> GetById(Guid id)
         => await context.Partners.AsNoTracking()

@@ -1,48 +1,55 @@
 using LabViroMol.Modules.Identity.Application.Users.Abstractions;
+using LabViroMol.Modules.Identity.Application.Users.Emails;
 using LabViroMol.Modules.Identity.Contracts;
 using LabViroMol.Modules.Identity.Domain.Users;
+using LabViroMol.Modules.Notify.Contracts;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.CreateUser;
 
-public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Result<string>>
+public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Result>
 {
     private readonly IIdentityService _identityService;
     private readonly IUserRepository _userRepository;
     private readonly IIdentityUnitOfWork _unitOfWork;
+    private readonly ISendEmail _emailSender;
 
     public CreateUserCommandHandler(
         IIdentityService identityService,
         IUserRepository userRepository,
-        IIdentityUnitOfWork unitOfWork)
+        IIdentityUnitOfWork unitOfWork,
+        ISendEmail emailSender)
     {
         _identityService = identityService;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _emailSender = emailSender;
     }
 
-    public async ValueTask<Result<string>> Handle(CreateUserCommand command, CancellationToken ct)
+    public async ValueTask<Result> Handle(CreateUserCommand command, CancellationToken ct)
     {
         var identityResult = await _identityService.CreateUserAsync(command.Email, ct);
 
         if (identityResult.IsFailure)
-            return Result<string>.Validation(identityResult.Errors);
+            return Result.Validation(identityResult.Errors);
 
-        var (applicationUserId, resetToken) = identityResult.Data!;
+        var (applicationUserId, resetLink) = identityResult.Data!;
 
         var userId = UserId.From(applicationUserId);
         var data = command.UserData;
         var name = new UserName(data.FirstName, data.LastName);
         var email = new Email(command.Email);
 
+        var emergencyContact = EmergencyContact.FromNullable(data.EmergencyContactName, data.EmergencyContactNumber);
+
         var user = User.Create(
             userId,
             name,
             email,
             data.PhoneNumber,
-            data.EmergencyContactNumber);
+            emergencyContact);
 
         await _userRepository.AddAsync(user, ct);
 
@@ -50,7 +57,7 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Resul
         {
             var rolesResult = await _identityService.UpdateUserRolesAsync(applicationUserId, command.RoleIds, ct);
             if (rolesResult.IsFailure)
-                return Result<string>.Validation(rolesResult.Errors);
+                return Result.Validation(rolesResult.Errors);
         }
 
         _unitOfWork.AddIntegrationEvent(new UserRegisteredIntegrationEvent(
@@ -63,6 +70,9 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Resul
 
         await _unitOfWork.CompleteAsync(ct);
 
-        return Result<string>.Success(resetToken);
+        var (subject, body) = PasswordEmailTemplates.BuildWelcomeEmail(data.FirstName, resetLink);
+        await _emailSender.SendEmail(command.Email, subject, body, ct);
+
+        return Result.Success();
     }
 }

@@ -8,9 +8,9 @@ using Mediator;
 public class CreatePublicationHandler(
     IPublicationRepository repository,
     IResearchUnitOfWork unitOfWork)
-    : ICommandHandler<CreatePublicationCommand, Result>
+    : ICommandHandler<CreatePublicationCommand, Result<Guid>>
 {
-    public async ValueTask<Result> Handle(CreatePublicationCommand command, CancellationToken ct)
+    public async ValueTask<Result<Guid>> Handle(CreatePublicationCommand command, CancellationToken ct)
     {
         var result = Publication.Create(
             command.Title,
@@ -21,11 +21,11 @@ public class CreatePublicationHandler(
             command.PublishUrl);
 
         if (result.IsFailure)
-            return result;
+            return Result<Guid>.FromError(result);
 
         await repository.AddAsync(result.Data!, ct);
         await unitOfWork.CompleteAsync(ct);
 
-        return Result.Success();
+        return Result<Guid>.Success(result.Data!.Id);
     }
 }

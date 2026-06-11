@@ -20,8 +20,15 @@ public class ScheduleQueries
     public async Task<PagedResponse<ScheduleViewModel>> GetAllAsync(PagedRequest request)
     {
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
 
         IQueryable<Schedule> query = _context.Schedules;
+
+        query = query.WhereSearch(request.Search,
+            s => s.ProjectTitle, s => s.Description, s => s.AdvisorProfessor,
+            s => s.Scheduler.Name, s => s.Scheduler.Course, s => s.Scheduler.Email);
+
+        var totalCount = await query.CountAsync();
 
         query = request.SortBy?.ToLower() switch
         {
@@ -31,26 +38,35 @@ public class ScheduleQueries
             "status" => request.SortDirection == "desc"
                 ? query.OrderByDescending(s => s.Status)
                 : query.OrderBy(s => s.Status),
+            "createdat" => request.SortDirection == "desc"
+                ? query.OrderByDescending(s => EF.Property<DateTimeOffset>(s, "CreatedAt"))
+                : query.OrderBy(s => EF.Property<DateTimeOffset>(s, "CreatedAt")),
             _ => query.OrderByDescending(s => s.Scheduling.StartDateHour)
         };
 
-        int total = await query.CountAsync();
         var entities = await query
-            .Skip((request.Page - 1) * pageSize)
+            .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
 
         var items = entities.Select(ScheduleMapper.FromEntity).ToList();
-        return new PagedResponse<ScheduleViewModel>(items, request.Page, pageSize, total);
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 
     public async Task<PagedResponse<ScheduleViewModel>> GetAllPendingAsync(PagedRequest request)
     {
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
 
         IQueryable<Schedule> query = _context.Schedules
             .Where(s => s.Status.Equals(ScheduleStatus.PENDING) &&
                         s.Scheduling.StartDateHour > DateTimeOffset.Now);
+
+        query = query.WhereSearch(request.Search,
+            s => s.ProjectTitle, s => s.Description, s => s.AdvisorProfessor,
+            s => s.Scheduler.Name, s => s.Scheduler.Course, s => s.Scheduler.Email);
+
+        var totalCount = await query.CountAsync();
 
         query = request.SortBy?.ToLower() switch
         {
@@ -60,36 +76,18 @@ public class ScheduleQueries
             "status" => request.SortDirection == "desc"
                 ? query.OrderByDescending(s => s.Status)
                 : query.OrderBy(s => s.Status),
+            "createdat" => request.SortDirection == "desc"
+                ? query.OrderByDescending(s => EF.Property<DateTimeOffset>(s, "CreatedAt"))
+                : query.OrderBy(s => EF.Property<DateTimeOffset>(s, "CreatedAt")),
             _ => query.OrderBy(s => s.Scheduling.StartDateHour)
         };
 
-        int total = await query.CountAsync();
         var entities = await query
-            .Skip((request.Page - 1) * pageSize)
+            .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
 
         var items = entities.Select(ScheduleMapper.FromEntity).ToList();
-        return new PagedResponse<ScheduleViewModel>(items, request.Page, pageSize, total);
-    }
-
-    public async Task<List<ScheduleViewModel>> GetAllSchedules()
-    {
-        var schedules = await _context.Schedules
-            .Select(s => ScheduleMapper.FromEntity(s))
-            .ToListAsync();
-
-        return schedules;
-    }
-
-    public async Task<List<ScheduleViewModel>> GetAllSchedulesPending()
-    {
-        var schedulesPending = await _context.Schedules
-            .Where(s => s.Status.Equals(ScheduleStatus.PENDING) &&
-                        s.Scheduling.StartDateHour > DateTimeOffset.Now)
-            .Select(s => ScheduleMapper.FromEntity(s))
-            .ToListAsync();
-
-        return schedulesPending;
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 }

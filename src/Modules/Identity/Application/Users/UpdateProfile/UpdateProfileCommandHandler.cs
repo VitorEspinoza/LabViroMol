@@ -33,8 +33,9 @@ public class UpdateProfileCommandHandler : ICommandHandler<UpdateProfileCommand,
 
         var data = command.UserData;
         var name = new UserName(data.FirstName, data.LastName);
+        var emergencyContact = EmergencyContact.FromNullable(data.EmergencyContactName, data.EmergencyContactNumber);
 
-        user.Update(name, user.Email, data.PhoneNumber, data.EmergencyContactNumber);
+        user.Update(name, user.Email, data.PhoneNumber, emergencyContact);
 
         var roleIds = await _identityService.GetUserRoleIdsAsync(command.UserId, ct);
 
@@ -43,6 +44,7 @@ public class UpdateProfileCommandHandler : ICommandHandler<UpdateProfileCommand,
             data.FirstName,
             data.LastName,
             data.PhoneNumber,
+            data.EmergencyContactName,
             data.EmergencyContactNumber,
             roleIds,
             data.ResearchData));

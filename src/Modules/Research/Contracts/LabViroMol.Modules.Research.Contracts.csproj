@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Shared\Kernel\LabViroMol.Modules.Shared.Kernel.csproj" />
+      <ProjectReference Include="..\..\Identity\Contracts\LabViroMol.Modules.Identity.Contracts.csproj" />
     </ItemGroup>
 
 </Project>

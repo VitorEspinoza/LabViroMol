@@ -54,6 +54,32 @@ public class GetProjectTests : ProjectEndpointsTestBase
     }
 
     [Fact]
+    public async Task TEMP_ShouldReturn200_WhenSearchingAndSorting()
+    {
+        await SeedProjectAsync();
+
+        var responsePartner = await Client.GetAsync($"{BaseRoute}?search=Instituto");
+        var responseManager = await Client.GetAsync($"{BaseRoute}?search=Silva");
+        var responseStatus = await Client.GetAsync($"{BaseRoute}?search=Planned");
+        var responseSortStatus = await Client.GetAsync($"{BaseRoute}?sortBy=status&sortDirection=desc");
+        var responseSortCreatedAt = await Client.GetAsync($"{BaseRoute}?sortBy=createdat&sortDirection=asc");
+
+        Assert.Equal(HttpStatusCode.OK, responsePartner.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, responseManager.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, responseStatus.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, responseSortStatus.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, responseSortCreatedAt.StatusCode);
+
+        var json = await responsePartner.Content.ReadAsStringAsync();
+        Assert.Contains("\"data\"", json);
+        Assert.Contains("\"currentPage\"", json);
+        Assert.Contains("\"totalCount\"", json);
+        Assert.Contains("\"totalPages\"", json);
+        Assert.Contains("\"hasNextPage\"", json);
+        Assert.Contains("\"hasPreviousPage\"", json);
+    }
+
+    [Fact]
     public async Task ShouldReturn200_WhenProjectExists()
     {
         var (projectId, _, _) = await SeedProjectAsync();
