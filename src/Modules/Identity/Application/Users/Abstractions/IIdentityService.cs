@@ -4,12 +4,12 @@ namespace LabViroMol.Modules.Identity.Application.Users.Abstractions;
 
 public interface IIdentityService
 {
-    Task<Result<(Guid UserId, string ResetToken)>> CreateUserAsync(string email, CancellationToken ct);
+    Task<Result<(Guid UserId, string ResetLink)>> CreateUserAsync(string email, CancellationToken ct);
     Task<List<Guid>> GetUserRoleIdsAsync(Guid userId, CancellationToken ct);
     Task<Result<(string AccessToken, string RefreshToken)>> LoginAsync(string email, string password, CancellationToken ct);
     Task<Result<(string NewAccessToken, string NewRefreshToken)>> RefreshTokenAsync(string refreshToken, CancellationToken ct);
     Task<Result> LogoutAsync(Guid userId, CancellationToken ct);
-    Task<Result<string>> GeneratePasswordResetTokenAsync(string email, CancellationToken ct);
+    Task<Result<(string ResetLink, string FirstName)>> GeneratePasswordResetTokenAsync(string email, CancellationToken ct);
     Task<Result> ResetPasswordAsync(string email, string token, string newPassword, CancellationToken ct);
     Task<Result> SetUserLockoutAsync(Guid userId, bool locked, CancellationToken ct);
     Task<Result> UpdateUserRolesAsync(Guid userId, List<Guid> roleIds, CancellationToken ct);

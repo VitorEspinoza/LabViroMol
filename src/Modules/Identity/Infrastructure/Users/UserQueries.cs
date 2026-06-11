@@ -2,13 +2,14 @@ using LabViroMol.Modules.Identity.Application.Users.ViewModels;
 using LabViroMol.Modules.Identity.Contracts;
 using LabViroMol.Modules.Identity.Domain.Users;
 using LabViroMol.Modules.Identity.Infrastructure.Persistence;
+using LabViroMol.Modules.Research.Contracts;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Identity.Infrastructure.Users;
 
-public class UserQueries(LabViroMolIdentityDbContext context)
+public class UserQueries(LabViroMolIdentityDbContext context, IResearcherProfileProvider researcherProfileProvider)
 {
     public async Task<PagedResponse<UserSummaryViewModel>> GetAllAsync(PagedRequest request)
     {
@@ -55,11 +56,11 @@ public class UserQueries(LabViroMolIdentityDbContext context)
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 
-    public async Task<UserProfileViewModel?> GetByIdAsync(Guid userId)
+    public async Task<UserProfileViewModel?> GetByIdAsync(Guid userId, CancellationToken ct = default)
     {
         var id = UserId.From(userId);
         var user = await context.DomainUsers.AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Id == id);
+            .FirstOrDefaultAsync(u => u.Id == id, ct);
 
         if (user is null)
             return null;
@@ -67,7 +68,9 @@ public class UserQueries(LabViroMolIdentityDbContext context)
         var roles = await context.UserRoles
             .Where(ur => ur.UserId == userId)
             .Join(context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name!)
-            .ToListAsync();
+            .ToListAsync(ct);
+
+        var researchData = await researcherProfileProvider.GetByUserIdAsync(userId, ct);
 
         return new UserProfileViewModel(
             user.Id.Value,
@@ -77,7 +80,7 @@ public class UserQueries(LabViroMolIdentityDbContext context)
                 user.PhoneNumber,
                 user.EmergencyContact?.Name,
                 user.EmergencyContact?.Number,
-                null),
+                researchData),
             user.IsActive,
             roles);
     }

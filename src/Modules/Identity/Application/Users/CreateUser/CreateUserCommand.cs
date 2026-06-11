@@ -7,4 +7,4 @@ namespace LabViroMol.Modules.Identity.Application.Users.CreateUser;
 public record CreateUserCommand(
     UserInfo UserData,
     string Email,
-    List<Guid> RoleIds) : ICommand<Result<string>>;
+    List<Guid> RoleIds) : ICommand<Result>;

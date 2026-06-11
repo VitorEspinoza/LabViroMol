@@ -3,4 +3,4 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.ForgotPassword;
 
-public record ForgotPasswordCommand(string Email) : ICommand<Result<string>>;
+public record ForgotPasswordCommand(string Email) : ICommand<Result>;

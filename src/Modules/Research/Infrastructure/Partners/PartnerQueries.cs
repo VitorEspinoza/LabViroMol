@@ -14,8 +14,7 @@ public class PartnerQueries(ResearchDbContext context)
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<PartnerSummaryViewModel> query = context.Partners.AsNoTracking()
-            .Select(p => new PartnerSummaryViewModel(p.Id.Value, p.Name, EF.Property<DateTimeOffset>(p, "CreatedAt")));
+        IQueryable<Partner> query = context.Partners.AsNoTracking();
 
         query = query.WhereSearch(request.Search, x => x.Name);
 
@@ -29,7 +28,9 @@ public class PartnerQueries(ResearchDbContext context)
             _ => query.OrderBy(p => p.Name)
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
+            .Select(p => new PartnerSummaryViewModel(p.Id.Value, p.Name, EF.Property<DateTimeOffset>(p, "CreatedAt")))
+            .ToListAsync();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
@@ -39,8 +40,7 @@ public class PartnerQueries(ResearchDbContext context)
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<PartnerAdminSummaryViewModel> query = context.Partners.AsNoTracking()
-            .Select(p => new PartnerAdminSummaryViewModel(p.Id.Value, p.Name, p.Description));
+        IQueryable<Partner> query = context.Partners.AsNoTracking();
 
         query = query.WhereSearch(request.Search, x => x.Name, x => x.Description);
 
@@ -54,7 +54,9 @@ public class PartnerQueries(ResearchDbContext context)
             _ => query.OrderBy(p => p.Name)
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
+            .Select(p => new PartnerAdminSummaryViewModel(p.Id.Value, p.Name, p.Description))
+            .ToListAsync();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }

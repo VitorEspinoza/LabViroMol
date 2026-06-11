@@ -21,6 +21,7 @@ public class IdentityService : IIdentityService
     private readonly string _jwtKey;
     private readonly string _jwtIssuer;
     private readonly string _jwtAudience;
+    private readonly string _frontendBaseUrl;
 
     private const string LoginProvider = "LabViroMol";
     private const string RefreshTokenName = "RefreshToken";
@@ -37,9 +38,10 @@ public class IdentityService : IIdentityService
         _jwtKey = configuration["Jwt:Key"]!;
         _jwtIssuer = configuration["Jwt:Issuer"]!;
         _jwtAudience = configuration["Jwt:Audience"]!;
+        _frontendBaseUrl = configuration["Frontend:BaseUrl"] ?? "http://localhost:4200";
     }
 
-    public async Task<Result<(Guid UserId, string ResetToken)>> CreateUserAsync(string email, CancellationToken ct)
+    public async Task<Result<(Guid UserId, string ResetLink)>> CreateUserAsync(string email, CancellationToken ct)
     {
         var applicationUser = new ApplicationUser
         {
@@ -56,7 +58,9 @@ public class IdentityService : IIdentityService
         }
 
         var resetToken = await _userManager.GeneratePasswordResetTokenAsync(applicationUser);
-        return Result<(Guid, string)>.Success((applicationUser.Id, resetToken));
+        var resetLink = BuildResetLink(email, resetToken);
+
+        return Result<(Guid, string)>.Success((applicationUser.Id, resetLink));
     }
 
     public async Task<List<Guid>> GetUserRoleIdsAsync(Guid userId, CancellationToken ct)
@@ -149,15 +153,19 @@ public class IdentityService : IIdentityService
         return Result.Success();
     }
 
-    public async Task<Result<string>> GeneratePasswordResetTokenAsync(string email, CancellationToken ct)
+    public async Task<Result<(string ResetLink, string FirstName)>> GeneratePasswordResetTokenAsync(string email, CancellationToken ct)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)
-            return Result<string>.NotFound("Usuário não encontrado.");
+            return Result<(string, string)>.NotFound("Usuário não encontrado.");
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var resetLink = BuildResetLink(email, token);
 
-        return Result<string>.Success(token);
+        var domainUser = await _dbContext.DomainUsers.AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == UserId.From(user.Id), ct);
+
+        return Result<(string, string)>.Success((resetLink, domainUser?.Name.FirstName ?? string.Empty));
     }
 
     public async Task<Result> ResetPasswordAsync(
@@ -317,6 +325,9 @@ public class IdentityService : IIdentityService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    private string BuildResetLink(string email, string token) =>
+        $"{_frontendBaseUrl}/reset-password?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(token)}";
 
     private string GenerateRefreshToken(ApplicationUser user)
     {

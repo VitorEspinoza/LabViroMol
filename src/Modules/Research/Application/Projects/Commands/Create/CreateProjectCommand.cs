@@ -7,4 +7,4 @@ public record CreateProjectCommand(
     Guid PrincipalInvestigatorId,
     string Title,
     string Description,
-    Guid PartnerId) : ICommand<Result>;
+    Guid PartnerId) : ICommand<Result<Guid>>;

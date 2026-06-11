@@ -12,14 +12,14 @@ public class CreateProjectHandler(
     IProjectRepository projectRepository,
     IResearcherRepository researcherRepository,
     IResearchUnitOfWork unitOfWork)
-    : ICommandHandler<CreateProjectCommand, Result>
+    : ICommandHandler<CreateProjectCommand, Result<Guid>>
 {
-    public async ValueTask<Result> Handle(CreateProjectCommand command, CancellationToken ct)
+    public async ValueTask<Result<Guid>> Handle(CreateProjectCommand command, CancellationToken ct)
     {
         var piId = ResearcherId.From(command.PrincipalInvestigatorId);
         var researcher = await researcherRepository.GetByIdAsync(piId, ct);
         if (researcher is null)
-            return Result.NotFound("Pesquisador nao encontrado.");
+            return Result<Guid>.NotFound("Pesquisador nao encontrado.");
 
         var result = Project.Create(
             piId,
@@ -28,11 +28,11 @@ public class CreateProjectHandler(
             PartnerId.From(command.PartnerId));
 
         if (result.IsFailure)
-            return result;
+            return Result<Guid>.FromError(result);
 
         await projectRepository.AddAsync(result.Data!, ct);
         await unitOfWork.CompleteAsync(ct);
 
-        return Result.Success();
+        return Result<Guid>.Success(result.Data!.Id);
     }
 }

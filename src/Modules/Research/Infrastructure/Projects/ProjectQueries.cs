@@ -1,8 +1,11 @@
 namespace LabViroMol.Modules.Research.Infrastructure.Projects;
 
 using LabViroMol.Modules.Research.Application.Projects.ViewModels;
+using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Research.Domain.Projects;
+using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
+using LabViroMol.Modules.Research.Infrastructure.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,22 +16,51 @@ public class ProjectQueries(ResearchDbContext context)
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<PublicProjectViewModel> query = context.Projects
-            .AsNoTracking()
-            .Select(p => new PublicProjectViewModel(
-                p.Title,
-                p.Description,
-                p.Status.Value,
-                context.Researchers
-                    .Where(r => p.Members.Any(m => m.Role == ProjectRole.ResearchLead
-                                                   && m.LeftAt == null
-                                                   && m.ResearcherId == r.Id))
-                    .Select(r => r.Name.FullName)
-                    .Single(),
-                context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single()));
+        IQueryable<Project> query = context.Projects.AsNoTracking().Include(p => p.Members);
 
-        query = query.WhereSearch(request.Search,
-            x => x.Title, x => x.Description, x => x.Status, x => x.ResearchLead, x => x.Partner);
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var search = request.Search;
+
+            var matchingStatuses = ProjectStatus.List()
+                .Where(s => s.Value.Contains(search, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            var ownFieldMatchIds = await context.Projects
+                .Where(p => p.Title.Contains(search) || p.Description.Contains(search) ||
+                            matchingStatuses.Contains(p.Status))
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            var matchingPartnerIds = await context.Partners
+                .Where(pt => pt.Name.Contains(search))
+                .Select(pt => pt.Id)
+                .ToListAsync();
+
+            var projectIdsByPartner = await context.Projects
+                .Where(p => matchingPartnerIds.Contains(p.PartnerId))
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            var matchingResearcherIds = await context.Researchers
+                .Where(r => r.Name.FirstName.Contains(search) || r.Name.LastName.Contains(search) ||
+                            (r.Name.CitationName != null && r.Name.CitationName.Contains(search)))
+                .Select(r => r.Id)
+                .ToListAsync();
+
+            var projectIdsByLead = await context.Projects
+                .Where(p => p.Members.Any(m => m.Role == ProjectRole.ResearchLead && m.LeftAt == null
+                                                && matchingResearcherIds.Contains(m.ResearcherId)))
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            var matchingIds = ownFieldMatchIds
+                .Union(projectIdsByPartner)
+                .Union(projectIdsByLead)
+                .ToList();
+
+            query = query.Where(p => matchingIds.Contains(p.Id));
+        }
 
         var totalCount = await query.CountAsync();
 
@@ -43,7 +75,24 @@ public class ProjectQueries(ResearchDbContext context)
             _ => query.OrderBy(p => p.Title)
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var projects = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+        var leadIds = GetResearchLeadIds(projects);
+        var partnerIds = projects.Select(p => p.PartnerId);
+
+        var researcherNames = await ResearcherNameLookup.GetNamesAsync(context, leadIds);
+        var partnerNames = await GetPartnerNamesAsync(partnerIds);
+
+        var items = projects.Select(p =>
+        {
+            var leadId = GetResearchLeadId(p);
+            var leadName = leadId.HasValue && researcherNames.TryGetValue(leadId.Value, out var lead)
+                ? lead.FullName
+                : string.Empty;
+            var partnerName = partnerNames.GetValueOrDefault(p.PartnerId, string.Empty);
+
+            return new PublicProjectViewModel(p.Title, p.Description, p.Status.Value, leadName, partnerName);
+        }).ToList();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
@@ -53,12 +102,35 @@ public class ProjectQueries(ResearchDbContext context)
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<Project> query = context.Projects.AsNoTracking();
+        IQueryable<Project> query = context.Projects.AsNoTracking().Include(p => p.Members);
 
-        query = query.WhereSearch(request.Search,
-            p => p.Title,
-            p => context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single(),
-            p => p.Status.Value);
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var search = request.Search;
+
+            var matchingStatuses = ProjectStatus.List()
+                .Where(s => s.Value.Contains(search, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            var ownFieldMatchIds = await context.Projects
+                .Where(p => p.Title.Contains(search) || matchingStatuses.Contains(p.Status))
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            var matchingPartnerIds = await context.Partners
+                .Where(pt => pt.Name.Contains(search))
+                .Select(pt => pt.Id)
+                .ToListAsync();
+
+            var projectIdsByPartner = await context.Projects
+                .Where(p => matchingPartnerIds.Contains(p.PartnerId))
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            var matchingIds = ownFieldMatchIds.Union(projectIdsByPartner).ToList();
+
+            query = query.Where(p => matchingIds.Contains(p.Id));
+        }
 
         var totalCount = await query.CountAsync();
 
@@ -76,41 +148,73 @@ public class ProjectQueries(ResearchDbContext context)
             _ => query.OrderByDescending(p => EF.Property<DateTimeOffset>(p, "CreatedAt"))
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
-            .Select(p => new ProjectAdminSummaryViewModel(
-                p.Id.Value,
-                p.Title,
-                context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single(),
-                context.Researchers
-                    .Where(r => p.Members.Any(m => m.Role == ProjectRole.ResearchLead
-                                                   && m.LeftAt == null
-                                                   && m.ResearcherId == r.Id))
-                    .Select(r => r.Name.FullName)
-                    .Single(),
-                p.Status.Value,
-                EF.Property<DateTimeOffset>(p, "CreatedAt")))
+        var rows = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
+            .Select(p => new { Project = p, CreatedAt = EF.Property<DateTimeOffset>(p, "CreatedAt") })
             .ToListAsync();
+
+        var leadIds = GetResearchLeadIds(rows.Select(r => r.Project));
+        var partnerIds = rows.Select(r => r.Project.PartnerId);
+
+        var researcherNames = await ResearcherNameLookup.GetNamesAsync(context, leadIds);
+        var partnerNames = await GetPartnerNamesAsync(partnerIds);
+
+        var items = rows.Select(r =>
+        {
+            var p = r.Project;
+            var leadId = GetResearchLeadId(p);
+            var leadName = leadId.HasValue && researcherNames.TryGetValue(leadId.Value, out var lead)
+                ? lead.FullName
+                : string.Empty;
+            var partnerName = partnerNames.GetValueOrDefault(p.PartnerId, string.Empty);
+
+            return new ProjectAdminSummaryViewModel(p.Id.Value, p.Title, partnerName, leadName, p.Status.Value, r.CreatedAt);
+        }).ToList();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 
     public async Task<ProjectViewModel?> GetById(Guid id)
-        => await context.Projects.AsNoTracking()
+    {
+        var row = await context.Projects.AsNoTracking()
+            .Include(p => p.Members)
             .Where(p => p.Id == ProjectId.From(id))
-            .Select(p => new ProjectViewModel(
-                p.Id.Value,
-                p.Title,
-                p.Description,
-                p.Status,
-                p.PartnerId.Value,
-                context.Partners.Where(pt => pt.Id == p.PartnerId).Select(pt => pt.Name).Single(),
-                p.Members.Where(m => m.LeftAt == null).Select(m =>
-                    new ProjectMemberViewModel(m.Id,
-                        context.Researchers
-                            .Where(r => r.Id == m.ResearcherId)
-                            .Select(r => r.Name.FullName)
-                            .Single(),
-                        m.Role)).ToList(),
-                EF.Property<DateTimeOffset>(p, "CreatedAt")))
+            .Select(p => new { Project = p, CreatedAt = EF.Property<DateTimeOffset>(p, "CreatedAt") })
             .FirstOrDefaultAsync();
+
+        if (row is null)
+            return null;
+
+        var project = row.Project;
+        var activeMembers = project.Members.Where(m => m.LeftAt == null).ToList();
+
+        var researcherNames = await ResearcherNameLookup.GetNamesAsync(context, activeMembers.Select(m => m.ResearcherId));
+        var partnerNames = await GetPartnerNamesAsync([project.PartnerId]);
+
+        return new ProjectViewModel(
+            project.Id.Value,
+            project.Title,
+            project.Description,
+            project.Status,
+            project.PartnerId.Value,
+            partnerNames.GetValueOrDefault(project.PartnerId, string.Empty),
+            activeMembers.Select(m => new ProjectMemberViewModel(m.Id, researcherNames[m.ResearcherId].FullName, m.Role)).ToList(),
+            row.CreatedAt);
+    }
+
+    private static ResearcherId? GetResearchLeadId(Project project)
+        => project.Members.FirstOrDefault(m => m.Role == ProjectRole.ResearchLead && m.LeftAt == null)?.ResearcherId;
+
+    private static IEnumerable<ResearcherId> GetResearchLeadIds(IEnumerable<Project> projects)
+        => projects.Select(GetResearchLeadId).Where(id => id.HasValue).Select(id => id!.Value);
+
+    private async Task<Dictionary<PartnerId, string>> GetPartnerNamesAsync(IEnumerable<PartnerId> partnerIds)
+    {
+        var ids = partnerIds.Distinct().ToList();
+        if (ids.Count == 0)
+            return new Dictionary<PartnerId, string>();
+
+        return await context.Partners.AsNoTracking()
+            .Where(pt => ids.Contains(pt.Id))
+            .ToDictionaryAsync(pt => pt.Id, pt => pt.Name);
+    }
 }

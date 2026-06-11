@@ -13,8 +13,7 @@ public class PositionQueries(ResearchDbContext context)
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<PositionViewModel> query = context.Positions.AsNoTracking()
-            .Select(p => new PositionViewModel(p.Id.Value, p.Name, p.Description));
+        IQueryable<Position> query = context.Positions.AsNoTracking();
 
         query = query.WhereSearch(request.Search, x => x.Name, x => x.Description);
 
@@ -28,7 +27,9 @@ public class PositionQueries(ResearchDbContext context)
             _ => query.OrderBy(p => p.Name)
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
+            .Select(p => new PositionViewModel(p.Id.Value, p.Name, p.Description))
+            .ToListAsync();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }

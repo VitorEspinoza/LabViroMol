@@ -1,4 +1,5 @@
 using LabViroMol.Modules.Assets.Application.Equipments.ViewModels;
+using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -21,15 +22,7 @@ public class EquipmentQueries
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<EquipmentViewModel> query = _context.Equipments
-            .Select(e => new EquipmentViewModel(
-                e.Id.Value,
-                e.Name,
-                e.Model,
-                e.Brand,
-                e.Code,
-                e.Description,
-                e.ImageUrl));
+        IQueryable<Equipment> query = _context.Equipments;
 
         query = query.WhereSearch(request.Search,
             x => x.Name, x => x.Model, x => x.Brand, x => x.Code, x => x.Description);
@@ -52,7 +45,16 @@ public class EquipmentQueries
                 : query.OrderBy(e => e.Name)
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
+            .Select(e => new EquipmentViewModel(
+                e.Id.Value,
+                e.Name,
+                e.Model,
+                e.Brand,
+                e.Code,
+                e.Description,
+                e.ImageUrl))
+            .ToListAsync();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
@@ -62,45 +64,51 @@ public class EquipmentQueries
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<EquipmentAdminSummaryViewModel> query = _context.Equipments
-            .Select(e => new EquipmentAdminSummaryViewModel(
-                e.Id.Value,
-                e.Code,
-                e.Name,
-                e.Model,
-                e.Brand,
-                e.Location,
-                _context.MaintenanceRequests.Any(mr => mr.EquipmentId == e.Id && mr.Status == MaintenanceRequestStatus.InProgress)
-                    ? "UnderMaintenance"
-                    : _context.MaintenanceRequests.Any(mr => mr.EquipmentId == e.Id && mr.Status == MaintenanceRequestStatus.Requested)
-                        ? "MaintenancePending"
-                        : "Available"));
+        var query = _context.Equipments.Select(e => new
+        {
+            Equipment = e,
+            Status = _context.MaintenanceRequests.Any(mr => mr.EquipmentId == e.Id && mr.Status == MaintenanceRequestStatus.InProgress)
+                ? "UnderMaintenance"
+                : _context.MaintenanceRequests.Any(mr => mr.EquipmentId == e.Id && mr.Status == MaintenanceRequestStatus.Requested)
+                    ? "MaintenancePending"
+                    : "Available"
+        });
 
         query = query.WhereSearch(request.Search,
-            x => x.Code, x => x.Name, x => x.Model, x => x.Brand, x => x.Location, x => x.Status);
+            x => x.Equipment.Code, x => x.Equipment.Name, x => x.Equipment.Model,
+            x => x.Equipment.Brand, x => x.Equipment.Location, x => x.Status);
 
         var totalCount = await query.CountAsync();
 
         query = request.SortBy?.ToLower() switch
         {
             "code" => request.SortDirection == "desc"
-                ? query.OrderByDescending(e => e.Code)
-                : query.OrderBy(e => e.Code),
+                ? query.OrderByDescending(x => x.Equipment.Code)
+                : query.OrderBy(x => x.Equipment.Code),
             "brand" => request.SortDirection == "desc"
-                ? query.OrderByDescending(e => e.Brand)
-                : query.OrderBy(e => e.Brand),
+                ? query.OrderByDescending(x => x.Equipment.Brand)
+                : query.OrderBy(x => x.Equipment.Brand),
             "model" => request.SortDirection == "desc"
-                ? query.OrderByDescending(e => e.Model)
-                : query.OrderBy(e => e.Model),
+                ? query.OrderByDescending(x => x.Equipment.Model)
+                : query.OrderBy(x => x.Equipment.Model),
             "status" => request.SortDirection == "desc"
-                ? query.OrderByDescending(e => e.Status)
-                : query.OrderBy(e => e.Status),
+                ? query.OrderByDescending(x => x.Status)
+                : query.OrderBy(x => x.Status),
             _ => request.SortDirection == "desc"
-                ? query.OrderByDescending(e => e.Name)
-                : query.OrderBy(e => e.Name)
+                ? query.OrderByDescending(x => x.Equipment.Name)
+                : query.OrderBy(x => x.Equipment.Name)
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
+            .Select(x => new EquipmentAdminSummaryViewModel(
+                x.Equipment.Id.Value,
+                x.Equipment.Code,
+                x.Equipment.Name,
+                x.Equipment.Model,
+                x.Equipment.Brand,
+                x.Equipment.Location,
+                x.Status))
+            .ToListAsync();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }

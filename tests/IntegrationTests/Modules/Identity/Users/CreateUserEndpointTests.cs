@@ -2,6 +2,8 @@ using System.Net;
 using System.Net.Http.Json;
 using LabViroMol.Modules.Identity.Application.Users.CreateUser;
 using LabViroMol.Modules.Identity.Contracts;
+using LabViroMol.Modules.Notify.Contracts;
+using NSubstitute;
 
 namespace LabViroMol.Modules.Identity.IntegrationTests.Users;
 
@@ -10,7 +12,7 @@ public class CreateUserTests : UserEndpointsTestBase
     public CreateUserTests(IdentityIntegrationTestWebAppFactory factory) : base(factory) { }
 
     [Fact]
-    public async Task ShouldReturn201WithResetToken_WhenRequestIsValid()
+    public async Task ShouldReturn201_WhenRequestIsValid()
     {
         // Arrange
         await SeedAuthenticatedAdmin();
@@ -24,8 +26,25 @@ public class CreateUserTests : UserEndpointsTestBase
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<ResetTokenResponse>();
-        Assert.NotNull(body?.ResetToken);
+    }
+
+    [Fact]
+    public async Task ShouldSendWelcomeEmail_WhenUserIsCreated()
+    {
+        // Arrange
+        await SeedAuthenticatedAdmin();
+        var command = new CreateUserCommand(
+            new UserInfo("João", "Silva", null, null, null, null),
+            "joao.welcome@labviromol.com",
+            []);
+
+        // Act
+        var response = await Client.PostAsJsonAsync(BaseRoute, command);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        await Factory.EmailSenderMock.Received(1).SendEmail(
+            "joao.welcome@labviromol.com", Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -61,6 +80,4 @@ public class CreateUserTests : UserEndpointsTestBase
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
-
-    private record ResetTokenResponse(string ResetToken);
 }

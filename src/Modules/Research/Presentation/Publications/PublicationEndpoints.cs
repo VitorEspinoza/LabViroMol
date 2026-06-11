@@ -38,7 +38,7 @@ internal static class PublicationEndpoints
         group.MapPost("/", async (CreatePublicationCommand command, IMediator mediator, CancellationToken ct) =>
         {
             var result = await mediator.Send(command, ct);
-            return result.ToHttpResult(Results.Created());
+            return result.ToHttpResult(id => Results.Created($"/api/research/publications/{id}", new { id }));
         }).RequireAuthorization(Permissions.Research.PublicationsManage);
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, PublicationQueries queries) =>

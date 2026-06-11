@@ -36,15 +36,15 @@ internal static class UserEndpoints
             Results.Ok(await queries.GetAllAsync(request)))
             .RequireAuthorization(Permissions.Identity.UsersView);
 
-        group.MapGet("/me", async (ICurrentUser currentUser, UserQueries queries) =>
+        group.MapGet("/me", async (ICurrentUser currentUser, UserQueries queries, CancellationToken ct) =>
         {
-            var user = await queries.GetByIdAsync(currentUser.Id.Value);
+            var user = await queries.GetByIdAsync(currentUser.Id.Value, ct);
             return user is null ? Results.NotFound() : Results.Ok(user);
         }).RequireAuthorization();
 
-        group.MapGet("/{id:guid}", async (Guid id, UserQueries queries) =>
+        group.MapGet("/{id:guid}", async (Guid id, UserQueries queries, CancellationToken ct) =>
         {
-            var user = await queries.GetByIdAsync(id);
+            var user = await queries.GetByIdAsync(id, ct);
             return user is null ? Results.NotFound() : Results.Ok(user);
         }).RequireAuthorization(Permissions.Identity.UsersView);
 
@@ -52,10 +52,7 @@ internal static class UserEndpoints
         {
             var result = await mediator.Send(command, ct);
 
-            if (result.IsFailure)
-                return result.ToHttpResult(Results.Ok());
-
-            return Results.Created("/api/identity/users", new { ResetToken = result.Data });
+            return result.ToHttpResult(Results.Created("/api/identity/users", (object?)null));
         }).RequireAuthorization()
           .Accepts<CreateUserCommand>("application/json");
 
@@ -182,10 +179,7 @@ internal static class UserEndpoints
         {
             var result = await mediator.Send(command, ct);
 
-            if (result.IsFailure)
-                return result.ToHttpResult(Results.Ok());
-
-            return Results.Ok(new { Token = result.Data });
+            return result.ToHttpResult(Results.Ok());
         }).Accepts<ForgotPasswordCommand>("application/json");
 
         group.MapPost("/reset-password", async (ResetPasswordCommand command, IMediator mediator, CancellationToken ct) =>

@@ -17,9 +17,11 @@ public abstract class BaseIdentityIntegrationTest : IDisposable
     protected readonly LabViroMolIdentityDbContext DbContext;
     protected readonly UserManager<ApplicationUser> UserManager;
     protected readonly RoleManager<ApplicationRole> RoleManager;
+    protected readonly IdentityIntegrationTestWebAppFactory Factory;
 
     protected BaseIdentityIntegrationTest(IdentityIntegrationTestWebAppFactory factory)
     {
+        Factory = factory;
         Client = factory.CreateClient();
         _scope = factory.Services.CreateScope();
         DbContext = _scope.ServiceProvider.GetRequiredService<LabViroMolIdentityDbContext>();

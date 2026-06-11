@@ -3,6 +3,7 @@ namespace LabViroMol.Modules.Research.Infrastructure.Publications;
 using LabViroMol.Modules.Research.Application.Publications.ViewModels;
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
+using LabViroMol.Modules.Research.Infrastructure.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,27 +14,9 @@ public class PublicationQueries(ResearchDbContext context)
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<PublicationSummaryViewModel> query = context.Publications.AsNoTracking()
-            .Select(p => new PublicationSummaryViewModel(
-                p.Id.Value,
-                p.Title,
-                p.Doi,
-                p.PublishedOn,
-                p.PublicationDate,
-                EF.Property<DateTimeOffset>(p, "CreatedAt"),
-                p.Researchers
-                    .OrderBy(pr => pr.Order)
-                    .Select(pr => new PublicationAuthorViewModel(
-                        context.Researchers
-                            .Where(r => r.Id == pr.ResearcherId)
-                            .Select(r => r.Name.CitationName != null && r.Name.CitationName.Length > 0
-                                ? r.Name.CitationName
-                                : r.Name.LastName.ToUpper() + ", " + r.Name.FirstName.Substring(0, 1) + ".")
-                            .Single(),
-                        pr.Order))
-                    .ToList()));
+        IQueryable<Publication> query = context.Publications.AsNoTracking();
 
-        query = query.WhereSearch(request.Search, x => x.Title, x => x.Doi, x => x.PublishedOn);
+        query = query.WhereSearch(request.Search, p => p.Title, p => p.Doi, p => p.PublishedOn);
 
         var totalCount = await query.CountAsync();
 
@@ -48,7 +31,24 @@ public class PublicationQueries(ResearchDbContext context)
             _ => query.OrderByDescending(p => p.PublicationDate)
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var rows = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
+            .Select(p => new { Publication = p, CreatedAt = EF.Property<DateTimeOffset>(p, "CreatedAt") })
+            .ToListAsync();
+
+        var researcherIds = rows.SelectMany(r => r.Publication.Researchers).Select(pr => pr.ResearcherId);
+        var names = await ResearcherNameLookup.GetNamesAsync(context, researcherIds);
+
+        var items = rows.Select(r => new PublicationSummaryViewModel(
+            r.Publication.Id.Value,
+            r.Publication.Title,
+            r.Publication.Doi,
+            r.Publication.PublishedOn,
+            r.Publication.PublicationDate,
+            r.CreatedAt,
+            r.Publication.Researchers
+                .OrderBy(pr => pr.Order)
+                .Select(pr => new PublicationAuthorViewModel(names[pr.ResearcherId].PublicCitationName, pr.Order))
+                .ToList())).ToList();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
@@ -58,23 +58,19 @@ public class PublicationQueries(ResearchDbContext context)
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<PublicationAdminSummaryViewModel> query = context.Publications.AsNoTracking()
-            .Select(p => new PublicationAdminSummaryViewModel(
-                p.Id.Value,
-                p.Title,
-                p.Doi,
-                p.PublicationDate,
-                p.Researchers
-                    .OrderBy(pr => pr.Order)
-                    .Select(pr => context.Researchers
-                        .Where(r => r.Id == pr.ResearcherId)
-                        .Select(r => r.Name.CitationName != null && r.Name.CitationName.Length > 0
-                            ? r.Name.CitationName
-                            : r.Name.LastName.ToUpper() + ", " + r.Name.FirstName.Substring(0, 1) + ".")
-                        .Single())
-                    .FirstOrDefault() ?? string.Empty));
+        IQueryable<Publication> query = context.Publications.AsNoTracking();
 
-        query = query.WhereSearch(request.Search, x => x.Title, x => x.Doi, x => x.CitationName);
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var search = request.Search;
+            query = query.Where(p =>
+                p.Title.Contains(search) ||
+                p.Doi.Contains(search) ||
+                context.Researchers.Any(r =>
+                    p.Researchers.Any(pr => pr.ResearcherId == r.Id) &&
+                    (r.Name.FirstName.Contains(search) || r.Name.LastName.Contains(search) ||
+                     (r.Name.CitationName != null && r.Name.CitationName.Contains(search)))));
+        }
 
         var totalCount = await query.CountAsync();
 
@@ -89,32 +85,50 @@ public class PublicationQueries(ResearchDbContext context)
             _ => query.OrderByDescending(p => p.PublicationDate)
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var publications = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+        var researcherIds = publications.SelectMany(p => p.Researchers).Select(pr => pr.ResearcherId);
+        var names = await ResearcherNameLookup.GetNamesAsync(context, researcherIds);
+
+        var items = publications.Select(p =>
+        {
+            var firstAuthorName = p.Researchers
+                .OrderBy(pr => pr.Order)
+                .Select(pr => names[pr.ResearcherId].PublicCitationName)
+                .FirstOrDefault() ?? string.Empty;
+
+            return new PublicationAdminSummaryViewModel(p.Id.Value, p.Title, p.Doi, p.PublicationDate, firstAuthorName);
+        }).ToList();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 
     public async Task<PublicationViewModel?> GetById(Guid id)
-        => await context.Publications.AsNoTracking()
-            .Include(p => p.Researchers)
+    {
+        var row = await context.Publications.AsNoTracking()
             .Where(p => p.Id == PublicationId.From(id))
-            .Select(p => new PublicationViewModel(
-                p.Id.Value,
-                p.Title,
-                p.Description,
-                p.Doi,
-                p.PublicationDate,
-                p.PublishedOn,
-                p.PublishUrl,
-                p.Researchers
-                    .OrderBy(pr => pr.Order)
-                    .Select(pr => new PublicationAuthorViewModel(
-                        context.Researchers
-                            .Where(r => r.Id == pr.ResearcherId)
-                            .Select(r => r.Name.FullName)
-                            .Single(),
-                        pr.Order))
-                    .ToList(),
-                EF.Property<DateTimeOffset>(p, "CreatedAt")))
+            .Select(p => new { Publication = p, CreatedAt = EF.Property<DateTimeOffset>(p, "CreatedAt") })
             .FirstOrDefaultAsync();
+
+        if (row is null)
+            return null;
+
+        var publication = row.Publication;
+        var researcherIds = publication.Researchers.Select(pr => pr.ResearcherId);
+        var names = await ResearcherNameLookup.GetNamesAsync(context, researcherIds);
+
+        return new PublicationViewModel(
+            publication.Id.Value,
+            publication.Title,
+            publication.Description,
+            publication.Doi,
+            publication.PublicationDate,
+            publication.PublishedOn,
+            publication.PublishUrl,
+            publication.Researchers
+                .OrderBy(pr => pr.Order)
+                .Select(pr => new PublicationAuthorViewModel(names[pr.ResearcherId].FullName, pr.Order))
+                .ToList(),
+            row.CreatedAt);
+    }
 }

@@ -1,4 +1,5 @@
 using LabViroMol.Modules.Research.Application.Projects.Integrations;
+using LabViroMol.Modules.Research.Application.Researchers.Integrations;
 using LabViroMol.Modules.Research.Contracts;
 
 namespace LabViroMol.Modules.Research.Application;
@@ -13,6 +14,7 @@ public static class ApplicationModule
     {
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddScoped<IProjectChecker, ProjectIntegrationService>();
+        services.AddScoped<IResearcherProfileProvider, ResearcherProfileProvider>();
         return services;
     }
 }
