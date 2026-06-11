@@ -35,7 +35,7 @@ internal static class ProjectEndpoints
         group.MapPost("/", async (CreateProjectCommand command, IMediator mediator, CancellationToken ct) =>
         {
             var result = await mediator.Send(command, ct);
-            return result.ToHttpResult(Results.Created());
+            return result.ToHttpResult(id => Results.Created($"/api/research/projects/{id}", new { id }));
         }).RequireAuthorization(Permissions.Research.ProjectsManage);
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, ProjectQueries queries) =>

@@ -26,25 +26,26 @@ public class MaterialTypeQueries
 
     public async Task<PagedResponse<MaterialTypeViewModel>> GetAllAsync(PagedRequest request)
     {
-        var all = await _context.MaterialTypes
-            .Select(t => new MaterialTypeViewModel(t.Id.Value, t.Name, t.Active))
-            .ToListAsync();
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
 
-        var sorted = request.SortBy?.ToLower() switch
+        IQueryable<MaterialTypeViewModel> query = _context.MaterialTypes
+            .Select(t => new MaterialTypeViewModel(t.Id.Value, t.Name, t.Active));
+
+        query = query.WhereSearch(request.Search, x => x.Name);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
         {
             "name" => request.SortDirection == "desc"
-                ? all.OrderByDescending(t => t.Name).ToList()
-                : all.OrderBy(t => t.Name).ToList(),
-            _ => all.OrderBy(t => t.Name).ToList()
+                ? query.OrderByDescending(t => t.Name)
+                : query.OrderBy(t => t.Name),
+            _ => query.OrderBy(t => t.Name)
         };
 
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
-    }
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
-    public async Task<List<MaterialTypeViewModel>> GetAll()
-    {
-        return await _context.MaterialTypes
-            .Select(t => new MaterialTypeViewModel(t.Id.Value, t.Name, t.Active))
-            .ToListAsync();
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 }

@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\Shared\Kernel\LabViroMol.Modules.Shared.Kernel.csproj" />
     <ProjectReference Include="..\Contracts\LabViroMol.Modules.Identity.Contracts.csproj" />
     <ProjectReference Include="..\Domain\LabViroMol.Modules.Identity.Domain.csproj" />
+    <ProjectReference Include="..\..\Notify\Contracts\LabViroMol.Modules.Notify.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

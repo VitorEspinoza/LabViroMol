@@ -1,17 +1,21 @@
 using LabViroMol.Modules.Assets.Infrastructure.Persistence;
 using LabViroMol.Modules.Identity.Infrastructure.Persistence;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
+using LabViroMol.Modules.Notify.Contracts;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using LabViroMol.Modules.Scheduling.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 
 namespace LabViroMol.Modules.Identity.IntegrationTests;
 
 public class IdentityIntegrationTestWebAppFactory : WebApplicationFactory<Program>
 {
+    public ISendEmail EmailSenderMock { get; } = Substitute.For<ISendEmail>();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseSetting("Jwt:Key", "IntegrationTestSecretKeyThatIsLongEnoughForHmacSha256!!");
@@ -26,6 +30,10 @@ public class IdentityIntegrationTestWebAppFactory : WebApplicationFactory<Progra
             ReplaceDbContext<ResearchDbContext>(services, "LabViroMol_Research_IT_Db");
             ReplaceDbContext<SchedulingDbContext>(services, "LabViroMol_Scheduling_IT_Db");
             ReplaceDbContext<AssetsDbContext>(services, "LabViroMol_Assets_IT_Db");
+
+            var emailDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(ISendEmail));
+            if (emailDescriptor != null) services.Remove(emailDescriptor);
+            services.AddSingleton(EmailSenderMock);
 
             var sp = services.BuildServiceProvider();
             using var scope = sp.CreateScope();

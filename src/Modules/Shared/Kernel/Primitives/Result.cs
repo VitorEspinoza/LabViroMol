@@ -69,5 +69,14 @@ public class Result<T> : Result
     public new static Result<T> InvalidReference(List<string> errors)
         => new(default, false, ResultErrorType.InvalidReference, errors);
 
+    public static Result<T> FromError(Result source) => source.ErrorType switch
+    {
+        ResultErrorType.NotFound         => NotFound(source.Errors[0]),
+        ResultErrorType.Conflict         => Conflict(source.Errors[0]),
+        ResultErrorType.BusinessRule     => BusinessRule(source.Errors[0]),
+        ResultErrorType.InvalidReference => InvalidReference(source.Errors),
+        _                                => Validation(source.Errors),
+    };
+
     public static implicit operator Result<T>(T value) => Success(value);
 }

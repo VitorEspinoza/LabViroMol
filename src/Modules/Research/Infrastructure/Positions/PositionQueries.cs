@@ -10,25 +10,29 @@ public class PositionQueries(ResearchDbContext context)
 {
     public async Task<PagedResponse<PositionViewModel>> GetAllAsync(PagedRequest request)
     {
-        var all = await context.Positions.AsNoTracking()
-            .Select(p => new PositionViewModel(p.Id.Value, p.Name, p.Description))
-            .ToListAsync();
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
 
-        var sorted = request.SortBy?.ToLower() switch
+        IQueryable<Position> query = context.Positions.AsNoTracking();
+
+        query = query.WhereSearch(request.Search, x => x.Name, x => x.Description);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
         {
             "name" => request.SortDirection == "desc"
-                ? all.OrderByDescending(p => p.Name).ToList()
-                : all.OrderBy(p => p.Name).ToList(),
-            _ => all.OrderBy(p => p.Name).ToList()
+                ? query.OrderByDescending(p => p.Name)
+                : query.OrderBy(p => p.Name),
+            _ => query.OrderBy(p => p.Name)
         };
 
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
-    }
-
-    public async Task<IReadOnlyCollection<PositionViewModel>> GetAll()
-        => await context.Positions.AsNoTracking()
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
             .Select(p => new PositionViewModel(p.Id.Value, p.Name, p.Description))
             .ToListAsync();
+
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
+    }
 
     public async Task<PositionViewModel?> GetById(Guid id)
         => await context.Positions.AsNoTracking()

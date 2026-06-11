@@ -12,18 +12,18 @@ public class User : AggregateRoot<UserId>, ICreationAuditable, IModificationAudi
         UserName name,
         Email email,
         string? phoneNumber,
-        string? emergencyContactNumber) : base(id)
+        EmergencyContact? emergencyContact) : base(id)
     {
         Name = name;
         Email = email;
         PhoneNumber = phoneNumber;
-        EmergencyContactNumber = emergencyContactNumber;
+        EmergencyContact = emergencyContact;
     }
 
     public UserName Name { get; private set; }
     public Email Email { get; private set; }
     public string? PhoneNumber { get; private set; }
-    public string? EmergencyContactNumber { get; private set; }
+    public EmergencyContact? EmergencyContact { get; private set; }
     public DateTimeOffset? DeactivatedAt { get; private set; }
     public bool IsActive => DeactivatedAt == null;
 
@@ -32,26 +32,26 @@ public class User : AggregateRoot<UserId>, ICreationAuditable, IModificationAudi
         UserName name,
         Email email,
         string? phoneNumber,
-        string? emergencyContactNumber)
+        EmergencyContact? emergencyContact)
     {
         return new User(
             id,
             name,
             email,
             phoneNumber?.Trim(),
-            emergencyContactNumber?.Trim());
+            emergencyContact);
     }
 
     public void Update(
         UserName name,
         Email email,
         string? phoneNumber,
-        string? emergencyContactNumber)
+        EmergencyContact? emergencyContact)
     {
         Name = name;
         Email = email;
         PhoneNumber = phoneNumber?.Trim();
-        EmergencyContactNumber = emergencyContactNumber?.Trim();
+        EmergencyContact = emergencyContact;
     }
 
     public void Deactivate()

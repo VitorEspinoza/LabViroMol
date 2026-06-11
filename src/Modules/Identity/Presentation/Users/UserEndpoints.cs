@@ -14,6 +14,7 @@ using LabViroMol.Modules.Identity.Infrastructure.Users;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
+using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -31,21 +32,19 @@ internal static class UserEndpoints
     {
         var group = app.MapGroup("/users");
 
-        group.MapGet("/", async (UserQueries queries) =>
-        {
-            var users = await queries.GetAllAsync();
-            return Results.Ok(users);
-        }).RequireAuthorization(Permissions.Identity.UsersView);
+        group.MapGet("/", async ([AsParameters] PagedRequest request, UserQueries queries) =>
+            Results.Ok(await queries.GetAllAsync(request)))
+            .RequireAuthorization(Permissions.Identity.UsersView);
 
-        group.MapGet("/me", async (ICurrentUser currentUser, UserQueries queries) =>
+        group.MapGet("/me", async (ICurrentUser currentUser, UserQueries queries, CancellationToken ct) =>
         {
-            var user = await queries.GetByIdAsync(currentUser.Id.Value);
+            var user = await queries.GetByIdAsync(currentUser.Id.Value, ct);
             return user is null ? Results.NotFound() : Results.Ok(user);
         }).RequireAuthorization();
 
-        group.MapGet("/{id:guid}", async (Guid id, UserQueries queries) =>
+        group.MapGet("/{id:guid}", async (Guid id, UserQueries queries, CancellationToken ct) =>
         {
-            var user = await queries.GetByIdAsync(id);
+            var user = await queries.GetByIdAsync(id, ct);
             return user is null ? Results.NotFound() : Results.Ok(user);
         }).RequireAuthorization(Permissions.Identity.UsersView);
 
@@ -53,10 +52,7 @@ internal static class UserEndpoints
         {
             var result = await mediator.Send(command, ct);
 
-            if (result.IsFailure)
-                return result.ToHttpResult(Results.Ok());
-
-            return Results.Created("/api/identity/users", new { ResetToken = result.Data });
+            return result.ToHttpResult(Results.Created("/api/identity/users", (object?)null));
         }).RequireAuthorization()
           .Accepts<CreateUserCommand>("application/json");
 
@@ -183,10 +179,7 @@ internal static class UserEndpoints
         {
             var result = await mediator.Send(command, ct);
 
-            if (result.IsFailure)
-                return result.ToHttpResult(Results.Ok());
-
-            return Results.Ok(new { Token = result.Data });
+            return result.ToHttpResult(Results.Ok());
         }).Accepts<ForgotPasswordCommand>("application/json");
 
         group.MapPost("/reset-password", async (ResetPasswordCommand command, IMediator mediator, CancellationToken ct) =>

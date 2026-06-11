@@ -18,7 +18,10 @@ public class MaterialQueries
 
     public async Task<PagedResponse<MaterialViewModel>> GetAllAsync(PagedRequest request)
     {
-        var all = await _context.Materials
+        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageNumber = Math.Max(request.PageNumber, 1);
+
+        IQueryable<MaterialViewModel> query = _context.Materials
             .Join(
                 _context.MaterialTypes,
                 m => m.TypeId,
@@ -30,42 +33,29 @@ public class MaterialQueries
                     m.MinStock.Value,
                     m.StockQuantity.Value,
                     m.Unit.ToString(),
-                    m.Location))
-            .ToListAsync();
+                    m.Location));
 
-        var sorted = request.SortBy?.ToLower() switch
+        query = query.WhereSearch(request.Search, x => x.Name, x => x.MaterialType, x => x.Unit, x => x.Location);
+
+        var totalCount = await query.CountAsync();
+
+        query = request.SortBy?.ToLower() switch
         {
             "name" => request.SortDirection == "desc"
-                ? all.OrderByDescending(m => m.Name).ToList()
-                : all.OrderBy(m => m.Name).ToList(),
+                ? query.OrderByDescending(m => m.Name)
+                : query.OrderBy(m => m.Name),
             "location" => request.SortDirection == "desc"
-                ? all.OrderByDescending(m => m.Location).ToList()
-                : all.OrderBy(m => m.Location).ToList(),
+                ? query.OrderByDescending(m => m.Location)
+                : query.OrderBy(m => m.Location),
             "minstock" => request.SortDirection == "desc"
-                ? all.OrderByDescending(m => m.MinStock).ToList()
-                : all.OrderBy(m => m.MinStock).ToList(),
-            _ => all.OrderBy(m => m.Name).ToList()
+                ? query.OrderByDescending(m => m.MinStock)
+                : query.OrderBy(m => m.MinStock),
+            _ => query.OrderBy(m => m.Name)
         };
 
-        return PagedResult.From(sorted, request.Page, Math.Clamp(request.PageSize, 1, 100));
-    }
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
-    public async Task<List<MaterialViewModel>> GetAll()
-    {
-        return await _context.Materials
-            .Join(
-                _context.MaterialTypes,
-                m => m.TypeId,
-                t => t.Id,
-                (m, t) => new MaterialViewModel(
-                    m.Id.Value,
-                    m.Name,
-                    t.Name,
-                    m.MinStock.Value,
-                    m.StockQuantity.Value,
-                    m.Unit.ToString(),
-                    m.Location))
-            .ToListAsync();
+        return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
 
     public async Task<MaterialViewModel?> GetById(Guid id)

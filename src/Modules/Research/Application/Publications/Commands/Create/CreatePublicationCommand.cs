@@ -9,4 +9,4 @@ public record CreatePublicationCommand(
     string Doi,
     DateOnly PublicationDate,
     string PublishedOn,
-    string PublishUrl) : ICommand<Result>;
+    string PublishUrl) : ICommand<Result<Guid>>;
