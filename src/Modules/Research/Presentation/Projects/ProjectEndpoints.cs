@@ -36,7 +36,7 @@ internal static class ProjectEndpoints
         {
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Created());
-        }).RequireAuthorization(Permissions.Research.ProjectsManage);
+        });
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, ProjectQueries queries) =>
             Results.Ok(await queries.GetAllAdminAsync(request)))

@@ -5,7 +5,6 @@ using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Shared.Infrastructure.Persistence.Extensions;
 
-
 public static class TranslationConfigurationExtension
 {
     public static EntityTypeBuilder<TEntity> ConfigureTranslations<TEntity, TTranslation>(
@@ -13,18 +12,30 @@ public static class TranslationConfigurationExtension
         where TEntity : class, ITranslatable<TTranslation>
         where TTranslation : class
     {
-        
-        var property = builder.Property(x => x.Translations);
-
-        property.HasConversion(
-            value => JsonSerializer.Serialize(value, JsonSerializerOptions.Default),
-            value => string.IsNullOrWhiteSpace(value)
+        // EF Core não detecta mudanças em Dictionary com HasConversion por padrão,
+        // pois usa igualdade por referência. O ValueComparer resolve isso.
+        var comparer = new ValueComparer<Dictionary<string, TTranslation>>(
+            (a, b) => JsonSerializer.Serialize(a) == JsonSerializer.Serialize(b),
+            v => v == null ? 0 : JsonSerializer.Serialize(v).GetHashCode(),
+            v => v == null
                 ? new Dictionary<string, TTranslation>()
                 : JsonSerializer.Deserialize<Dictionary<string, TTranslation>>(
-                    value,
-                    JsonSerializerOptions.Default
-                )!
+                    JsonSerializer.Serialize(v),
+                    JsonSerializerOptions.Default)!
         );
+
+        builder
+            .Property(x => x.Translations)
+            .HasConversion(
+                value => JsonSerializer.Serialize(value, JsonSerializerOptions.Default),
+                value => string.IsNullOrWhiteSpace(value)
+                    ? new Dictionary<string, TTranslation>()
+                    : JsonSerializer.Deserialize<Dictionary<string, TTranslation>>(
+                        value,
+                        JsonSerializerOptions.Default)!
+            )
+            .Metadata
+            .SetValueComparer(comparer);
 
         return builder;
     }

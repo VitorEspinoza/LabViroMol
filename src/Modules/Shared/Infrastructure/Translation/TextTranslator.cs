@@ -20,7 +20,6 @@ public class TextTranslator : ITextTranslator
         string targetLanguage,
         string text)
     {
-        _logger.LogInformation($"Translating: '{text}' from '{sourceLanguage}' to '{targetLanguage}'");
         var result = await _translator.TranslateAsync(
             text,
             Language.GetLanguage(targetLanguage),

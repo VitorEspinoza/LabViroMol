@@ -11,15 +11,8 @@ public class PositionRepository(ResearchDbContext context) : IPositionRepository
     public async Task<Position?> GetByIdAsync(PositionId id, CancellationToken ct)
         => await context.Positions.FirstOrDefaultAsync(p => p.Id == id, ct);
 
-    public async Task AddAsync(Position position, CancellationToken ct)
-    {
-        var sw = Stopwatch.StartNew();
-
-        await context.Positions.AddAsync(position, ct);
-
-        Console.WriteLine(
-            $"REAL EF ADD: {sw.ElapsedMilliseconds}ms");
-    }
+    public async Task AddAsync(Position position, CancellationToken ct) 
+        => await context.Positions.AddAsync(position, ct);
 
     public void Delete(Position position)
         => context.Positions.Remove(position);

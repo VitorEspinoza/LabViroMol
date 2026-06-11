@@ -1,53 +1,50 @@
-using System.Diagnostics;
-using LabViroMol.Modules.Shared.Infrastructure.Translation;
-using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace LabViroMol.Modules.Research.Application.Positions.Commands.Create;
 
-using LabViroMol.Modules.Research.Application.Shared;
+using Shared;
 using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
+using EventHandlers;
 using Mediator;
 
-public class CreatePositionHandler(
-    IPositionRepository repository,
-    IResearchUnitOfWork unitOfWork,
-    IBackgroundJobQueue backgroundJobQueue,
-    ILogger<CreatePositionHandler> _logger)
-    : ICommandHandler<CreatePositionCommand, Result>
+public class CreatePositionHandler : ICommandHandler<CreatePositionCommand, Result>
 {
+    private readonly IPositionRepository _repository;
+    private readonly IResearchUnitOfWork _unitOfWork;
+    private readonly IServiceScopeFactory _scopeFactory;
+
+    public CreatePositionHandler(
+        IPositionRepository repository,
+        IResearchUnitOfWork unitOfWork,
+        IServiceScopeFactory scopeFactory)
+    {
+        _repository = repository;
+        _unitOfWork = unitOfWork;
+        _scopeFactory = scopeFactory;
+    }
+    
     public async ValueTask<Result> Handle(CreatePositionCommand command, CancellationToken ct)
     {
         var result = Position.Create(command.Name, command.Description);
         if (result.IsFailure)
             return result;
-        
-        var sw = Stopwatch.StartNew();
+        var position = result.Data!;
 
-        await repository.AddAsync(result.Data!, ct);
+        await _repository.AddAsync(position, ct);
+        await _unitOfWork.CompleteAsync(ct);
 
-        _logger.LogInformation(
-            "AddAsync: {ms}",
-            sw.ElapsedMilliseconds);
+        _ = Task.Run(async () =>
+        {
+            using var scope = _scopeFactory.CreateScope();
 
-        sw.Restart();
+            var publisher =
+                scope.ServiceProvider.GetRequiredService<IPublisher>();
 
-        await unitOfWork.CompleteAsync(ct);
-
-        _logger.LogInformation(
-            "CompleteAsync: {ms}",
-            sw.ElapsedMilliseconds);
-
-        sw.Restart();
-
-        await backgroundJobQueue.QueueAsync(
-            async (_, _) => { });
-
-        _logger.LogInformation(
-            "QueueAsync: {ms}",
-            sw.ElapsedMilliseconds);
+            await publisher.Publish(
+                new PositionTranslationEvent(position.Id),
+                CancellationToken.None);
+        });
 
         return Result.Success();
     }

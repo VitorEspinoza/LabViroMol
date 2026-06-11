@@ -22,7 +22,6 @@ public class Equipment : AggregateRoot<EquipmentId>, IFullAuditable, ITranslatab
         Model = model;
         Code = code;
         Description = description;
-        AddEvent(new EquipmentCreatedDomainEvent(this)); 
     }
     
     public void AddTranslation(string languageCode, string name, string description)
