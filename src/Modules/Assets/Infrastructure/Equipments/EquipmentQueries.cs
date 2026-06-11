@@ -129,7 +129,7 @@ public class EquipmentQueries
             .FirstOrDefaultAsync();
     }
 
-    public async Task<EquipmentViewModel?> GetEquipmentById(Guid id, string? language)
+    public async Task<EquipmentViewModel?> GetEquipmentByIdInstitutional(Guid id, string? language)
     {
         return await _context.Equipments
             .Where(e => e.Id == id)
