@@ -36,16 +36,18 @@ public static class IdentityModule
         group.MapUserEndpoints();
 
         group.MapGet("/permissions", (PermissionQueries queries) =>
-            Results.Ok(queries.GetAll()));
+            Results.Ok(queries.GetAll()))
+            .RequireAuthorization(Permissions.Identity.RolesView);
 
         group.MapGet("/roles", async (RoleQueries queries) =>
-            Results.Ok(await queries.GetAllWithPermissions()));
+            Results.Ok(await queries.GetAllWithPermissions()))
+            .RequireAuthorization(Permissions.Identity.RolesView);
 
         group.MapPost("/roles", async (CreateRoleCommand command, IMediator mediator, CancellationToken ct) =>
         {
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Created());
-        });
+        }).RequireAuthorization(Permissions.Identity.RolesManage);
 
         group.MapPut("/roles/{id:guid}/permissions", async (Guid id, UpdateRolePermissionsRequest request, IMediator mediator, CancellationToken ct) =>
         {
