@@ -21,7 +21,7 @@ internal static class PositionEndpoints
         {
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Created());
-        });
+        }).RequireAuthorization(Permissions.Research.PositionsManage);
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, PositionQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))

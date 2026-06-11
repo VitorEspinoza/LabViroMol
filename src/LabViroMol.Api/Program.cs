@@ -52,7 +52,8 @@ builder.Services
     .AddAssetsModule(builder.Configuration)
     .AddResearchModule(builder.Configuration)
     .AddNotifyModule(builder.Configuration)
-    .AddStorages(builder.Configuration);
+    .AddStorages(builder.Configuration)
+    .AddTranslator(builder.Configuration);
     
 builder.Services.AddAuthorization();
 

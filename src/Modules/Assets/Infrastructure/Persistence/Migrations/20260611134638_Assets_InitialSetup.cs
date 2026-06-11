@@ -27,7 +27,7 @@ namespace LabViroMol.Modules.Assets.Infrastructure.Persistence.Migrations
                     Description = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Location = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    Translations = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Translations = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),

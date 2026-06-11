@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace LabViroMol.Modules.Shared.Infrastructure.Translation;
 
@@ -9,13 +10,16 @@ public class TranslationBackgroundWorker
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<TranslationBackgroundWorker> _logger;
+    private readonly TranslationOptions _options;
 
     public TranslationBackgroundWorker(
         IServiceScopeFactory scopeFactory,
-        ILogger<TranslationBackgroundWorker> logger)
+        ILogger<TranslationBackgroundWorker> logger,
+        IOptions<TranslationOptions> options)
     {
         _scopeFactory = scopeFactory;
         _logger = logger;
+        _options = options.Value;
     }
 
     protected override async Task ExecuteAsync(
@@ -44,7 +48,7 @@ public class TranslationBackgroundWorker
             }
 
             await Task.Delay(
-                TimeSpan.FromMinutes(5),
+                TimeSpan.FromMinutes(_options.IntervalMinutes),
                 stoppingToken);
         }
     }

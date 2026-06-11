@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ResearchDbContext))]
-    [Migration("20260608175453_Research_InitialSetup")]
+    [Migration("20260611134738_Research_InitialSetup")]
     partial class Research_InitialSetup
     {
         /// <inheritdoc />
@@ -112,7 +112,6 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<string>("Translations")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -156,7 +155,6 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Translations")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
@@ -270,7 +268,6 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Translations")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")

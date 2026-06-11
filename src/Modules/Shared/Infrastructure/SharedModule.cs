@@ -1,8 +1,6 @@
-﻿using GTranslate.Translators;
-using LabViroMol.Modules.Shared.Infrastructure.Exceptions;
+﻿using LabViroMol.Modules.Shared.Infrastructure.Exceptions;
 using LabViroMol.Modules.Shared.Infrastructure.Storage;
 using LabViroMol.Modules.Shared.Infrastructure.Translation;
-using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +12,6 @@ public static class SharedModule
     {
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
-        services.AddTranslator();
                 
         return services;
     }
@@ -31,13 +28,21 @@ public static class SharedModule
         return services;
     }
 
-    private static IServiceCollection AddTranslator(
-        this IServiceCollection services
+    public static IServiceCollection AddTranslator(
+        this IServiceCollection services,
+        IConfiguration configuration
     )
     {
-        services.AddScoped<ITranslator, GoogleTranslator>();
-        services.AddScoped<ITextTranslator, TextTranslator>();
+        services.Configure<TranslationOptions>(
+            configuration.GetSection("Translation"));
+        
         services.AddHostedService<TranslationBackgroundWorker>();
+        services.AddHttpClient<ITextTranslator,
+            LibreTranslator>(client =>
+        {
+            client.BaseAddress =
+                new Uri("http://localhost:5000");
+        });
         return services;
     }
 }

@@ -109,7 +109,6 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<string>("Translations")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -153,7 +152,6 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Translations")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
@@ -267,7 +265,6 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Translations")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")

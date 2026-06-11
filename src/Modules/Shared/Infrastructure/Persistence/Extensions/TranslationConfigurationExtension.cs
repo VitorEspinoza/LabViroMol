@@ -12,8 +12,6 @@ public static class TranslationConfigurationExtension
         where TEntity : class, ITranslatable<TTranslation>
         where TTranslation : class
     {
-        // EF Core não detecta mudanças em Dictionary com HasConversion por padrão,
-        // pois usa igualdade por referência. O ValueComparer resolve isso.
         var comparer = new ValueComparer<Dictionary<string, TTranslation>>(
             (a, b) => JsonSerializer.Serialize(a) == JsonSerializer.Serialize(b),
             v => v == null ? 0 : JsonSerializer.Serialize(v).GetHashCode(),
@@ -26,6 +24,7 @@ public static class TranslationConfigurationExtension
 
         builder
             .Property(x => x.Translations)
+            .IsRequired(false)
             .HasConversion(
                 value => JsonSerializer.Serialize(value, JsonSerializerOptions.Default),
                 value => string.IsNullOrWhiteSpace(value)

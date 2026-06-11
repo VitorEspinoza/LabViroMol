@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LabViroMol.Modules.Assets.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AssetsDbContext))]
-    [Migration("20260608180132_Assets_InitialSetup")]
+    [Migration("20260611134638_Assets_InitialSetup")]
     partial class Assets_InitialSetup
     {
         /// <inheritdoc />
@@ -86,7 +86,6 @@ namespace LabViroMol.Modules.Assets.Infrastructure.Persistence.Migrations
                         .HasColumnType("rowversion");
 
                     b.Property<string>("Translations")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")

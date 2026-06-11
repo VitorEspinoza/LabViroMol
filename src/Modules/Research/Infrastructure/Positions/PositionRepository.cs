@@ -16,4 +16,19 @@ public class PositionRepository(ResearchDbContext context) : IPositionRepository
 
     public void Delete(Position position)
         => context.Positions.Remove(position);
+    
+    public async Task<List<Position>> GetMissingEnglishTranslationAsync(int limit,
+        CancellationToken ct)
+    {
+        var positions = await context.Positions
+            .Take(limit)
+            .ToListAsync(ct);
+
+        return positions
+            .Where(x =>
+                !x.Translations.TryGetValue("en", out var translation)
+                || string.IsNullOrWhiteSpace(translation.Name)
+                || string.IsNullOrWhiteSpace(translation.Description))
+            .ToList();
+    }
 }
