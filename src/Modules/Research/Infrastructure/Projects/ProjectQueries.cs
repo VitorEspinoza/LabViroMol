@@ -91,7 +91,7 @@ public class ProjectQueries(ResearchDbContext context)
                 : string.Empty;
             var partnerName = partnerNames.GetValueOrDefault(p.PartnerId, string.Empty);
 
-            return new PublicProjectViewModel(p.GetTitle(language), p.GetDescription(language), p.Status.Value, leadName, partnerName);
+            return new PublicProjectViewModel(p.Id.Value, p.GetTitle(language), p.GetDescription(language), p.Status.Value, leadName, partnerName);
         }).ToList();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
