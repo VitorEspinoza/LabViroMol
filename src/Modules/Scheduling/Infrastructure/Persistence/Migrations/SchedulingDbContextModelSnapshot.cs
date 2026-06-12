@@ -51,6 +51,10 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("ProjectTitle");
 
+                    b.Property<string>("RefuseJustification")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("RefuseJustification");
+
                     b.Property<Guid?>("RefusedBy")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("RefusedBy");
