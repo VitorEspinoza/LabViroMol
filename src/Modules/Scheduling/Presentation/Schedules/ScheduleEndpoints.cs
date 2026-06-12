@@ -43,7 +43,7 @@ internal static class ScheduleEndpoints
             var command = new RefuseScheduleCommand(ScheduleId.From(id), request.Justification);
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Accepted());
-        });
+        }).RequireAuthorization(Permissions.Scheduling.SchedulesManage);
 
         group.MapPost("/{id:guid}/term", async (Guid id, IFormFile file, IMediator mediator, CancellationToken ct) =>
         {
