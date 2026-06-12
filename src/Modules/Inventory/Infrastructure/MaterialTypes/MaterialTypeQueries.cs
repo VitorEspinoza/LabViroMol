@@ -29,10 +29,9 @@ public class MaterialTypeQueries
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<MaterialTypeViewModel> query = _context.MaterialTypes
-            .Select(t => new MaterialTypeViewModel(t.Id.Value, t.Name, t.Active));
+        IQueryable<MaterialType> query = _context.MaterialTypes;
 
-        query = query.WhereSearch(request.Search, x => x.Name);
+        query = query.WhereSearch(request.Search, t => t.Name);
 
         var totalCount = await query.CountAsync();
 
@@ -44,7 +43,9 @@ public class MaterialTypeQueries
             _ => query.OrderBy(t => t.Name)
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
+            .Select(t => new MaterialTypeViewModel(t.Id.Value, t.Name, t.Active))
+            .ToListAsync();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }

@@ -1,4 +1,5 @@
 using LabViroMol.Modules.Inventory.Application.Orders.ViewModels;
+using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -49,38 +50,58 @@ public class OrderQueries
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<OrderSummaryViewModel> query = _context.Orders
+        var query = _context.Orders
             .Join(_context.Materials,
                 o => o.MaterialId,
                 m => m.Id,
-                (order, material) =>
-                    new OrderSummaryViewModel(
-                        "MockProject",
-                        material.Name,
-                        material.Unit.ToString(),
-                        order.RequestedQuantity,
-                        (order.Receipt != null ? order.Receipt.Quantity : null)!,
-                        order.Status.ToString(),
-                        "Mock User",
-                        EF.Property<DateTimeOffset>(order, "CreatedAt"))
-            );
+                (order, material) => new
+                {
+                    Order = order,
+                    MaterialName = material.Name,
+                    MaterialUnit = material.Unit,
+                    CreatedAt = EF.Property<DateTimeOffset>(order, "CreatedAt")
+                });
 
-        query = query.WhereSearch(request.Search, x => x.MaterialName, x => x.MaterialUnit, x => x.Status);
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var search = request.Search;
+            var matchingUnits = Enum.GetValues<Unit>()
+                .Where(u => u.ToString().Contains(search, StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+            var matchingStatuses = Enum.GetValues<OrderStatus>()
+                .Where(s => s.ToString().Contains(search, StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+
+            query = query.Where(x =>
+                x.MaterialName.Contains(search) ||
+                matchingUnits.Contains(x.MaterialUnit) ||
+                matchingStatuses.Contains(x.Order.Status));
+        }
 
         var totalCount = await query.CountAsync();
 
         query = request.SortBy?.ToLower() switch
         {
             "status" => request.SortDirection == "desc"
-                ? query.OrderByDescending(o => o.Status)
-                : query.OrderBy(o => o.Status),
+                ? query.OrderByDescending(x => x.Order.Status)
+                : query.OrderBy(x => x.Order.Status),
             "createdon" => request.SortDirection == "desc"
-                ? query.OrderByDescending(o => o.CreatedOn)
-                : query.OrderBy(o => o.CreatedOn),
-            _ => query.OrderByDescending(o => o.CreatedOn)
+                ? query.OrderByDescending(x => x.CreatedAt)
+                : query.OrderBy(x => x.CreatedAt),
+            _ => query.OrderByDescending(x => x.CreatedAt)
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
+            .Select(x => new OrderSummaryViewModel(
+                "MockProject",
+                x.MaterialName,
+                x.MaterialUnit.ToString(),
+                x.Order.RequestedQuantity,
+                (x.Order.Receipt != null ? x.Order.Receipt.Quantity : null)!,
+                x.Order.Status.ToString(),
+                "Mock User",
+                x.CreatedAt))
+            .ToListAsync();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }
