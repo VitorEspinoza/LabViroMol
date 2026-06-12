@@ -1,4 +1,6 @@
-﻿using LabViroMol.Modules.Assets.Domain.Equipments;
+﻿using System.Text.Json;
+using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -40,5 +42,9 @@ public class EquipmentConfiguration : IEntityTypeConfiguration<Equipment>
         builder.Property(e => e.Location)
             .HasMaxLength(200)
             .IsRequired(false);
+        
+        builder.ConfigureTranslations<
+            Equipment,
+            EquipmentTranslation>();
     }
 }

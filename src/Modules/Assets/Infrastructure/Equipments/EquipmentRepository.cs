@@ -33,4 +33,19 @@ public class EquipmentRepository : IEquipmentRepository
     {
         _context.Equipments.Remove(equipment);
     }
+
+    public async Task<List<Equipment>> GetMissingEnglishTranslationAsync(int limit,
+        CancellationToken ct)
+    {
+        var equipments = await _context.Equipments
+            .Take(limit)
+            .ToListAsync(ct);
+
+        return equipments
+            .Where(x =>
+                !x.Translations.TryGetValue("en", out var translation)
+                || string.IsNullOrWhiteSpace(translation.Name)
+                || string.IsNullOrWhiteSpace(translation.Description))
+            .ToList();
+    }
 }

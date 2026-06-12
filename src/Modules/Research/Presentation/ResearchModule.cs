@@ -31,7 +31,6 @@ public static class ResearchModule
 
         group.MapPartnerEndpoints();
         group.MapProjectEndpoints();
-        group.MapResearcherEndpoints();
         group.MapPositionEndpoints();
         group.MapPublicationEndpoints();
 
@@ -39,6 +38,7 @@ public static class ResearchModule
         publicGroup.MapInstitutionalPublicationEndpoints();
         publicGroup.MapInstitutionalPartnerEndpoints();
         publicGroup.MapInstitutionalProjectEndpoints();
+        publicGroup.MapInstitutionalResearcherEndpoints();
 
         return app;
     }

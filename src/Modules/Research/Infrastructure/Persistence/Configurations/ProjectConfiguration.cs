@@ -1,3 +1,6 @@
+using System.Text.Json;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Extensions;
+
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Configurations;
 
 using LabViroMol.Modules.Research.Domain.Projects;
@@ -31,5 +34,9 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
         builder.Metadata.FindNavigation(nameof(Project.Members))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
+        
+        builder.ConfigureTranslations<
+            Project,
+            ProjectTranslation>();
     }
 }

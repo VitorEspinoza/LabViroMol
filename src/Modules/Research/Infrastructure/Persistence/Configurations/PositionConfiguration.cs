@@ -1,3 +1,6 @@
+using System.Text.Json;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Extensions;
+
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Configurations;
 
 using LabViroMol.Modules.Research.Domain.Positions;
@@ -19,5 +22,9 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
 
         builder.Property(p => p.Description)
             .HasMaxLength(2000);
+        
+        builder.ConfigureTranslations<
+            Position,
+            PositionTranslation>();
     }
 }

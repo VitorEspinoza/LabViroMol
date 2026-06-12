@@ -2,7 +2,7 @@ using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Assets.Domain.Equipments;
 
-public class Equipment : AggregateRoot<EquipmentId>, IFullAuditable
+public class Equipment : AggregateRoot<EquipmentId>, IFullAuditable, ITranslatable<EquipmentTranslation>
 {
     private Equipment() {}
 
@@ -11,8 +11,9 @@ public class Equipment : AggregateRoot<EquipmentId>, IFullAuditable
     public string Model { get; private set; }
     public string Code { get; private set; }
     public string Description { get; private set; }
-    public string ImageUrl { get; private set; }
+    public string? ImageUrl { get; private set; }
     public string? Location { get; private set; }
+    public Dictionary<string, EquipmentTranslation> Translations { get; private set; } = new();
 
     private Equipment(EquipmentId id, string name, string brand, string model, string code, string description) : base(id)
     {
@@ -21,6 +22,13 @@ public class Equipment : AggregateRoot<EquipmentId>, IFullAuditable
         Model = model;
         Code = code;
         Description = description;
+    }
+    
+    public void AddTranslation(string languageCode, string name, string description)
+    {
+        if (string.IsNullOrWhiteSpace(languageCode)) return;
+        
+        Translations[languageCode.ToLower()] = new EquipmentTranslation(name, description);
     }
 
     public static Result<Equipment> Create(string name, string brand, string model, string code,
@@ -48,5 +56,29 @@ public class Equipment : AggregateRoot<EquipmentId>, IFullAuditable
     public void AttachImageUrl(string imageUrl)
     {
         ImageUrl = imageUrl;
+    }
+    
+    public string GetName(string? language)
+    {
+        if (language == "en"
+            && Translations.TryGetValue("en", out var translation)
+            && !string.IsNullOrWhiteSpace(translation.Name))
+        {
+            return translation.Name;
+        }
+
+        return Name;
+    }
+
+    public string GetDescription(string? language)
+    {
+        if (language == "en"
+            && Translations.TryGetValue("en", out var translation)
+            && !string.IsNullOrWhiteSpace(translation.Description))
+        {
+            return translation.Description;
+        }
+
+        return Description;
     }
 }

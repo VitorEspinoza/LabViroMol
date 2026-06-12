@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace LabViroMol.Modules.Research.Presentation.Researchers;
 
 using LabViroMol.Modules.Research.Infrastructure.Researchers;
@@ -9,11 +11,11 @@ using Microsoft.AspNetCore.Routing;
 
 internal static class ResearcherEndpoints
 {
-    public static void MapResearcherEndpoints(this IEndpointRouteBuilder app)
+    public static void MapInstitutionalResearcherEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/researchers").WithTags("Researchers");
+        var group = app.MapGroup("/researchers").WithTags("Researchers-Public");
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, ResearcherQueries queries) =>
-            Results.Ok(await queries.GetAllInstitutionalAsync(request)));
+        group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, ResearcherQueries queries) =>
+            Results.Ok(await queries.GetAllInstitutionalAsync(request, language)));
     }
 }

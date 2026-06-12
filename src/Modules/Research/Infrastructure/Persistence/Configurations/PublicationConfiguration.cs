@@ -1,3 +1,7 @@
+using System.Text.Json;
+using LabViroMol.Modules.Research.Domain.Positions;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Extensions;
+
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Configurations;
 
 using LabViroMol.Modules.Research.Domain.Publications;
@@ -49,5 +53,9 @@ public class PublicationConfiguration : IEntityTypeConfiguration<Publication>
         
         builder.Metadata.FindNavigation(nameof(Publication.Researchers))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
+        
+        builder.ConfigureTranslations<
+            Publication,
+            PublicationTranslation>();
     }
 }

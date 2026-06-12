@@ -27,6 +27,9 @@ public static class SchedulingModule
 
         group.MapScheduleEndpoints();
         
+        var publicGroup = group.MapGroup("/public").WithTags("Assets-Public");
+        publicGroup.MapInstitutionalScheduleEndpoints();
+        
         return app;
     }
 }
