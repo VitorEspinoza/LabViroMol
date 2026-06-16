@@ -50,7 +50,9 @@ public class UserQueries(LabViroMolIdentityDbContext context, IResearcherProfile
             u.Name.FullName,
             u.Email.Value,
             u.IsActive,
-            rolesByUser.Where(r => r.UserId == u.Id.Value).Select(r => r.RoleName).ToList()
+            rolesByUser.Where(r => r.UserId == u.Id.Value).Select(r => r.RoleName).ToList(),
+            u.EmergencyContact?.Name,
+            u.EmergencyContact?.Number
         )).ToList();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
@@ -65,9 +67,17 @@ public class UserQueries(LabViroMolIdentityDbContext context, IResearcherProfile
         if (user is null)
             return null;
 
-        var roles = await context.UserRoles
+        var userRoles = await context.UserRoles.AsNoTracking()
             .Where(ur => ur.UserId == userId)
-            .Join(context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => r.Name!)
+            .Join(context.Roles, ur => ur.RoleId, r => r.Id, (ur, r) => new { r.Id, RoleName = r.Name! })
+            .ToListAsync(ct);
+
+        var roleIds = userRoles.Select(r => r.Id).ToList();
+
+        var permissions = await context.RoleClaims.AsNoTracking()
+            .Where(rc => roleIds.Contains(rc.RoleId) && rc.ClaimType == "permission")
+            .Select(rc => rc.ClaimValue!)
+            .Distinct()
             .ToListAsync(ct);
 
         var researchData = await researcherProfileProvider.GetByUserIdAsync(userId, ct);
@@ -82,6 +92,7 @@ public class UserQueries(LabViroMolIdentityDbContext context, IResearcherProfile
                 user.EmergencyContact?.Number,
                 researchData),
             user.IsActive,
-            roles);
+            userRoles.Select(r => r.RoleName).ToList(),
+            permissions);
     }
 }

@@ -1,6 +1,5 @@
 using LabViroMol.Modules.Notify.Application.Notifications.Commands.Dismiss;
 using LabViroMol.Modules.Notify.Application.Notifications.Commands.DismissAll;
-using LabViroMol.Modules.Notify.Application.Notifications.Commands.DismissBatch;
 using LabViroMol.Modules.Notify.Domain.Notifications;
 using LabViroMol.Modules.Notify.Infrastructure.Notifications;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
@@ -25,12 +24,6 @@ internal static class NotificationEndpoints
             return result.ToHttpResult(Results.NoContent());
         }).RequireAuthorization();
 
-        group.MapPost("/dismiss/batch", async (DismissBatchCommand command, IMediator mediator, CancellationToken ct) =>
-        {
-            var result = await mediator.Send(command, ct);
-            return result.ToHttpResult(Results.NoContent());
-        }).RequireAuthorization();
-
         group.MapPost("/dismiss/{id:guid}", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {
             var command = new DismissCommand(NotificationId.From(id));
@@ -38,11 +31,10 @@ internal static class NotificationEndpoints
             return result.ToHttpResult(Results.NoContent());
         }).RequireAuthorization();
 
-        group.MapGet("/", async (ICurrentUser currentUser, NotificationQueries queries) =>
+        group.MapGet("/", async (ICurrentUser currentUser, NotificationQueries queries, CancellationToken ct) =>
         {
-            var results = await queries.GetAllByPermissions(currentUser.Permissions.ToList());
-            return results;
+            var results = await queries.GetUnreadByUserAsync(currentUser.Id, currentUser.Permissions.ToList(), ct);
+            return Results.Ok(results);
         }).RequireAuthorization();
-            
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SchedulingDbContext))]
-    [Migration("20260606130606_Scheduling_InitialSetup")]
+    [Migration("20260615005350_Scheduling_InitialSetup")]
     partial class Scheduling_InitialSetup
     {
         /// <inheritdoc />

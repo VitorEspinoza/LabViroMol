@@ -34,12 +34,8 @@ public class User : AggregateRoot<UserId>, ICreationAuditable, IModificationAudi
         string? phoneNumber,
         EmergencyContact? emergencyContact)
     {
-        return new User(
-            id,
-            name,
-            email,
-            phoneNumber?.Trim(),
-            emergencyContact);
+        EnsureEmergencyContactDifferent(phoneNumber, emergencyContact);
+        return new User(id, name, email, phoneNumber?.Trim(), emergencyContact);
     }
 
     public void Update(
@@ -48,10 +44,23 @@ public class User : AggregateRoot<UserId>, ICreationAuditable, IModificationAudi
         string? phoneNumber,
         EmergencyContact? emergencyContact)
     {
+        EnsureEmergencyContactDifferent(phoneNumber, emergencyContact);
         Name = name;
         Email = email;
         PhoneNumber = phoneNumber?.Trim();
         EmergencyContact = emergencyContact;
+    }
+
+    private static void EnsureEmergencyContactDifferent(string? phoneNumber, EmergencyContact? emergencyContact)
+    {
+        if (emergencyContact is null || string.IsNullOrWhiteSpace(phoneNumber))
+            return;
+
+        var phone = new string(phoneNumber.Where(char.IsDigit).ToArray());
+        var emergency = new string(emergencyContact.Number.Where(char.IsDigit).ToArray());
+
+        if (phone.Length > 0 && phone == emergency)
+            throw new DomainException("O contato de emergência não pode ter o mesmo número que o usuário.");
     }
 
     public void Deactivate()

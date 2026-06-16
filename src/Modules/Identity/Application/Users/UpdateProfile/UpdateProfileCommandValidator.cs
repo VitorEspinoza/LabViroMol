@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace LabViroMol.Modules.Identity.Application.Users.UpdateProfile;
 
@@ -32,5 +32,14 @@ public class UpdateProfileCommandValidator : AbstractValidator<UpdateProfileComm
         RuleFor(x => x.UserData.EmergencyContactNumber)
             .NotEmpty().WithMessage("O número do contato de emergência é obrigatório quando um nome é informado.")
             .When(x => !string.IsNullOrEmpty(x.UserData.EmergencyContactName));
+
+        RuleFor(x => x.UserData.EmergencyContactNumber)
+            .Must((cmd, number) => NormalizeDigits(number) != NormalizeDigits(cmd.UserData.PhoneNumber))
+            .When(x => !string.IsNullOrEmpty(x.UserData.PhoneNumber) && !string.IsNullOrEmpty(x.UserData.EmergencyContactNumber))
+            .WithMessage("O contato de emergência não pode ter o mesmo número que o usuário.")
+            .OverridePropertyName("emergencyContactNumber");
     }
+
+    private static string NormalizeDigits(string? value)
+        => new string((value ?? string.Empty).Where(char.IsDigit).ToArray());
 }

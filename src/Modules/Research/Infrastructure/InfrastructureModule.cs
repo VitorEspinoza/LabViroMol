@@ -1,6 +1,8 @@
 namespace LabViroMol.Modules.Research.Infrastructure;
 
+using LabViroMol.Modules.Identity.Contracts;
 using LabViroMol.Modules.Research.Application.Shared;
+using LabViroMol.Modules.Research.Contracts;
 using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Research.Domain.Projects;
@@ -36,6 +38,9 @@ public static class InfrastructureModule
         services.AddScoped<IPositionRepository, PositionRepository>();
         services.AddScoped<IPublicationRepository, PublicationRepository>();
         services.AddScoped<IResearchUnitOfWork, ResearchUnitOfWork>();
+        services.AddScoped<IProjectChecker, ProjectIntegrationService>();
+        services.AddScoped<IProjectCatalog, ProjectCatalog>();
+        services.AddScoped<IResearcherProfileProvider, ResearcherProfileProvider>();
         return services;
     }
 

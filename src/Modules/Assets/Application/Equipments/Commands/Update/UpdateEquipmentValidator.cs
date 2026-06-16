@@ -21,10 +21,6 @@ public class UpdateEquipmentValidator : AbstractValidator<UpdateEquipmentCommand
             .NotEmpty().WithMessage("Marca é obrigatória")
             .MaximumLength(100).WithMessage("Marca deve ter no máximo 100 caracteres");
 
-        RuleFor(x => x.Code)
-            .NotEmpty().WithMessage("Código é obrigatório")
-            .MaximumLength(50).WithMessage("Código deve ter no máximo 50 caracteres");
-
         RuleFor(x => x.Description)
             .NotEmpty().WithMessage("Descrição é obrigatório")
             .MaximumLength(500).WithMessage("Descrição deve ter no máximo 500 caracteres");

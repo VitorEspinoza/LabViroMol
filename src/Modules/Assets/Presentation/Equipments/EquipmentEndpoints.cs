@@ -1,4 +1,5 @@
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.Create;
+using LabViroMol.Modules.Assets.Application.Equipments.Commands.Delete;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.UploadImage;
 using LabViroMol.Modules.Assets.Domain.Equipments;
@@ -13,7 +14,7 @@ using Microsoft.AspNetCore.Routing;
 
 namespace LabViroMol.Modules.Assets.Presentation.Equipments;
 
-public record UpdateEquipmentRequest(string Name, string Brand, string Model, string Code, string Description, string? Location);
+public record UpdateEquipmentRequest(string Name, string Brand, string Model, string Description, string? Location);
 
 internal static class EquipmentEndpoints
 {
@@ -29,11 +30,18 @@ internal static class EquipmentEndpoints
 
         group.MapPut("{id:guid}", async (Guid id, UpdateEquipmentRequest request, IMediator mediator, CancellationToken ct) =>
         {
-            var command = new UpdateEquipmentCommand(EquipmentId.From(id), request.Name, request.Model, request.Brand, request.Code, request.Description, request.Location);
+            var command = new UpdateEquipmentCommand(EquipmentId.From(id), request.Name, request.Model, request.Brand, request.Description, request.Location);
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Accepted());
         }).Accepts<UpdateEquipmentRequest>("application/json")
           .RequireAuthorization(Permissions.Assets.EquipmentsManage);
+
+        group.MapDelete("{id:guid}", async (Guid id, IMediator mediator, CancellationToken ct) =>
+        {
+            var command = new DeleteEquipmentCommand(EquipmentId.From(id));
+            var result = await mediator.Send(command, ct);
+            return result.ToHttpResult(Results.NoContent());
+        }).RequireAuthorization(Permissions.Assets.EquipmentsManage);
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, EquipmentQueries equipmentQueries) =>
             Results.Ok(await equipmentQueries.GetAllAdminAsync(request)))

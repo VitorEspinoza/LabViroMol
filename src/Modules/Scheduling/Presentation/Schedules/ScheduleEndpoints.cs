@@ -38,6 +38,12 @@ internal static class ScheduleEndpoints
             Results.Ok(await scheduleQueries.GetAllPendingAsync(request)))
             .RequireAuthorization(Permissions.Scheduling.SchedulesView);
 
+        group.MapGet("/{id:guid}", async (Guid id, ScheduleQueries scheduleQueries) =>
+        {
+            var schedule = await scheduleQueries.GetByIdAsync(id);
+            return schedule is null ? Results.NotFound() : Results.Ok(schedule);
+        }).RequireAuthorization(Permissions.Scheduling.SchedulesView);
+
         group.MapPost("/{id:guid}/approve", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {
             var command = new ApproveScheduleCommand(ScheduleId.From(id));

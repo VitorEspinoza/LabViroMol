@@ -1,7 +1,7 @@
 namespace LabViroMol.Modules.Assets.Application.Equipments.ViewModels;
 
 public record EquipmentAdminDetailViewModel(
-    Guid Id,
+    Guid EquipmentId,
     string Name,
     string Model,
     string Brand,

@@ -4,7 +4,11 @@ using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 namespace LabViroMol.Modules.Assets.Application.MaintenanceRequests.ViewModels;
 
 public record MaintenanceRequestViewModel(
-    Guid Id,
+    Guid MaintenanceRequestId,
     Guid EquipmentId,
+    string EquipmentName,
     string Description,
-    string ProblemDescription);
+    string ProblemDescription,
+    string Status,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? UpdatedAt);

@@ -21,7 +21,8 @@ public class CreateEquipmentHandler(
             command.Brand,
             command.Model,
             command.Code,
-            command.Description);
+            command.Description,
+            command.Location);
 
         await equipmentRepository.AddAsync(equipment.Data!, ct);
         await unitOfWork.CompleteAsync(ct);

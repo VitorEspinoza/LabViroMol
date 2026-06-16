@@ -26,7 +26,7 @@ public class UserRegisteredIntegrationEventHandler(
 
         var data = notification.ResearchData;
 
-        var position = await positionRepository.GetByIdAsync(PositionId.From(data.PositionId), ct);
+        var position = await positionRepository.GetByIdAsync(PositionId.From(data.PositionId!.Value), ct);
 
         if (position is null)
             throw new DomainException("Cargo inválido selecionado para usuário");

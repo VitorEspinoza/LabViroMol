@@ -107,7 +107,9 @@ public class EquipmentQueries
                 x.Equipment.Model,
                 x.Equipment.Brand,
                 x.Equipment.Location,
-                x.Status))
+                x.Equipment.Description,
+                x.Status,
+                x.Equipment.ImageUrl))
             .ToListAsync();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);

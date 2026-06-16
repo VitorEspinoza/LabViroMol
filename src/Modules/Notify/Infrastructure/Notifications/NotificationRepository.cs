@@ -19,12 +19,6 @@ public class NotificationRepository(NotifyDbContext context) : INotificationRepo
                 .All(d => d.UserId != userId))
             .ToListAsync(ct);
     
-    public async Task<List<Notification>> GetAllByNotificationIds(List<NotificationId> ids, CancellationToken ct) 
-        => await context.Notifications
-            .Include(n => n.NotificationDismissals)
-            .Where(n => ids.Contains(n.Id))
-            .ToListAsync(ct);
-    
     public async Task<Notification?> GetByNotificationId(NotificationId notificationId, CancellationToken ct)
         => await context.Notifications.FindAsync(notificationId, ct);
 }

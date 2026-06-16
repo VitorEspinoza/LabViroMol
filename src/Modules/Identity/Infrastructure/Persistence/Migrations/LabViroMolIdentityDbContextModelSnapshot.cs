@@ -69,6 +69,9 @@ namespace LabViroMol.Modules.Identity.Infrastructure.Persistence.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -76,6 +79,13 @@ namespace LabViroMol.Modules.Identity.Infrastructure.Persistence.Migrations
                     b.Property<string>("NormalizedName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTimeOffset?>("RemovedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("RemovedBy")
+                        .HasMaxLength(15)
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 

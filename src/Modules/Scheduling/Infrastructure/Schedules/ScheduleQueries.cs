@@ -38,6 +38,9 @@ public class ScheduleQueries
             "status" => request.SortDirection == "desc"
                 ? query.OrderByDescending(s => s.Status)
                 : query.OrderBy(s => s.Status),
+            "user" => request.SortDirection == "desc"
+                ? query.OrderByDescending(s => s.Scheduler.Name)
+                : query.OrderBy(s => s.Scheduler.Name),
             "createdat" => request.SortDirection == "desc"
                 ? query.OrderByDescending(s => EF.Property<DateTimeOffset>(s, "CreatedAt"))
                 : query.OrderBy(s => EF.Property<DateTimeOffset>(s, "CreatedAt")),
@@ -51,6 +54,14 @@ public class ScheduleQueries
 
         var items = entities.Select(ScheduleMapper.FromEntity).ToList();
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
+    }
+
+    public async Task<ScheduleViewModel?> GetByIdAsync(Guid id)
+    {
+        var entity = await _context.Schedules
+            .FirstOrDefaultAsync(s => s.Id == ScheduleId.From(id));
+
+        return entity is null ? null : ScheduleMapper.FromEntity(entity);
     }
 
     public async Task<PagedResponse<ScheduleViewModel>> GetAllPendingAsync(PagedRequest request)

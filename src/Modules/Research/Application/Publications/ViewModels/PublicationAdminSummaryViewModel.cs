@@ -5,4 +5,4 @@ public record PublicationAdminSummaryViewModel(
     string Title,
     string Doi,
     DateOnly PublicationDate,
-    string CitationName);
+    IReadOnlyCollection<PublicationAuthorViewModel> Authors);

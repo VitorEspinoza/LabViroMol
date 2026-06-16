@@ -12,7 +12,8 @@ public class CreateRoleCommandValidator : AbstractValidator<CreateRoleCommand>
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Nome do perfil é obrigatório.")
-            .MinimumLength(2).WithMessage("Nome deve ter no mínimo 2 caracteres.");
+            .MinimumLength(2).WithMessage("Nome deve ter no mínimo 2 caracteres.")
+            .MaximumLength(50).WithMessage("Nome deve ter no máximo 50 caracteres.");
 
         RuleFor(x => x.Permissions)
             .NotEmpty().WithMessage("Ao menos uma permissão é obrigatória.");

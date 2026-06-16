@@ -3,7 +3,7 @@ using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 
-public class MaintenanceRequest : AggregateRoot<MaintenanceRequestId>, ICreationAuditable, IModificationAuditable
+public class MaintenanceRequest : AggregateRoot<MaintenanceRequestId>, IFullAuditable
 {
     private MaintenanceRequest() { }
 
