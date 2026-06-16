@@ -64,12 +64,11 @@ public class EquipmentTests
         var equipment = Fakers.GenerateEquipment();
         var command = Fakers.GenerateUpdateCommand(equipment.Id);
 
-        equipment.Update(command.Name, command.Brand, command.Model, command.Code, command.Description);
+        equipment.Update(command.Name, command.Brand, command.Model, command.Description);
 
         Assert.Equal(command.Name, equipment.Name);
         Assert.Equal(command.Brand, equipment.Brand);
         Assert.Equal(command.Model, equipment.Model);
-        Assert.Equal(command.Code, equipment.Code);
         Assert.Equal(command.Description, equipment.Description);
     }
 }
