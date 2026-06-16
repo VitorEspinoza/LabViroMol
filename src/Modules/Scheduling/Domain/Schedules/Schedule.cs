@@ -88,6 +88,22 @@ public static Result<Schedule> Create(Scheduler scheduler, Scheduling scheduling
 
         return Result.Success();
     }
+
+    public Result Cancel(string justification, UserId userId)
+    {
+        if (Status.Equals(ScheduleStatus.CANCELED))
+            return Result.BusinessRule("Agendamento já cancelado.");
+        
+        if (Status.Equals(ScheduleStatus.REFUSED))
+            return Result.BusinessRule("Agendamento reprovado não pode ser cancelado.");
+        
+        
+        Status = ScheduleStatus.CANCELED;
+        RefusedBy = userId;
+        RefuseJustification =  justification;
+        AddEvent(new CanceledScheduleDomainEvent(this,  justification));
+        return  Result.Success();
+    }
     
     public void AttachTermUrl(string url)
     {
