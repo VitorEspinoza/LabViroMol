@@ -18,8 +18,8 @@ public static class DateExtension
 
             var isWeekday = dayOfWeek is >= DayOfWeek.Monday and <= DayOfWeek.Friday;
 
-            var start = TimeSpan.FromHours(8);
-            var end = TimeSpan.FromHours(18);
+            var start = TimeSpan.FromHours(9);
+            var end = TimeSpan.FromHours(16);
 
             var isWithinHours = hour >= start && hour <= end;
 

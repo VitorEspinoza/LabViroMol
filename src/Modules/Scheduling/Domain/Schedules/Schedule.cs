@@ -7,7 +7,9 @@ namespace LabViroMol.Modules.Scheduling.Domain.Schedules;
 
 public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
 {
-    private Schedule() {}
+    private Schedule()
+    {
+    }
 
     private Schedule(ScheduleId id, Scheduler scheduler, Scheduling scheduling, bool acceptTerm,
         string advisorProfessor, string projectTitle, string description, List<ScheduleEquipment> equipments) : base(id)
@@ -26,16 +28,17 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
     public Scheduler Scheduler { get; private set; }
     public Scheduling Scheduling { get; private set; }
     public bool AcceptTerm { get; private set; }
-    public string AdvisorProfessor  { get; private set; }
-    public string ProjectTitle  { get; private set; }
+    public string AdvisorProfessor { get; private set; }
+    public string ProjectTitle { get; private set; }
     public string Description { get; private set; }
-    public ScheduleStatus  Status { get; private set; }
+    public ScheduleStatus Status { get; private set; }
     public List<ScheduleEquipment> Equipments { get; private set; }
     public UserId? ApprovedBy { get; private set; }
     public UserId? RefusedBy { get; private set; }
     public string TermUrl { get; private set; }
+    public string RefuseJustification { get; private set; }
 
-    public static Result<Schedule> Create(Scheduler scheduler, Scheduling scheduling, bool acceptTerm, string advisorProfessor,
+public static Result<Schedule> Create(Scheduler scheduler, Scheduling scheduling, bool acceptTerm, string advisorProfessor,
         string projectTitle, string description, List<ScheduleEquipment> equipments)
     {
         if (equipments == null || equipments.Count < 1)
@@ -70,6 +73,7 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
 
         Status = ScheduleStatus.REFUSED;
         RefusedBy = userId;
+        RefuseJustification = justification;
         AddEvent(new ReprovedScheduleDomainEvent(this, justification));
         return Result.Success();
     }
@@ -83,6 +87,22 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
             return Result.BusinessRule("Não é possível alterar agendamento com data passada.");
 
         return Result.Success();
+    }
+
+    public Result Cancel(string justification, UserId userId)
+    {
+        if (Status.Equals(ScheduleStatus.CANCELED))
+            return Result.BusinessRule("Agendamento já cancelado.");
+        
+        if (Status.Equals(ScheduleStatus.REFUSED))
+            return Result.BusinessRule("Agendamento reprovado não pode ser cancelado.");
+        
+        
+        Status = ScheduleStatus.CANCELED;
+        RefusedBy = userId;
+        RefuseJustification =  justification;
+        AddEvent(new CanceledScheduleDomainEvent(this,  justification));
+        return  Result.Success();
     }
     
     public void AttachTermUrl(string url)

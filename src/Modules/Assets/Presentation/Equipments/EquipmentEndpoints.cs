@@ -77,5 +77,8 @@ internal static class EquipmentEndpoints
                 ? Results.NotFound()
                 : Results.Ok(equipment);
         });
+        
+        group.MapGet("/schedulable", async ([FromQuery] string? language, EquipmentQueries equipmentQueries) =>
+            Results.Ok(await equipmentQueries.GetSchedulableEquipments(language)));
     }
 }

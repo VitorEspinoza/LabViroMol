@@ -81,5 +81,8 @@ public class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
                 .IsRequired();
         });
 
+        builder.Property(e => e.RefuseJustification)
+            .HasColumnName("RefuseJustification")
+            .IsRequired(false);
     }
 }
