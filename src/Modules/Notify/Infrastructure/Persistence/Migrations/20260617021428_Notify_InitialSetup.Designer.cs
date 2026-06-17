@@ -3,16 +3,16 @@ using System;
 using LabViroMol.Modules.Notify.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotifyDbContext))]
-    [Migration("20260602174747_Notify_InitialSetup")]
+    [Migration("20260617021428_Notify_InitialSetup")]
     partial class Notify_InitialSetup
     {
         /// <inheritdoc />
@@ -22,51 +22,52 @@ namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Migrations
             modelBuilder
                 .HasDefaultSchema("notify")
                 .HasAnnotation("ProductVersion", "10.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("LabViroMol.Modules.Notify.Domain.Notifications.Notification", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("CreatedBy")
                         .HasMaxLength(15)
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("ExpiresOn")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ReferenceId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ReferenceModule")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
+                        .HasColumnType("text");
 
                     b.Property<string>("TargetPermission")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 
@@ -78,20 +79,20 @@ namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Migrations
                     b.OwnsMany("LabViroMol.Modules.Notify.Domain.Notifications.NotificationDismissal", "NotificationDismissals", b1 =>
                         {
                             b1.Property<Guid>("NotificationId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<int>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
+                                .HasColumnType("integer");
 
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+                            NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b1.Property<int>("Id"));
 
                             b1.Property<DateTimeOffset>("DismissedOn")
-                                .HasColumnType("datetimeoffset")
+                                .HasColumnType("timestamp with time zone")
                                 .HasColumnName("DismissedOn");
 
                             b1.Property<Guid>("UserId")
-                                .HasColumnType("uniqueidentifier")
+                                .HasColumnType("uuid")
                                 .HasColumnName("UserId");
 
                             b1.HasKey("NotificationId", "Id");

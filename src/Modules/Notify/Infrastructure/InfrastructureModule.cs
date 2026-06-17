@@ -44,10 +44,10 @@ public static class InfrastructureModule
         var connectionString = configuration.GetConnectionString("LabViroMol");
 
         services.AddDbContext<NotifyDbContext>(options =>
-            options.UseSqlServer(connectionString, sqlOptions =>
+            options.UseNpgsql(connectionString, npgsqlOptions =>
             {
-                sqlOptions.MigrationsHistoryTable("__NotifyMigrationsHistory");
-                sqlOptions.MigrationsAssembly(typeof(NotifyDbContext).Assembly.FullName);
+                npgsqlOptions.MigrationsHistoryTable("__NotifyMigrationsHistory", "notify");
+                npgsqlOptions.MigrationsAssembly(typeof(NotifyDbContext).Assembly.FullName);
             }));
 
         services.Configure<EmailOptions>(

@@ -1,4 +1,4 @@
-﻿using LabViroMol.Modules.Inventory.Application.Shared;
+using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.Kits;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
@@ -17,51 +17,47 @@ namespace LabViroMol.Modules.Inventory.Infrastructure;
 
 public static class InfrastructureModule
 {
-    extension(IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        public IServiceCollection AddInfrastructure(IConfiguration configuration)
-        {
-            services
-                .AddRepositories()
-                .AddQueries()
-                .AddContext(configuration);
-        
-            return services;
-        }
+        services
+            .AddRepositories()
+            .AddQueries()
+            .AddContext(configuration);
 
-        private IServiceCollection AddRepositories()
-        {
-            services.AddScoped<IKitRepository, KitRepository>();
-            services.AddScoped<IMaterialRepository, MaterialRepository>();
-            services.AddScoped<IMaterialTypeRepository, MaterialTypeRepository>();
-            services.AddScoped<IOrderRepository, OrderRepository>();
-            services.AddScoped<IInventoryUnitOfWork, InventoryUnitOfWork>();
-            services.AddScoped<MaterialValidatorService>();
-            return services;
-        }
+        return services;
+    }
 
-        private IServiceCollection AddQueries()
-        {
-            services.AddScoped<KitQueries>();
-            services.AddScoped<MaterialQueries>();
-            services.AddScoped<MaterialTypeQueries>();
-            services.AddScoped<OrderQueries>();
-            return services;
-        }
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IKitRepository, KitRepository>();
+        services.AddScoped<IMaterialRepository, MaterialRepository>();
+        services.AddScoped<IMaterialTypeRepository, MaterialTypeRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IInventoryUnitOfWork, InventoryUnitOfWork>();
+        services.AddScoped<MaterialValidatorService>();
+        return services;
+    }
 
-        private IServiceCollection AddContext(IConfiguration configuration)
-        {
-            var connectionString = configuration.GetConnectionString("LabViroMol");
-            
-            services.AddDbContext<InventoryDbContext>(options =>
-                options.UseSqlServer(connectionString, sqlOptions =>
-                {
-                    sqlOptions.MigrationsHistoryTable("__InventoryMigrationsHistory");
-                    sqlOptions.MigrationsAssembly(typeof(InventoryDbContext).Assembly.FullName);
-            
-                }));
-            
-            return services;
-        }
+    private static IServiceCollection AddQueries(this IServiceCollection services)
+    {
+        services.AddScoped<KitQueries>();
+        services.AddScoped<MaterialQueries>();
+        services.AddScoped<MaterialTypeQueries>();
+        services.AddScoped<OrderQueries>();
+        return services;
+    }
+
+    private static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("LabViroMol");
+
+        services.AddDbContext<InventoryDbContext>(options =>
+            options.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.MigrationsHistoryTable("__InventoryMigrationsHistory", "inventory");
+                npgsqlOptions.MigrationsAssembly(typeof(InventoryDbContext).Assembly.FullName);
+            }));
+
+        return services;
     }
 }

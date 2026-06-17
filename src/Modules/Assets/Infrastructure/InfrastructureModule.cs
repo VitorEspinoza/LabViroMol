@@ -1,4 +1,4 @@
-﻿using LabViroMol.Modules.Assets.Application.Shared;
+using LabViroMol.Modules.Assets.Application.Shared;
 using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.Equipments;
@@ -12,48 +12,42 @@ namespace LabViroMol.Modules.Assets.Infrastructure;
 
 public static class InfrastructureModule
 {
-    extension(IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        public IServiceCollection AddInfrastructure(IConfiguration configuration)
-        {
-            services
-                .AddRepositories()
-                .AddQueries()
-                .AddContext(configuration);
-            
-            return services;
-        }
+        services
+            .AddRepositories()
+            .AddQueries()
+            .AddContext(configuration);
 
-        private IServiceCollection AddQueries()
-        {
-            services.AddScoped<EquipmentQueries>();
-            services.AddScoped<MaintenanceRequestQueries>();
-            
-            return services;
-        }
-        
-        private IServiceCollection AddRepositories()
-        {
-            services.AddScoped<IEquipmentRepository, EquipmentRepository>();
-            services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
-            services.AddScoped<IAssetsUnitOfWork, AssetsUnitOfWork>();
-            
-            return services;
-        }
-        
-        private IServiceCollection AddContext(IConfiguration configuration)
-        {
-            var connectionString = configuration.GetConnectionString("LabViroMol");
-            
-            services.AddDbContext<AssetsDbContext>(options =>
-                options.UseSqlServer(connectionString, sqlOptions =>
-                {
-                    sqlOptions.MigrationsHistoryTable("__AssetsMigrationsHistory");
-                    sqlOptions.MigrationsAssembly(typeof(AssetsDbContext).Assembly.FullName);
-            
-                }));
-            
-            return services;
-        }
+        return services;
+    }
+
+    private static IServiceCollection AddQueries(this IServiceCollection services)
+    {
+        services.AddScoped<EquipmentQueries>();
+        services.AddScoped<MaintenanceRequestQueries>();
+        return services;
+    }
+
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+        services.AddScoped<IMaintenanceRequestRepository, MaintenanceRequestRepository>();
+        services.AddScoped<IAssetsUnitOfWork, AssetsUnitOfWork>();
+        return services;
+    }
+
+    private static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("LabViroMol");
+
+        services.AddDbContext<AssetsDbContext>(options =>
+            options.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.MigrationsHistoryTable("__AssetsMigrationsHistory", "assets");
+                npgsqlOptions.MigrationsAssembly(typeof(AssetsDbContext).Assembly.FullName);
+            }));
+
+        return services;
     }
 }

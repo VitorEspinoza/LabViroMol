@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -19,17 +20,17 @@ namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Migrations
                 schema: "notify",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ReferenceId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ReferenceModule = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TargetPermission = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExpiresOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: false),
+                    ReferenceId = table.Column<string>(type: "text", nullable: true),
+                    ReferenceModule = table.Column<string>(type: "text", nullable: true),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    TargetPermission = table.Column<string>(type: "text", nullable: false),
+                    ExpiresOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uuid", maxLength: 15, nullable: false),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -41,11 +42,11 @@ namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Migrations
                 schema: "notify",
                 columns: table => new
                 {
-                    NotificationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DismissedOn = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    NotificationId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DismissedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
