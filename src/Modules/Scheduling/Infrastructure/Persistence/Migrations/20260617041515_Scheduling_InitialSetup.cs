@@ -19,25 +19,25 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                 schema: "scheduling",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SchedulerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SchedulerCourse = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SchedulerEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    SchedulerName = table.Column<string>(type: "text", nullable: false),
+                    SchedulerCourse = table.Column<string>(type: "text", nullable: false),
+                    SchedulerEmail = table.Column<string>(type: "text", nullable: false),
                     SchedulingDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    SchedulingStartHour = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    SchedulingEndHour = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    AcceptTerm = table.Column<bool>(type: "bit", nullable: false),
-                    AdvisorProfessor = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ProjectTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApprovedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    RefusedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    TermUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RefuseJustification = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true),
-                    UpdatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", maxLength: 15, nullable: true)
+                    SchedulingStartHour = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    SchedulingEndHour = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    AcceptTerm = table.Column<bool>(type: "boolean", nullable: false),
+                    AdvisorProfessor = table.Column<string>(type: "text", nullable: false),
+                    ProjectTitle = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    ApprovedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    RefusedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    TermUrl = table.Column<string>(type: "text", nullable: true),
+                    RefuseJustification = table.Column<string>(type: "text", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uuid", maxLength: 15, nullable: true),
+                    xmin = table.Column<uint>(type: "xid", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,10 +49,10 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                 schema: "scheduling",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EquipmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EquipmentName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ScheduleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    EquipmentId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EquipmentName = table.Column<string>(type: "text", nullable: false),
+                    ScheduleId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {

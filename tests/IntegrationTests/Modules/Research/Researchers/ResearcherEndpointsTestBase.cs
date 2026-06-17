@@ -4,7 +4,7 @@ namespace LabViroMol.Modules.Research.IntegrationTests.Researchers;
 
 public abstract class ResearcherEndpointsTestBase : BaseIntegrationTest
 {
-    protected const string BaseRoute = "/api/research/researchers";
+    protected const string BaseRoute = "/api/research/public/researchers";
 
     protected ResearcherEndpointsTestBase(ResearchIntegrationTestWebAppFactory factory) : base(factory) { }
 

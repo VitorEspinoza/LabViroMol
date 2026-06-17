@@ -49,12 +49,11 @@ public class EquipmentTests
     {
         var equipment = Fakers.GenerateEquipment();
 
-        equipment.Update("Novo Nome", "Nova Marca", "Novo Modelo", "COD999", "Nova Descrição");
+        equipment.Update("Novo Nome", "Nova Marca", "Novo Modelo", "Nova Descrição");
 
         Assert.Equal("Novo Nome", equipment.Name);
         Assert.Equal("Nova Marca", equipment.Brand);
         Assert.Equal("Novo Modelo", equipment.Model);
-        Assert.Equal("COD999", equipment.Code);
         Assert.Equal("Nova Descrição", equipment.Description);
     }
 

@@ -59,10 +59,10 @@ public static class InfrastructureModule
         var connectionString = configuration.GetConnectionString("LabViroMol");
 
         services.AddDbContext<ResearchDbContext>(options =>
-            options.UseSqlServer(connectionString, sqlOptions =>
+            options.UseNpgsql(connectionString, npgsqlOptions =>
             {
-                sqlOptions.MigrationsHistoryTable("__ResearchMigrationsHistory");
-                sqlOptions.MigrationsAssembly(typeof(ResearchDbContext).Assembly.FullName);
+                npgsqlOptions.MigrationsHistoryTable("__ResearchMigrationsHistory", "research");
+                npgsqlOptions.MigrationsAssembly(typeof(ResearchDbContext).Assembly.FullName);
             }));
 
         return services;

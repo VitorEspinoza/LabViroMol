@@ -3,8 +3,8 @@ using System;
 using LabViroMol.Modules.Scheduling.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -19,65 +19,66 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
             modelBuilder
                 .HasDefaultSchema("scheduling")
                 .HasAnnotation("ProductVersion", "10.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("LabViroMol.Modules.Scheduling.Domain.Schedules.Schedule", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("AcceptTerm")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("AcceptTerm");
 
                     b.Property<string>("AdvisorProfessor")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("AdvisorProfessor");
 
                     b.Property<Guid?>("ApprovedBy")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("uuid")
                         .HasColumnName("ApprovedBy");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("Description");
 
                     b.Property<string>("ProjectTitle")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("ProjectTitle");
 
                     b.Property<string>("RefuseJustification")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("RefuseJustification");
 
                     b.Property<Guid?>("RefusedBy")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("uuid")
                         .HasColumnName("RefusedBy");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("TermUrl")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("TermUrl");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("UpdatedBy")
                         .HasMaxLength(15)
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id");
 
@@ -90,19 +91,19 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                         {
                             b1.Property<Guid>("Id")
                                 .ValueGeneratedOnAdd()
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<Guid>("EquipmentId")
-                                .HasColumnType("uniqueidentifier")
+                                .HasColumnType("uuid")
                                 .HasColumnName("EquipmentId");
 
                             b1.Property<string>("Name")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
+                                .HasColumnType("text")
                                 .HasColumnName("EquipmentName");
 
                             b1.Property<Guid>("ScheduleId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.HasKey("Id");
 
@@ -117,21 +118,21 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                     b.OwnsOne("LabViroMol.Modules.Scheduling.Domain.Schedules.Scheduler", "Scheduler", b1 =>
                         {
                             b1.Property<Guid>("ScheduleId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("Course")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
+                                .HasColumnType("text")
                                 .HasColumnName("SchedulerCourse");
 
                             b1.Property<string>("Email")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
+                                .HasColumnType("text")
                                 .HasColumnName("SchedulerEmail");
 
                             b1.Property<string>("Name")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
+                                .HasColumnType("text")
                                 .HasColumnName("SchedulerName");
 
                             b1.HasKey("ScheduleId");
@@ -145,18 +146,18 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
                     b.OwnsOne("LabViroMol.Modules.Scheduling.Domain.Schedules.Scheduling", "Scheduling", b1 =>
                         {
                             b1.Property<Guid>("ScheduleId")
-                                .HasColumnType("uniqueidentifier");
+                                .HasColumnType("uuid");
 
                             b1.Property<DateOnly>("Date")
                                 .HasColumnType("date")
                                 .HasColumnName("SchedulingDate");
 
                             b1.Property<DateTimeOffset>("EndDateHour")
-                                .HasColumnType("datetimeoffset")
+                                .HasColumnType("timestamp with time zone")
                                 .HasColumnName("SchedulingEndHour");
 
                             b1.Property<DateTimeOffset>("StartDateHour")
-                                .HasColumnType("datetimeoffset")
+                                .HasColumnType("timestamp with time zone")
                                 .HasColumnName("SchedulingStartHour");
 
                             b1.HasKey("ScheduleId");

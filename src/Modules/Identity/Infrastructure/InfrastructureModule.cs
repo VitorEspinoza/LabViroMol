@@ -40,10 +40,10 @@ public static class InfrastructureModule
         var connectionString = configuration.GetConnectionString("LabViroMol");
 
         services.AddDbContext<LabViroMolIdentityDbContext>(options =>
-            options.UseSqlServer(connectionString, sqlOptions =>
+            options.UseNpgsql(connectionString, npgsqlOptions =>
             {
-                sqlOptions.MigrationsHistoryTable("__IdentityMigrationsHistory");
-                sqlOptions.MigrationsAssembly(typeof(LabViroMolIdentityDbContext).Assembly.FullName);
+                npgsqlOptions.MigrationsHistoryTable("__IdentityMigrationsHistory", "identity");
+                npgsqlOptions.MigrationsAssembly(typeof(LabViroMolIdentityDbContext).Assembly.FullName);
             }));
 
         return services;

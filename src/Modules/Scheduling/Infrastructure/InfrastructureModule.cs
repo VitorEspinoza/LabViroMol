@@ -1,4 +1,4 @@
-﻿using LabViroMol.Modules.Scheduling.Application.Shared;
+using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Infrastructure.Persistence;
 using LabViroMol.Modules.Scheduling.Infrastructure.Schedules;
@@ -10,44 +10,40 @@ namespace LabViroMol.Modules.Scheduling.Infrastructure;
 
 public static class InfrastructureModule
 {
-    extension(IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        public IServiceCollection AddInfrastructure(IConfiguration configuration)
-        {
-            services
-                .AddRepositories()
-                .AddQueries()
-                .AddContext(configuration);
-        
-            return services;
-        }
+        services
+            .AddRepositories()
+            .AddQueries()
+            .AddContext(configuration);
 
-        private IServiceCollection AddQueries()
-        {
-            services.AddScoped<ScheduleQueries>();
-            return services;
-        }
-        
-        private IServiceCollection AddRepositories()
-        {
-            services.AddScoped<IScheduleRepository, ScheduleRepository>();
-            services.AddScoped<ISchedulingUnitOfWork, SchedulingUnitOfWork>();
-            return services;
-        }
-        
-        private IServiceCollection AddContext(IConfiguration configuration)
-        {
-            var connectionString = configuration.GetConnectionString("LabViroMol");
-            
-            services.AddDbContext<SchedulingDbContext>(options =>
-                options.UseSqlServer(connectionString, sqlOptions =>
-                {
-                    sqlOptions.MigrationsHistoryTable("__SchedulingMigrationsHistory");
-                    sqlOptions.MigrationsAssembly(typeof(SchedulingDbContext).Assembly.FullName);
-            
-                }));
-            
-            return services;
-        }
+        return services;
+    }
+
+    private static IServiceCollection AddQueries(this IServiceCollection services)
+    {
+        services.AddScoped<ScheduleQueries>();
+        return services;
+    }
+
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddScoped<IScheduleRepository, ScheduleRepository>();
+        services.AddScoped<ISchedulingUnitOfWork, SchedulingUnitOfWork>();
+        return services;
+    }
+
+    private static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("LabViroMol");
+
+        services.AddDbContext<SchedulingDbContext>(options =>
+            options.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.MigrationsHistoryTable("__SchedulingMigrationsHistory", "scheduling");
+                npgsqlOptions.MigrationsAssembly(typeof(SchedulingDbContext).Assembly.FullName);
+            }));
+
+        return services;
     }
 }

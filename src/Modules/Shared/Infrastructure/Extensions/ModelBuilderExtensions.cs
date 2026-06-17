@@ -44,8 +44,9 @@ public static class ModelBuilderExtensions
             if (typeof(IConcurrencySafe).IsAssignableFrom(clrType))
             {
                 modelBuilder.Entity(clrType)
-                    .Property<byte[]>("RowVersion")
-                    .IsRowVersion()
+                    .Property<uint>("xmin")
+                    .HasColumnType("xid")
+                    .ValueGeneratedOnAddOrUpdate()
                     .IsConcurrencyToken();
             }
         }

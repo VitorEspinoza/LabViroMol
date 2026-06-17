@@ -18,7 +18,7 @@ public class LabViroMolIdentityDbContext : IdentityDbContext<ApplicationUser, Ap
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.HasDefaultSchema("Identity");
+        modelBuilder.HasDefaultSchema("identity");
 
         modelBuilder.Entity<ApplicationUser>().ToTable("IdentityUsers");
         modelBuilder.Entity<ApplicationRole>().ToTable("Roles");

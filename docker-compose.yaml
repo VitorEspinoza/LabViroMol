@@ -1,4 +1,21 @@
 services:
+  postgres:
+    image: postgres:17
+    container_name: labviromol-postgres
+    environment:
+      POSTGRES_USER: labviromol
+      POSTGRES_PASSWORD: labviromol_dev
+      POSTGRES_DB: LabViroMol
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U labviromol -d LabViroMol"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   libretranslate:
     image: libretranslate/libretranslate:latest
     container_name: libretranslate
@@ -7,3 +24,6 @@ services:
       - "5000:5000"
     environment:
       LT_LOAD_ONLY: pt,en
+
+volumes:
+  postgres_data:
