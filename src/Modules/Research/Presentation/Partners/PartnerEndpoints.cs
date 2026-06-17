@@ -24,7 +24,7 @@ internal static class PartnerEndpoints
         {
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Created());
-        }).RequireAuthorization(Permissions.Research.PartnersManage);
+        });
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, PartnerQueries queries) =>
             Results.Ok(await queries.GetAllAdminAsync(request)))

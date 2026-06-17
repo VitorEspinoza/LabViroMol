@@ -6,4 +6,6 @@ public interface IEquipmentRepository
     Task AddAsync(Equipment equipment, CancellationToken ct);
     Task<Equipment?> GetByIdAsync(Guid id, CancellationToken ct);
     void Remove(Equipment equipment);
+    Task<List<Equipment>> GetMissingEnglishTranslationAsync(int limit,
+        CancellationToken ct);
 }

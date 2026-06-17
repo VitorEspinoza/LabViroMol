@@ -17,7 +17,7 @@ public class EquipmentQueries
         _context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
     }
 
-    public async Task<PagedResponse<EquipmentViewModel>> GetAllInstitutionalAsync(PagedRequest request)
+    public async Task<PagedResponse<EquipmentViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
@@ -48,11 +48,11 @@ public class EquipmentQueries
         var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
             .Select(e => new EquipmentViewModel(
                 e.Id.Value,
-                e.Name,
+                e.GetName(language),
                 e.Model,
                 e.Brand,
                 e.Code,
-                e.Description,
+                e.GetDescription(language),
                 e.ImageUrl))
             .ToListAsync();
 
@@ -131,17 +131,17 @@ public class EquipmentQueries
             .FirstOrDefaultAsync();
     }
 
-    public async Task<EquipmentViewModel?> GetEquipmentById(Guid id)
+    public async Task<EquipmentViewModel?> GetEquipmentByIdInstitutional(Guid id, string? language)
     {
         return await _context.Equipments
             .Where(e => e.Id == id)
             .Select(e => new EquipmentViewModel(
                 e.Id!.Value,
-                e.Name,
+                e.GetName(language),
                 e.Model,
                 e.Brand,
                 e.Code,
-                e.Description,
+                e.GetDescription(language),
                 e.ImageUrl))
             .FirstOrDefaultAsync();
     }

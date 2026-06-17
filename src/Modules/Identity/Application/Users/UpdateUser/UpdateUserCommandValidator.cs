@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 
 namespace LabViroMol.Modules.Identity.Application.Users.UpdateUser;
 

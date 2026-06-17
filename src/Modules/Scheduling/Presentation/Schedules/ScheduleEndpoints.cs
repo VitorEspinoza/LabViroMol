@@ -23,13 +23,6 @@ internal static class ScheduleEndpoints
     {
         var group = app.MapGroup("/schedules").WithTags("Schedules");
 
-        // PUBLIC — no auth required (institutional site)
-        group.MapPost("/", async (CreateScheduleCommand command, IMediator mediator, CancellationToken ct) =>
-        {
-            var result = await mediator.Send(command, ct);
-            return result.ToHttpResult(Results.Created());
-        });
-
         group.MapGet("/", async ([AsParameters] PagedRequest request, ScheduleQueries scheduleQueries) =>
             Results.Ok(await scheduleQueries.GetAllAsync(request)))
             .RequireAuthorization(Permissions.Scheduling.SchedulesView);
@@ -65,5 +58,17 @@ internal static class ScheduleEndpoints
             return result.ToHttpResult(Results.Accepted());
         }).DisableAntiforgery()
           .RequireAuthorization(Permissions.Scheduling.SchedulesManage);
+    }
+
+    public static void MapInstitutionalScheduleEndpoints(this IEndpointRouteBuilder app)
+    {
+        var group = app.MapGroup("/schedules").WithTags("Schedules-Public");
+        
+        
+        group.MapPost("/", async (CreateScheduleCommand command, IMediator mediator, CancellationToken ct) =>
+        {
+            var result = await mediator.Send(command, ct);
+            return result.ToHttpResult(Results.Created());
+        }).RequireRateLimiting("SchedulingPolicy");
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LabViroMol.Modules.Assets.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AssetsDbContext))]
-    [Migration("20260606173343_Assets_AddEquipmentLocation")]
-    partial class Assets_AddEquipmentLocation
+    [Migration("20260611134638_Assets_InitialSetup")]
+    partial class Assets_InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -84,6 +84,9 @@ namespace LabViroMol.Modules.Assets.Infrastructure.Persistence.Migrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
+
+                    b.Property<string>("Translations")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");

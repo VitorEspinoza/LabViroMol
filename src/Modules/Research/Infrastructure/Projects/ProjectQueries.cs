@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 public class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser)
 {
-    public async Task<PagedResponse<PublicProjectViewModel>> GetAllInstitutionalAsync(PagedRequest request)
+    public async Task<PagedResponse<PublicProjectViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
@@ -92,7 +92,7 @@ public class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser)
                 : string.Empty;
             var partnerName = partnerNames.GetValueOrDefault(p.PartnerId, string.Empty);
 
-            return new PublicProjectViewModel(p.Title, p.Description, p.Status.Value, leadName, partnerName);
+            return new PublicProjectViewModel(p.Id.Value, p.GetTitle(language), p.GetDescription(language), p.Status.Value, leadName, partnerName);
         }).ToList();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);

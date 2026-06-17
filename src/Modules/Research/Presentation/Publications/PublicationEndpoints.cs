@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace LabViroMol.Modules.Research.Presentation.Publications;
 
 using LabViroMol.Modules.Research.Application.Publications.Commands.Create;
@@ -100,7 +102,7 @@ internal static class PublicationEndpoints
     {
         var group = app.MapGroup("/publications").WithTags("Publications-Public");
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, PublicationQueries queries) =>
-            Results.Ok(await queries.GetAllInstitutionalAsync(request)));
+        group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, PublicationQueries queries) =>
+            Results.Ok(await queries.GetAllInstitutionalAsync(request, language)));
     }
 }

@@ -25,7 +25,7 @@ internal static class MaterialTypeEndpoints
             var result = await mediator.Send(command, ct);
 
             return result.ToHttpResult(Results.Created());
-        }).RequireAuthorization(Permissions.Inventory.MaterialsManage);
+        });
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, MaterialTypeQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))

@@ -362,4 +362,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# Rider
+.idea
+
+src/LabViroMol.Api/Upload
 Upload/Images/

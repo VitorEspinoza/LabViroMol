@@ -82,6 +82,9 @@ namespace LabViroMol.Modules.Assets.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
+                    b.Property<string>("Translations")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
 

@@ -13,4 +13,19 @@ public class ProjectRepository(ResearchDbContext context) : IProjectRepository
 
     public async Task AddAsync(Project project, CancellationToken ct)
         => await context.Projects.AddAsync(project, ct);
+    
+    public async Task<List<Project>> GetMissingEnglishTranslationAsync(int limit,
+        CancellationToken ct)
+    {
+        var projects = await context.Projects
+            .Take(limit)
+            .ToListAsync(ct);
+
+        return projects
+            .Where(x =>
+                !x.Translations.TryGetValue("en", out var translation)
+                || string.IsNullOrWhiteSpace(translation.Title)
+                || string.IsNullOrWhiteSpace(translation.Description))
+            .ToList();
+    }
 }

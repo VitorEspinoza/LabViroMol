@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 public class ResearcherQueries(ResearchDbContext context)
 {
-    public async Task<PagedResponse<ResearcherSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request)
+    public async Task<PagedResponse<ResearcherSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
@@ -17,7 +17,7 @@ public class ResearcherQueries(ResearchDbContext context)
             .Join(context.Positions,
                 r => r.PositionId,
                 p => p.Id,
-                (r, p) => new { Researcher = r, PositionName = p.Name });
+                (r, p) => new { Researcher = r, PositionName = p.GetName(language) });
 
         query = query.WhereSearch(request.Search,
             x => x.Researcher.Name.FirstName,

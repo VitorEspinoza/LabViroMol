@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ResearchDbContext))]
-    [Migration("20260605131708_Research_InitialSetup")]
+    [Migration("20260611134738_Research_InitialSetup")]
     partial class Research_InitialSetup
     {
         /// <inheritdoc />
@@ -111,6 +111,9 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
+                    b.Property<string>("Translations")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Positions", "research");
@@ -150,6 +153,9 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Translations")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");
@@ -260,6 +266,9 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Translations")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset?>("UpdatedAt")
                         .HasColumnType("datetimeoffset");

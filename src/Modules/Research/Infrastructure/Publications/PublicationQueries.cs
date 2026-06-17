@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 public class PublicationQueries(ResearchDbContext context)
 {
-    public async Task<PagedResponse<PublicationSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request)
+    public async Task<PagedResponse<PublicationSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
@@ -40,7 +40,7 @@ public class PublicationQueries(ResearchDbContext context)
 
         var items = rows.Select(r => new PublicationSummaryViewModel(
             r.Publication.Id.Value,
-            r.Publication.Title,
+            r.Publication.GetTitle(language),
             r.Publication.Doi,
             r.Publication.PublishedOn,
             r.Publication.PublicationDate,

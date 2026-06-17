@@ -1,4 +1,6 @@
+using LabViroMol.Modules.Research.Application.Projects.EventHandlers;
 using LabViroMol.Modules.Research.Domain.Partners;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LabViroMol.Modules.Research.Application.Projects.Commands.Create;
 
@@ -11,7 +13,8 @@ using Mediator;
 public class CreateProjectHandler(
     IProjectRepository projectRepository,
     IResearcherRepository researcherRepository,
-    IResearchUnitOfWork unitOfWork)
+    IResearchUnitOfWork unitOfWork,
+    IServiceScopeFactory scopeFactory)
     : ICommandHandler<CreateProjectCommand, Result<Guid>>
 {
     public async ValueTask<Result<Guid>> Handle(CreateProjectCommand command, CancellationToken ct)
@@ -30,8 +33,22 @@ public class CreateProjectHandler(
         if (result.IsFailure)
             return Result<Guid>.FromError(result);
 
-        await projectRepository.AddAsync(result.Data!, ct);
+        var project = result.Data!;
+
+        await projectRepository.AddAsync(project, ct);
         await unitOfWork.CompleteAsync(ct);
+
+        _ = Task.Run(async () =>
+        {
+            using var scope = scopeFactory.CreateScope();
+
+            var publisher =
+                scope.ServiceProvider.GetRequiredService<IPublisher>();
+
+            await publisher.Publish(
+                new ProjectTranslationEvent(project.Id),
+                CancellationToken.None);
+        });
 
         return Result<Guid>.Success(result.Data!.Id);
     }

@@ -9,6 +9,7 @@ using LabViroMol.Modules.Shared.Infrastructure;
 using LabViroMol.Modules.Shared.Infrastructure.Behaviors;
 using LabViroMol.Modules.Shared.Infrastructure.Converters;
 using Mediator;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
 
@@ -36,6 +37,15 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("SchedulingPolicy", opt =>
+    {
+        opt.PermitLimit = 5;
+        opt.Window = TimeSpan.FromHours(1);
+    });
+});
+
 builder.Services.AddMediator(options => 
 {
     options.ServiceLifetime = ServiceLifetime.Scoped; 
@@ -52,7 +62,8 @@ builder.Services
     .AddAssetsModule(builder.Configuration)
     .AddResearchModule(builder.Configuration)
     .AddNotifyModule(builder.Configuration)
-    .AddStorages(builder.Configuration);
+    .AddStorages(builder.Configuration)
+    .AddTranslator(builder.Configuration);
     
 builder.Services.AddAuthorization();
 
@@ -88,6 +99,7 @@ app.UseCors("AngularApp");
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 
 app.MapIdentityEndpoints();
 app.MapInventoryEndpoints();
