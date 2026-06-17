@@ -145,4 +145,20 @@ public class EquipmentQueries
                 e.ImageUrl))
             .FirstOrDefaultAsync();
     }
+
+    public async Task<List<EquipmentSchedulableViewModel>> GetSchedulableEquipments(string? language)
+    {
+        return await _context.Equipments
+            .Where(e => !_context.MaintenanceRequests
+                .Where(mr => mr.Status == MaintenanceRequestStatus.InProgress
+                             || mr.Status == MaintenanceRequestStatus.Requested)
+                .Select(mr => mr.EquipmentId)
+                .Contains(e.Id))
+            .OrderBy(e => e.Name)
+            .Select(e => new EquipmentSchedulableViewModel(
+                e.Id.Value,
+                e.GetName(language)
+                ))
+            .ToListAsync();
+    }
 }
