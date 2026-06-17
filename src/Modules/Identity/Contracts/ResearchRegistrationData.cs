@@ -1,7 +1,7 @@
 namespace LabViroMol.Modules.Identity.Contracts;
 
 public record ResearchRegistrationData(
-    Guid PositionId,
+    Guid? PositionId,
     string DegreeLevel,
     string FieldOfStudy,
     string? LattesUrl,

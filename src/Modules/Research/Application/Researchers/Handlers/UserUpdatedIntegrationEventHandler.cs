@@ -36,8 +36,11 @@ public class UserUpdatedIntegrationEventHandler(
             existing.UpdateName(updatedName);
 
             var degreeLevel = DegreeLevel.FromString(notification.ResearchData.DegreeLevel);
-            existing.Update(degreeLevel, notification.ResearchData.FieldOfStudy,
-                PositionId.From(notification.ResearchData.PositionId));
+            var positionId = notification.ResearchData.PositionId.HasValue
+                ? PositionId.From(notification.ResearchData.PositionId.Value)
+                : existing.PositionId;
+
+            existing.Update(degreeLevel, notification.ResearchData.FieldOfStudy, positionId);
 
             await unitOfWork.CompleteAsync(ct);
             return;
@@ -47,7 +50,12 @@ public class UserUpdatedIntegrationEventHandler(
             return;
 
         var data = notification.ResearchData;
-        var position = await positionRepository.GetByIdAsync(PositionId.From(data.PositionId), ct);
+
+        // Position is required to create a researcher profile; skip if not provided (admin must assign it)
+        if (!data.PositionId.HasValue)
+            return;
+
+        var position = await positionRepository.GetByIdAsync(PositionId.From(data.PositionId.Value), ct);
 
         if (position is null)
             throw new DomainException("Cargo inválido selecionado para usuário");

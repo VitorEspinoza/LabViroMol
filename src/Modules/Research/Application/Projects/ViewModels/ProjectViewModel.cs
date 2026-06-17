@@ -10,4 +10,9 @@ public record ProjectViewModel(
     Guid PartnerId,
     string PartnerName,
     IReadOnlyCollection<ProjectMemberViewModel> Members,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    bool CanChangeStatus,
+    bool CanTransferLeadership,
+    bool CanEditMembers,
+    bool CanChangeMemberRole,
+    bool CanRemoveMembers);

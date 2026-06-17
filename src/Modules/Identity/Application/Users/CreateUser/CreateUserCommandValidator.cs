@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace LabViroMol.Modules.Identity.Application.Users.CreateUser;
 
@@ -45,5 +45,14 @@ public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
             RuleFor(x => x.UserData.ResearchData!.FieldOfStudy)
                 .NotEmpty().WithMessage("A área de estudo é obrigatória.");
         });
+
+        RuleFor(x => x.UserData.EmergencyContactNumber)
+            .Must((cmd, number) => NormalizeDigits(number) != NormalizeDigits(cmd.UserData.PhoneNumber))
+            .When(x => !string.IsNullOrEmpty(x.UserData.PhoneNumber) && !string.IsNullOrEmpty(x.UserData.EmergencyContactNumber))
+            .WithMessage("O contato de emergência não pode ter o mesmo número que o usuário.")
+            .OverridePropertyName("emergencyContactNumber");
     }
+
+    private static string NormalizeDigits(string? value)
+        => new string((value ?? string.Empty).Where(char.IsDigit).ToArray());
 }

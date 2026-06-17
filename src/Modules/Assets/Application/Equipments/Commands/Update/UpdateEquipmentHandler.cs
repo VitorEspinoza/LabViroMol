@@ -16,16 +16,10 @@ public class UpdateEquipmentHandler(
         if (result is null)
             return Result.BusinessRule("Equipamento não encontrado.");
 
-        var conflictingCode = await equipmentRepository.GetByCodeAsync(command.Code, ct);
-
-        if (conflictingCode != null && conflictingCode.Id != command.EquipmentId)
-            return Result.BusinessRule("Código de equipamento já registrado.");
-
         result.Update(
             command.Name,
             command.Brand,
             command.Model,
-            command.Code,
             command.Description,
             command.Location);
 

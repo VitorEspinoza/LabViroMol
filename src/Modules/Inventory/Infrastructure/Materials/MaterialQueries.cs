@@ -21,39 +21,53 @@ public class MaterialQueries
         var pageSize = Math.Clamp(request.PageSize, 1, 100);
         var pageNumber = Math.Max(request.PageNumber, 1);
 
-        IQueryable<MaterialViewModel> query = _context.Materials
+        var query = _context.Materials
             .Join(
                 _context.MaterialTypes,
                 m => m.TypeId,
                 t => t.Id,
-                (m, t) => new MaterialViewModel(
-                    m.Id.Value,
-                    m.Name,
-                    t.Name,
-                    m.MinStock.Value,
-                    m.StockQuantity.Value,
-                    m.Unit.ToString(),
-                    m.Location));
+                (m, t) => new { Material = m, TypeName = t.Name });
 
-        query = query.WhereSearch(request.Search, x => x.Name, x => x.MaterialType, x => x.Unit, x => x.Location);
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var search = request.Search;
+            var matchingUnits = Enum.GetValues<Unit>()
+                .Where(u => u.ToString().Contains(search, StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+
+            query = query.Where(x =>
+                x.Material.Name.Contains(search) ||
+                x.TypeName.Contains(search) ||
+                x.Material.Location.Contains(search) ||
+                matchingUnits.Contains(x.Material.Unit));
+        }
 
         var totalCount = await query.CountAsync();
 
         query = request.SortBy?.ToLower() switch
         {
             "name" => request.SortDirection == "desc"
-                ? query.OrderByDescending(m => m.Name)
-                : query.OrderBy(m => m.Name),
+                ? query.OrderByDescending(x => x.Material.Name)
+                : query.OrderBy(x => x.Material.Name),
             "location" => request.SortDirection == "desc"
-                ? query.OrderByDescending(m => m.Location)
-                : query.OrderBy(m => m.Location),
+                ? query.OrderByDescending(x => x.Material.Location)
+                : query.OrderBy(x => x.Material.Location),
             "minstock" => request.SortDirection == "desc"
-                ? query.OrderByDescending(m => m.MinStock)
-                : query.OrderBy(m => m.MinStock),
-            _ => query.OrderBy(m => m.Name)
+                ? query.OrderByDescending(x => x.Material.MinStock)
+                : query.OrderBy(x => x.Material.MinStock),
+            _ => query.OrderBy(x => x.Material.Name)
         };
 
-        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+        var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize)
+            .Select(x => new MaterialViewModel(
+                x.Material.Id.Value,
+                x.Material.Name,
+                x.TypeName,
+                x.Material.MinStock.Value,
+                x.Material.StockQuantity.Value,
+                x.Material.Unit.ToString(),
+                x.Material.Location))
+            .ToListAsync();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
     }

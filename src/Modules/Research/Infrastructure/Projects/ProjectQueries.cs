@@ -6,10 +6,11 @@ using LabViroMol.Modules.Research.Domain.Projects;
 using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using LabViroMol.Modules.Research.Infrastructure.Researchers;
+using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
-public class ProjectQueries(ResearchDbContext context)
+public class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser)
 {
     public async Task<PagedResponse<PublicProjectViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {
@@ -134,7 +135,46 @@ public class ProjectQueries(ResearchDbContext context)
 
         var totalCount = await query.CountAsync();
 
-        query = request.SortBy?.ToLower() switch
+        var sortBy = request.SortBy?.ToLower();
+
+        if (sortBy is "partnername" or "managername")
+        {
+            var allRows = await query
+                .Select(p => new { Project = p, CreatedAt = EF.Property<DateTimeOffset>(p, "CreatedAt") })
+                .ToListAsync();
+
+            var allLeadIds = GetResearchLeadIds(allRows.Select(r => r.Project));
+            var allPartnerIds = allRows.Select(r => r.Project.PartnerId);
+
+            var allResearcherNames = await ResearcherNameLookup.GetNamesAsync(context, allLeadIds);
+            var allPartnerNames = await GetPartnerNamesAsync(allPartnerIds);
+
+            var allItems = allRows.Select(r =>
+            {
+                var p = r.Project;
+                var leadId = GetResearchLeadId(p);
+                var leadName = leadId.HasValue && allResearcherNames.TryGetValue(leadId.Value, out var lead)
+                    ? lead.FullName
+                    : string.Empty;
+                var partnerName = allPartnerNames.GetValueOrDefault(p.PartnerId, string.Empty);
+
+                return new ProjectAdminSummaryViewModel(p.Id.Value, p.Title, partnerName, leadName, p.Status.Value, r.CreatedAt);
+            });
+
+            allItems = sortBy == "partnername"
+                ? (request.SortDirection == "desc"
+                    ? allItems.OrderByDescending(x => x.PartnerName)
+                    : allItems.OrderBy(x => x.PartnerName))
+                : (request.SortDirection == "desc"
+                    ? allItems.OrderByDescending(x => x.ManagerName)
+                    : allItems.OrderBy(x => x.ManagerName));
+
+            var page = allItems.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            return PagedResult.Create(page, pageNumber, pageSize, totalCount);
+        }
+
+        query = sortBy switch
         {
             "title" => request.SortDirection == "desc"
                 ? query.OrderByDescending(p => p.Title)
@@ -190,6 +230,11 @@ public class ProjectQueries(ResearchDbContext context)
         var researcherNames = await ResearcherNameLookup.GetNamesAsync(context, activeMembers.Select(m => m.ResearcherId));
         var partnerNames = await GetPartnerNamesAsync([project.PartnerId]);
 
+        var currentUserGuid = currentUser.Id.Value;
+        var currentMember = activeMembers.FirstOrDefault(m => m.ResearcherId.Value == currentUserGuid);
+        var isLead = currentMember?.Role == ProjectRole.ResearchLead;
+        var hasAdminPriv = isLead || currentMember?.Role == ProjectRole.Manager;
+
         return new ProjectViewModel(
             project.Id.Value,
             project.Title,
@@ -198,7 +243,12 @@ public class ProjectQueries(ResearchDbContext context)
             project.PartnerId.Value,
             partnerNames.GetValueOrDefault(project.PartnerId, string.Empty),
             activeMembers.Select(m => new ProjectMemberViewModel(m.Id, researcherNames[m.ResearcherId].FullName, m.Role)).ToList(),
-            row.CreatedAt);
+            row.CreatedAt,
+            CanChangeStatus: isLead,
+            CanTransferLeadership: isLead,
+            CanEditMembers: hasAdminPriv,
+            CanChangeMemberRole: hasAdminPriv,
+            CanRemoveMembers: hasAdminPriv);
     }
 
     private static ResearcherId? GetResearchLeadId(Project project)

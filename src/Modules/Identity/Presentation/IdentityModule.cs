@@ -1,5 +1,6 @@
 using LabViroMol.Modules.Identity.Application;
 using LabViroMol.Modules.Identity.Application.Roles.CreateRole;
+using LabViroMol.Modules.Identity.Application.Roles.DeleteRole;
 using LabViroMol.Modules.Identity.Application.Roles.UpdateRolePermissions;
 using LabViroMol.Modules.Identity.Infrastructure;
 using LabViroMol.Modules.Identity.Infrastructure.Roles;
@@ -56,6 +57,13 @@ public static class IdentityModule
             return result.ToHttpResult(Results.Ok());
         }).RequireAuthorization(Permissions.Identity.RolesManage)
           .Accepts<UpdateRolePermissionsRequest>("application/json");
+
+        group.MapDelete("/roles/{id:guid}", async (Guid id, IMediator mediator, CancellationToken ct) =>
+        {
+            var command = new DeleteRoleCommand(id);
+            var result = await mediator.Send(command, ct);
+            return result.ToHttpResult(Results.NoContent());
+        }).RequireAuthorization(Permissions.Identity.RolesManage);
 
         return app;
     }

@@ -31,19 +31,19 @@ public class CreatePublicationHandler(
 
         await repository.AddAsync(publication, ct);
         await unitOfWork.CompleteAsync(ct);
-        
+
         _ = Task.Run(async () =>
         {
             using var scope = scopeFactory.CreateScope();
 
             var publisher =
                 scope.ServiceProvider.GetRequiredService<IPublisher>();
-            
+
             await publisher.Publish(
                 new PublicationTranslationEvent(publication.Id),
                 CancellationToken.None);
         });
-        
+
         return Result<Guid>.Success(result.Data!.Id);
     }
 }

@@ -47,7 +47,7 @@ public class PublicationQueries(ResearchDbContext context)
             r.CreatedAt,
             r.Publication.Researchers
                 .OrderBy(pr => pr.Order)
-                .Select(pr => new PublicationAuthorViewModel(names[pr.ResearcherId].PublicCitationName, pr.Order))
+                .Select(pr => new PublicationAuthorViewModel(pr.ResearcherId, names[pr.ResearcherId].PublicCitationName, pr.Order))
                 .ToList())).ToList();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
@@ -92,12 +92,12 @@ public class PublicationQueries(ResearchDbContext context)
 
         var items = publications.Select(p =>
         {
-            var firstAuthorName = p.Researchers
+            var authors = p.Researchers
                 .OrderBy(pr => pr.Order)
-                .Select(pr => names[pr.ResearcherId].PublicCitationName)
-                .FirstOrDefault() ?? string.Empty;
+                .Select(pr => new PublicationAuthorViewModel(pr.ResearcherId, names[pr.ResearcherId].PublicCitationName, pr.Order))
+                .ToList();
 
-            return new PublicationAdminSummaryViewModel(p.Id.Value, p.Title, p.Doi, p.PublicationDate, firstAuthorName);
+            return new PublicationAdminSummaryViewModel(p.Id.Value, p.Title, p.Doi, p.PublicationDate, authors);
         }).ToList();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
@@ -127,7 +127,7 @@ public class PublicationQueries(ResearchDbContext context)
             publication.PublishUrl,
             publication.Researchers
                 .OrderBy(pr => pr.Order)
-                .Select(pr => new PublicationAuthorViewModel(names[pr.ResearcherId].FullName, pr.Order))
+                .Select(pr => new PublicationAuthorViewModel(pr.ResearcherId, names[pr.ResearcherId].FullName, pr.Order))
                 .ToList(),
             row.CreatedAt);
     }

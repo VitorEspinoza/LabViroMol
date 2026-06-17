@@ -15,6 +15,7 @@ public class DeleteEquipmentHandler(
         if (equipment is null)
             return Result.Success();
 
+        equipment.Delete();
         equipmentRepository.Remove(equipment);
         await unitOfWork.CompleteAsync(ct);
         return Result.Success();

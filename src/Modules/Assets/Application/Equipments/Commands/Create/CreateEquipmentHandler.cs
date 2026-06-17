@@ -35,7 +35,8 @@ public class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Re
             command.Brand,
             command.Model,
             command.Code,
-            command.Description);
+            command.Description,
+            command.Location);
 
         if (result.IsFailure)
             return result;

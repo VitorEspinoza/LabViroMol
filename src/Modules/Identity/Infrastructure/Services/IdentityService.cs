@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using LabViroMol.Modules.Identity.Application.Users;
 using LabViroMol.Modules.Identity.Application.Users.Abstractions;
 using LabViroMol.Modules.Identity.Infrastructure.Identity;
 using LabViroMol.Modules.Identity.Infrastructure.Persistence;
@@ -18,6 +19,7 @@ public class IdentityService : IIdentityService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly RoleManager<ApplicationRole> _roleManager;
     private readonly LabViroMolIdentityDbContext _dbContext;
+    private readonly IIdentityUnitOfWork _unitOfWork;
     private readonly string _jwtKey;
     private readonly string _jwtIssuer;
     private readonly string _jwtAudience;
@@ -30,11 +32,13 @@ public class IdentityService : IIdentityService
         UserManager<ApplicationUser> userManager,
         RoleManager<ApplicationRole> roleManager,
         LabViroMolIdentityDbContext dbContext,
+        IIdentityUnitOfWork unitOfWork,
         IConfiguration configuration)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _dbContext = dbContext;
+        _unitOfWork = unitOfWork;
         _jwtKey = configuration["Jwt:Key"]!;
         _jwtIssuer = configuration["Jwt:Issuer"]!;
         _jwtAudience = configuration["Jwt:Audience"]!;
@@ -269,6 +273,26 @@ public class IdentityService : IIdentityService
 
         foreach (var permission in permissions)
             await _roleManager.AddClaimAsync(role, new Claim("permission", permission));
+
+        return Result.Success();
+    }
+
+    public async Task<Result> DeleteRoleAsync(Guid roleId, CancellationToken ct)
+    {
+        var role = await _roleManager.FindByIdAsync(roleId.ToString());
+        if (role is null)
+            return Result.NotFound("Perfil não encontrado.");
+
+        var userRoles = await _dbContext.UserRoles
+            .Where(ur => ur.RoleId == roleId)
+            .ToListAsync(ct);
+
+        if (userRoles.Count > 0)
+            _dbContext.UserRoles.RemoveRange(userRoles);
+
+        _dbContext.Roles.Remove(role);
+
+        await _unitOfWork.CompleteAsync(ct);
 
         return Result.Success();
     }

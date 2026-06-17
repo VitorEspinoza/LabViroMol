@@ -12,7 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LabViroMol.Modules.Scheduling.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(SchedulingDbContext))]
+<<<<<<<< HEAD:src/Modules/Scheduling/Infrastructure/Persistence/Migrations/20260615005350_Scheduling_InitialSetup.Designer.cs
+    [Migration("20260615005350_Scheduling_InitialSetup")]
+========
     [Migration("20260612184144_Scheduling_InitialSetup")]
+>>>>>>>> d13f5a8b754a4692a037cd2951c2095ecd9023fc:src/Modules/Scheduling/Infrastructure/Persistence/Migrations/20260612184144_Scheduling_InitialSetup.Designer.cs
     partial class Scheduling_InitialSetup
     {
         /// <inheritdoc />

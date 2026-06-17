@@ -248,19 +248,17 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
                 {
                     b.OwnsMany("LabViroMol.Modules.Inventory.Domain.Kits.KitItem", "Materials", b1 =>
                         {
-                            b1.Property<Guid>("MaterialId")
+                            b1.Property<Guid>("KitId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<Guid>("KitId")
+                            b1.Property<Guid>("MaterialId")
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<decimal>("Quantity")
                                 .HasPrecision(18, 4)
                                 .HasColumnType("decimal(18,4)");
 
-                            b1.HasKey("MaterialId");
-
-                            b1.HasIndex("KitId");
+                            b1.HasKey("KitId", "MaterialId");
 
                             b1.ToTable("KitItems", "inventory");
 

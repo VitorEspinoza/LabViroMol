@@ -23,6 +23,9 @@ public static class ScheduleMapper
             sched.Description,
             sched.AdvisorProfessor,
             sched.Status.ToString(),
-            sched.TermUrl);
+            sched.TermUrl,
+            sched.Equipments
+                .Select(e => new ScheduleEquipmentViewModel(e.EquipmentId, e.Name))
+                .ToList());
     }
 }

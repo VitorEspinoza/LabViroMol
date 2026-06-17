@@ -15,10 +15,9 @@ public class MaintenanceRequestRepository : IMaintenanceRequestRepository
         _context = context;
     }
     
-    public Task AddAsync(MaintenanceRequest maintenanceRequest, CancellationToken cancellationToken)
+    public async Task AddAsync(MaintenanceRequest maintenanceRequest, CancellationToken cancellationToken)
     {
-        _context.MaintenanceRequests.Add(maintenanceRequest);
-        return _context.SaveChangesAsync(cancellationToken);
+        await _context.MaintenanceRequests.AddAsync(maintenanceRequest, cancellationToken);
     }
 
     public async Task<List<MaintenanceRequest>> GetAllActiveByEquipmentIdAsync(
@@ -32,9 +31,23 @@ public class MaintenanceRequestRepository : IMaintenanceRequestRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<List<MaintenanceRequest>> GetAllByEquipmentIdAsync(
+        Guid equipmentId,
+        CancellationToken cancellationToken)
+    {
+        return await _context.MaintenanceRequests
+            .Where(req => req.EquipmentId == equipmentId)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<MaintenanceRequest?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _context.MaintenanceRequests.FirstOrDefaultAsync(
             req => req.Id == id, cancellationToken);
+    }
+
+    public void Remove(MaintenanceRequest maintenanceRequest)
+    {
+        _context.MaintenanceRequests.Remove(maintenanceRequest);
     }
 }

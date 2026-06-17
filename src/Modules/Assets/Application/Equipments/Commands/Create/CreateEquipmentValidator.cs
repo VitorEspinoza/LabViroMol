@@ -25,5 +25,8 @@ public class CreateEquipmentValidator : AbstractValidator<CreateEquipmentCommand
         RuleFor(x => x.Description)
             .NotEmpty().WithMessage("Descrição é obrigatória")
             .MaximumLength(1000).WithMessage("A descrição não pode exceder 1000 caracteres");
+
+        RuleFor(x => x.Location)
+            .MaximumLength(200).WithMessage("A localização não pode exceder 200 caracteres");
     }
 }

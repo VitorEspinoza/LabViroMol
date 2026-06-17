@@ -32,11 +32,12 @@ public class CreateProjectHandler(
 
         if (result.IsFailure)
             return Result<Guid>.FromError(result);
+
         var project = result.Data!;
 
         await projectRepository.AddAsync(project, ct);
         await unitOfWork.CompleteAsync(ct);
-        
+
         _ = Task.Run(async () =>
         {
             using var scope = scopeFactory.CreateScope();
@@ -48,7 +49,7 @@ public class CreateProjectHandler(
                 new ProjectTranslationEvent(project.Id),
                 CancellationToken.None);
         });
-        
+
         return Result<Guid>.Success(result.Data!.Id);
     }
 }

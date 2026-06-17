@@ -23,7 +23,7 @@ public class KitConfiguration : IEntityTypeConfiguration<Kit>
             kitItemBuilder.ToTable("KitItems");
             kitItemBuilder.WithOwner().HasForeignKey("KitId");
             
-            kitItemBuilder.HasKey(i => i.MaterialId);
+            kitItemBuilder.HasKey("KitId", nameof(KitItem.MaterialId));
             kitItemBuilder.Property(i => i.Quantity)
                 .HasPrecision(18, 4); 
         });

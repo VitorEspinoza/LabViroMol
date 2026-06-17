@@ -39,6 +39,11 @@ public class UpdateProfileCommandHandler : ICommandHandler<UpdateProfileCommand,
 
         var roleIds = await _identityService.GetUserRoleIdsAsync(command.UserId, ct);
 
+        // PositionId is managed by administrators — strip it from self-update to prevent changes
+        var researchData = data.ResearchData is not null
+            ? data.ResearchData with { PositionId = null }
+            : null;
+
         _unitOfWork.AddIntegrationEvent(new UserUpdatedIntegrationEvent(
             userId,
             data.FirstName,
@@ -47,7 +52,7 @@ public class UpdateProfileCommandHandler : ICommandHandler<UpdateProfileCommand,
             data.EmergencyContactName,
             data.EmergencyContactNumber,
             roleIds,
-            data.ResearchData));
+            researchData));
 
         await _unitOfWork.CompleteAsync(ct);
 
