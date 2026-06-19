@@ -37,7 +37,7 @@ public class DeactivateUserCommandHandler : ICommandHandler<DeactivateUserComman
         if (lockoutResult.IsFailure)
             return lockoutResult;
 
-        _unitOfWork.AddIntegrationEvent(new UserDeactivatedIntegrationEvent(userId));
+        _unitOfWork.AddPersistentEvent(new UserDeactivatedPersistentEvent(userId));
 
         await _unitOfWork.CompleteAsync(ct);
 

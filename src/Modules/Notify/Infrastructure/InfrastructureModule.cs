@@ -4,6 +4,7 @@ using LabViroMol.Modules.Notify.Domain.Notifications;
 using LabViroMol.Modules.Notify.Infrastructure.Emails;
 using LabViroMol.Modules.Notify.Infrastructure.Notifications;
 using LabViroMol.Modules.Notify.Infrastructure.Persistence;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +35,11 @@ public static class InfrastructureModule
     public static IServiceCollection AddQueries(this IServiceCollection services)
     {
         services
+<<<<<<< Updated upstream
             .AddScoped<NotificationQueries>();
+=======
+            .AddScoped<INotificationQueries, NotificationQueries>();
+>>>>>>> Stashed changes
         
         return services;
     }
@@ -49,6 +54,8 @@ public static class InfrastructureModule
                 npgsqlOptions.MigrationsHistoryTable("__NotifyMigrationsHistory", "notify");
                 npgsqlOptions.MigrationsAssembly(typeof(NotifyDbContext).Assembly.FullName);
             }));
+
+        services.AddOutbox<NotifyDbContext>();
 
         services.Configure<EmailOptions>(
             configuration.GetSection("Email"));

@@ -4,6 +4,7 @@ using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.Equipments;
 using LabViroMol.Modules.Assets.Infrastructure.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.Persistence;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +48,8 @@ public static class InfrastructureModule
                 npgsqlOptions.MigrationsHistoryTable("__AssetsMigrationsHistory", "assets");
                 npgsqlOptions.MigrationsAssembly(typeof(AssetsDbContext).Assembly.FullName);
             }));
+
+        services.AddOutbox<AssetsDbContext>();
 
         return services;
     }

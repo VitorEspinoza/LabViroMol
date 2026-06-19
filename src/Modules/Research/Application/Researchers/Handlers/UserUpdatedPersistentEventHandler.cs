@@ -7,13 +7,13 @@ using Mediator;
 
 namespace LabViroMol.Modules.Research.Application.Researchers.Handlers;
 
-public class UserUpdatedIntegrationEventHandler(
+public class UserUpdatedPersistentEventHandler(
     IResearcherRepository researcherRepository,
     IPositionRepository positionRepository,
     IResearchUnitOfWork unitOfWork)
-    : INotificationHandler<UserUpdatedIntegrationEvent>
+    : INotificationHandler<UserUpdatedPersistentEvent>
 {
-    public async ValueTask Handle(UserUpdatedIntegrationEvent notification, CancellationToken ct)
+    public async ValueTask Handle(UserUpdatedPersistentEvent notification, CancellationToken ct)
     {
         var researcherId = ResearcherId.From(notification.UserId.Value);
         var existing = await researcherRepository.GetByIdAsync(researcherId, ct);

@@ -8,6 +8,7 @@ using LabViroMol.Modules.Scheduling.Presentation;
 using LabViroMol.Modules.Shared.Infrastructure;
 using LabViroMol.Modules.Shared.Infrastructure.Behaviors;
 using LabViroMol.Modules.Shared.Infrastructure.Converters;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using Mediator;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.FileProviders;
@@ -26,11 +27,15 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
+var corsAllowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? [];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularApp", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(corsAllowedOrigins)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -63,7 +68,8 @@ builder.Services
     .AddResearchModule(builder.Configuration)
     .AddNotifyModule(builder.Configuration)
     .AddStorages(builder.Configuration)
-    .AddTranslator(builder.Configuration);
+    .AddTranslator(builder.Configuration)
+    .AddOutboxDispatcher(builder.Configuration);
     
 builder.Services.AddAuthorization();
 

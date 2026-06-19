@@ -8,6 +8,7 @@ using LabViroMol.Modules.Identity.Infrastructure.Persistence;
 using LabViroMol.Modules.Identity.Infrastructure.Services;
 using LabViroMol.Modules.Identity.Infrastructure.Roles;
 using LabViroMol.Modules.Identity.Infrastructure.Users;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -45,6 +46,8 @@ public static class InfrastructureModule
                 npgsqlOptions.MigrationsHistoryTable("__IdentityMigrationsHistory", "identity");
                 npgsqlOptions.MigrationsAssembly(typeof(LabViroMolIdentityDbContext).Assembly.FullName);
             }));
+
+        services.AddOutbox<LabViroMolIdentityDbContext>();
 
         return services;
     }
