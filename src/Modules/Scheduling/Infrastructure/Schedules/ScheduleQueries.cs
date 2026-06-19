@@ -1,4 +1,5 @@
 using LabViroMol.Modules.Scheduling.Application.Schedules.Mappings;
+using LabViroMol.Modules.Scheduling.Application.Schedules.Queries;
 using LabViroMol.Modules.Scheduling.Application.Schedules.ViewModels;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Infrastructure.Persistence;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Scheduling.Infrastructure.Schedules;
 
-public class ScheduleQueries
+public class ScheduleQueries : IScheduleQueries
 {
     private readonly SchedulingDbContext _context;
 

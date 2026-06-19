@@ -1,12 +1,13 @@
 namespace LabViroMol.Modules.Research.Infrastructure.Researchers;
 
+using LabViroMol.Modules.Research.Application.Researchers.Queries;
 using LabViroMol.Modules.Research.Application.Researchers.ViewModels;
 using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
-public class ResearcherQueries(ResearchDbContext context)
+public class ResearcherQueries(ResearchDbContext context) : IResearcherQueries
 {
     public async Task<PagedResponse<ResearcherSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {

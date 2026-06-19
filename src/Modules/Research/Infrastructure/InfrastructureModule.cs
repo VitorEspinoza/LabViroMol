@@ -1,6 +1,11 @@
 namespace LabViroMol.Modules.Research.Infrastructure;
 
 using LabViroMol.Modules.Identity.Contracts;
+using LabViroMol.Modules.Research.Application.Partners.Queries;
+using LabViroMol.Modules.Research.Application.Positions.Queries;
+using LabViroMol.Modules.Research.Application.Projects.Queries;
+using LabViroMol.Modules.Research.Application.Publications.Queries;
+using LabViroMol.Modules.Research.Application.Researchers.Queries;
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Contracts;
 using LabViroMol.Modules.Research.Domain.Partners;
@@ -46,11 +51,11 @@ public static class InfrastructureModule
 
     private static IServiceCollection AddQueries(this IServiceCollection services)
     {
-        services.AddScoped<PartnerQueries>();
-        services.AddScoped<ProjectQueries>();
-        services.AddScoped<ResearcherQueries>();
-        services.AddScoped<PositionQueries>();
-        services.AddScoped<PublicationQueries>();
+        services.AddScoped<IPartnerQueries, PartnerQueries>();
+        services.AddScoped<IProjectQueries, ProjectQueries>();
+        services.AddScoped<IResearcherQueries, ResearcherQueries>();
+        services.AddScoped<IPositionQueries, PositionQueries>();
+        services.AddScoped<IPublicationQueries, PublicationQueries>();
         return services;
     }
 

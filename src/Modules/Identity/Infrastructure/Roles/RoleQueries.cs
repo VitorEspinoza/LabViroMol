@@ -1,10 +1,11 @@
+using LabViroMol.Modules.Identity.Application.Roles.Queries;
 using LabViroMol.Modules.Identity.Application.Users.ViewModels;
 using LabViroMol.Modules.Identity.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Identity.Infrastructure.Roles;
 
-public class RoleQueries(LabViroMolIdentityDbContext context)
+public class RoleQueries(LabViroMolIdentityDbContext context) : IRoleQueries
 {
     public async Task<IReadOnlyCollection<RoleViewModel>> GetAll()
         => await context.Roles.AsNoTracking()

@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Notify.Application.Notifications.Queries;
 using LabViroMol.Modules.Notify.Application.Notifications.ViewModels;
 using LabViroMol.Modules.Notify.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Kernel.Identity;
@@ -5,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Notify.Infrastructure.Notifications;
 
-public class NotificationQueries(NotifyDbContext context)
+public class NotificationQueries(NotifyDbContext context) : INotificationQueries
 {
     public async Task<List<NotificationViewModel>> GetUnreadByUserAsync(UserId userId, List<string> permissions, CancellationToken ct)
     {

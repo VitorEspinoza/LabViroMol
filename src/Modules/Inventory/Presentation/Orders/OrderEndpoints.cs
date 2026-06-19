@@ -3,10 +3,10 @@ using LabViroMol.Modules.Inventory.Application.Orders.Commands.FixDetails;
 using LabViroMol.Modules.Inventory.Application.Orders.Commands.Process;
 using LabViroMol.Modules.Inventory.Application.Orders.Commands.Cancel;
 using LabViroMol.Modules.Inventory.Application.Orders.Commands.Receive;
+using LabViroMol.Modules.Inventory.Application.Orders.Queries;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Domain.References;
-using LabViroMol.Modules.Inventory.Infrastructure.Orders;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -42,11 +42,11 @@ internal static class OrderEndpoints
             return result.ToHttpResult(Results.Created());
         }).RequireAuthorization(Permissions.Inventory.OrdersManage);
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, OrderQueries queries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IOrderQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))
             .RequireAuthorization(Permissions.Inventory.OrdersView);
 
-        group.MapGet("/{id:guid}", async (Guid id, OrderQueries queries) =>
+        group.MapGet("/{id:guid}", async (Guid id, IOrderQueries queries) =>
         {
             var order = await queries.GetById(id);
 

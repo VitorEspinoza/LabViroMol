@@ -1,5 +1,6 @@
 namespace LabViroMol.Modules.Research.Infrastructure.Publications;
 
+using LabViroMol.Modules.Research.Application.Publications.Queries;
 using LabViroMol.Modules.Research.Application.Publications.ViewModels;
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
@@ -7,7 +8,7 @@ using LabViroMol.Modules.Research.Infrastructure.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
-public class PublicationQueries(ResearchDbContext context)
+public class PublicationQueries(ResearchDbContext context) : IPublicationQueries
 {
     public async Task<PagedResponse<PublicationSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {
