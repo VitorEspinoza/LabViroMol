@@ -191,6 +191,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Notify.Presentation", "src\Modules\Notify\Presentation\LabViroMol.Modules.Notify.Presentation.csproj", "{6740329F-5994-4014-8ADA-9E37261150B7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contracts", "Contracts", "{FE8C1504-0BE1-4576-9EB9-635412B1CE80}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.Contracts", "src\Modules\Scheduling\Contracts\LabViroMol.Modules.Scheduling.Contracts\LabViroMol.Modules.Scheduling.Contracts.csproj", "{39BC7CB9-A0B6-4733-8D8B-C32071078635}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -617,6 +621,18 @@ Global
 		{6740329F-5994-4014-8ADA-9E37261150B7}.Release|x64.Build.0 = Release|Any CPU
 		{6740329F-5994-4014-8ADA-9E37261150B7}.Release|x86.ActiveCfg = Release|Any CPU
 		{6740329F-5994-4014-8ADA-9E37261150B7}.Release|x86.Build.0 = Release|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Debug|x64.Build.0 = Debug|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Debug|x86.Build.0 = Debug|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Release|x64.ActiveCfg = Release|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Release|x64.Build.0 = Release|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Release|x86.ActiveCfg = Release|Any CPU
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -714,6 +730,8 @@ Global
 		{5E0E6995-FE9A-47EC-A1E7-2FB64D648205} = {89AFA019-BF3F-2457-5701-A62AD593E066}
 		{A36F4F22-8636-7096-9E5B-890FA79F48BB} = {BE3AF575-4C87-4A91-9DCF-66A73BB6F055}
 		{7F25B413-AEF5-43D0-AE85-88AC41C76962} = {A36F4F22-8636-7096-9E5B-890FA79F48BB}
+		{FE8C1504-0BE1-4576-9EB9-635412B1CE80} = {43B77451-CBDA-4B62-B049-BA7E1462723E}
+		{39BC7CB9-A0B6-4733-8D8B-C32071078635} = {FE8C1504-0BE1-4576-9EB9-635412B1CE80}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {62F99306-E0EA-47D3-A6A7-7B0499A189B8}

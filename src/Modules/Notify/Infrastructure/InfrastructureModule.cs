@@ -35,11 +35,7 @@ public static class InfrastructureModule
     public static IServiceCollection AddQueries(this IServiceCollection services)
     {
         services
-<<<<<<< Updated upstream
             .AddScoped<NotificationQueries>();
-=======
-            .AddScoped<INotificationQueries, NotificationQueries>();
->>>>>>> Stashed changes
         
         return services;
     }

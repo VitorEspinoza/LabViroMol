@@ -1,11 +1,12 @@
 using LabViroMol.Modules.Notify.Contracts;
+using LabViroMol.Modules.Scheduling.Contracts;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Domain.Schedules.Events;
 using Mediator;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.EventHandlers;
 
-public class NewScheduleEmailEventHandler : INotificationHandler<NewScheduleDomainEvent>
+public class NewScheduleEmailEventHandler : INotificationHandler<NewScheduleEmailPersistentEvent>
 {
     private readonly ISendEmail _emailSender;
 
@@ -16,34 +17,33 @@ public class NewScheduleEmailEventHandler : INotificationHandler<NewScheduleDoma
     }
     
     public async ValueTask Handle(
-        NewScheduleDomainEvent notification,
+        NewScheduleEmailPersistentEvent notification,
         CancellationToken ct)
     {
-        var schedule = notification.Schedule;
 
         var subject = "Solicitação de Agendamento Recebida";
 
-        var body = MountEmailBody(schedule);
+        var body = MountEmailBody(notification);
 
         await _emailSender.SendEmail(
-            schedule.Scheduler.Email,
+            notification.SchedulerEmail,
             subject,
             body,
             ct);
     }
 
-    private string MountEmailBody(Schedule schedule)
+    private string MountEmailBody(NewScheduleEmailPersistentEvent notification)
     {
         var body = $"""
-                    <p>Olá, {schedule.Scheduler.Name}.</p>
+                    <p>Olá, {notification.SchedulerName}.</p>
 
                     <p>Recebemos sua solicitação de agendamento para o projeto
-                    <strong>{schedule.ProjectTitle}</strong>.</p>
+                    <strong>{notification.ProjectTitle}</strong>.</p>
 
                     <p>
-                        Data solicitada: {schedule.Scheduling.Date:dd/MM/yyyy}<br />
-                        Horário: {schedule.Scheduling.StartDateHour:HH:mm} às
-                        {schedule.Scheduling.EndDateHour:HH:mm}
+                        Data solicitada: {notification.Date:dd/MM/yyyy}<br />
+                        Horário: {notification.Start:HH:mm} às
+                        {notification.End:HH:mm}
                     </p>
 
                     <p>

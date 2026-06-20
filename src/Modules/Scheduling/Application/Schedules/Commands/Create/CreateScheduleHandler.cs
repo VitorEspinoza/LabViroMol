@@ -1,4 +1,5 @@
 ﻿using LabViroMol.Modules.Scheduling.Application.Shared;
+using LabViroMol.Modules.Scheduling.Contracts;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
@@ -61,8 +62,8 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
     private Result<Domain.Schedules.Scheduling> CreateScheduling(CreateScheduleCommand command) =>
         Domain.Schedules.Scheduling.Create(
             command.Scheduling.Date,
-            command.Scheduling.Start,
-            command.Scheduling.End);
+            command.Scheduling.Start.ToUniversalTime(),
+            command.Scheduling.End.ToUniversalTime());
     
     private Result<Schedule> CreateSchedule(
         CreateScheduleCommand command,
@@ -87,6 +88,15 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
     
     private async Task PersistAsync(Schedule schedule, CancellationToken ct)
     {
+        _unitOfWork.AddPersistentEvent(new NewScheduleNotificationPersistentEvent(
+            schedule.Id,
+            schedule.Scheduler.Email,
+            schedule.Scheduler.Name,
+            schedule.ProjectTitle,
+            schedule.Scheduling.Date,
+            schedule.Scheduling.StartDateHour,
+            schedule.Scheduling.EndDateHour,
+            schedule.Equipments));
         await _scheduleRepository.AddAsync(schedule, ct);
         await _unitOfWork.CompleteAsync(ct);
     }

@@ -51,7 +51,7 @@ public class Notification : AggregateRoot<NotificationId>, ICreationAuditable
             referenceModule,
             type,
             targetPermission,
-            creationDate.AddDays(3));
+            creationDate.AddDays(3).ToUniversalTime());
         
         return Result<Notification>.Success(notification);
     }

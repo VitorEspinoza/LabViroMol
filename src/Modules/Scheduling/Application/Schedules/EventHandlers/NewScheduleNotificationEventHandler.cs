@@ -1,12 +1,12 @@
 using LabViroMol.Modules.Notify.Contracts;
-using LabViroMol.Modules.Scheduling.Domain.Schedules;
-using LabViroMol.Modules.Scheduling.Domain.Schedules.Events;
+using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Shared;
+using LabViroMol.Modules.Scheduling.Contracts;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using Mediator;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.EventHandlers;
 
-public class NewScheduleNotificationEventHandler : INotificationHandler<NewScheduleDomainEvent>
+public class NewScheduleNotificationEventHandler : INotificationHandler<NewScheduleNotificationPersistentEvent>
 {
     private readonly ISendNotification _sendNotification;
 
@@ -16,19 +16,20 @@ public class NewScheduleNotificationEventHandler : INotificationHandler<NewSched
         _sendNotification = sendNotification;
     }
     
-    public async ValueTask Handle(NewScheduleDomainEvent notification, CancellationToken ct)
+    public async ValueTask Handle(NewScheduleNotificationPersistentEvent notification, CancellationToken ct)
     {
-        var schedule = notification.Schedule;
         var equipments = string.Join(", ", 
-            schedule.Equipments.Select(e => e.Name));
+            notification.Equipments?
+                .Select(e => new ScheduleEquipmentInput(e.EquipmentId, e.Name))
+                .ToList() ?? new List<ScheduleEquipmentInput>());
 
         var message = $"""
                        Novo agendamento solicitado.
 
-                       Solicitante: {schedule.Scheduler.Name}
+                       Solicitante: {notification.SchedulerName}
 
-                       Data: {schedule.Scheduling.Date:dd/MM/yyyy}
-                       Horário: {schedule.Scheduling.StartDateHour:HH:mm} às {schedule.Scheduling.EndDateHour:HH:mm}
+                       Data: {notification.Date:dd/MM/yyyy}
+                       Horário: {notification.Start:HH:mm} às {notification.End:HH:mm}
 
                        Equipamentos: {equipments}
                        """;
@@ -36,7 +37,7 @@ public class NewScheduleNotificationEventHandler : INotificationHandler<NewSched
         await _sendNotification.SendNotification(
             "Agendamento solicitado",
             message,
-            schedule.Id.ToString(),
+            notification.ScheduleId.ToString(),
             "Schedule",
             "NewSchedule",
             Permissions.Scheduling.SchedulesManage,

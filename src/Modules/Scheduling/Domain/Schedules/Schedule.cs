@@ -32,7 +32,7 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
     public string ProjectTitle { get; private set; }
     public string Description { get; private set; }
     public ScheduleStatus Status { get; private set; }
-    public List<ScheduleEquipment> Equipments { get; private set; }
+    public List<ScheduleEquipment> Equipments { get; private set; } = new();
     public UserId? ApprovedBy { get; private set; }
     public UserId? RefusedBy { get; private set; }
     public string TermUrl { get; private set; }
