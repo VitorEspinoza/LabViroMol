@@ -3,6 +3,7 @@ using System;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ResearchDbContext))]
-    partial class ResearchDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260618191023_AddResearchIntraModuleForeignKeys")]
+    partial class AddResearchIntraModuleForeignKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -337,39 +340,6 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                     b.HasIndex("PositionId");
 
                     b.ToTable("Researchers", "research");
-                });
-
-            modelBuilder.Entity("LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox.OutboxMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("jsonb");
-
-                    b.Property<string>("Error")
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("OccurredOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTimeOffset?>("ProcessedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("RetryCount")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProcessedOn", "OccurredOn");
-
-                    b.ToTable("OutboxMessages", "research");
                 });
 
             modelBuilder.Entity("LabViroMol.Modules.Research.Domain.Projects.Project", b =>
