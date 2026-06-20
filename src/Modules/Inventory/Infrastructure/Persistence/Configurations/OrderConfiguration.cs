@@ -35,6 +35,9 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
             p.Property(x => x.ProcessedBy)
                 .HasColumnName("ProcessedByUser");
+
+            p.Property(x => x.ProcessedByName)
+                .HasColumnName("ProcessedByName");
         });
 
         builder.OwnsOne(o => o.Receipt, r =>
