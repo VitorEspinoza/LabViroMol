@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+using System.Text.Json;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Messaging;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
@@ -9,22 +10,28 @@ namespace LabViroMol.Modules.Shared.Infrastructure.Persistence;
 
 public abstract class BaseUnitOfWork<TContext> : IUnitOfWork where TContext : DbContext
 {
-    
     protected readonly TContext _context;
     private readonly IMediator _mediator;
     private readonly ICurrentUser _currentUser;
+    private readonly IPersistentEventTypeRegistry _eventTypeRegistry;
 
-    private readonly List<IIntegrationEvent> _integrationEvents = new();
-    public BaseUnitOfWork(TContext context, IMediator mediator, ICurrentUser currentUser)
+    private readonly List<IPersistentEvent> _persistentEvents = new();
+
+    public BaseUnitOfWork(
+        TContext context,
+        IMediator mediator,
+        ICurrentUser currentUser,
+        IPersistentEventTypeRegistry eventTypeRegistry)
     {
         _context = context;
         _mediator = mediator;
         _currentUser = currentUser;
+        _eventTypeRegistry = eventTypeRegistry;
     }
 
-    public void AddIntegrationEvent(IIntegrationEvent integrationEvent)
+    public void AddPersistentEvent(IPersistentEvent persistentEvent)
     {
-        _integrationEvents.Add(integrationEvent);
+        _persistentEvents.Add(persistentEvent);
     }
 
     public async Task CompleteAsync(CancellationToken cancellationToken = default)
@@ -67,39 +74,36 @@ public abstract class BaseUnitOfWork<TContext> : IUnitOfWork where TContext : Db
                 entry.Property("UpdatedAt").CurrentValue = now;
                 entry.Property("UpdatedBy").CurrentValue = userId;
             }
-            
+
             if (entry is { State: EntityState.Deleted, Entity: IDeletionAuditable })
             {
-                entry.State = EntityState.Modified; 
-                
+                entry.State = EntityState.Modified;
+
                 entry.Property("IsDeleted").CurrentValue = true;
                 entry.Property("RemovedAt").CurrentValue = now;
                 entry.Property("RemovedBy").CurrentValue = userId;
             }
         }
 
-        
-        var allIntegrationEvents = _context.ChangeTracker.Entries<IHasEvents>()
+        var persistentEvents = _context.ChangeTracker.Entries<IHasEvents>()
             .SelectMany(e => e.Entity.Events)
-            .OfType<IIntegrationEvent>()
-            .Concat(_integrationEvents)
+            .OfType<IPersistentEvent>()
+            .Concat(_persistentEvents)
             .ToList();
 
         _context.ChangeTracker.Entries<IHasEvents>().ToList().ForEach(e => e.Entity.ClearEvents());
 
-        // foreach (var integrationEvent in allIntegrationEvents)
-        // {
-        //     var outboxMessage = new OutboxMessage(
-        //         type: _registry.GetName(integrationEvent.GetType()),
-        //         content: JsonSerializer.Serialize(integrationEvent, integrationEvent.GetType())
-        //     );
-        //     _context.Set<OutboxMessage>().Add(outboxMessage);
-        // }
-        
-        foreach (var integrationEvent in allIntegrationEvents)
+        foreach (var persistentEvent in persistentEvents)
         {
-            await _mediator.Publish(integrationEvent, cancellationToken);
+            var eventType = persistentEvent.GetType();
+            var outboxMessage = new OutboxMessage(
+                type: _eventTypeRegistry.GetName(eventType),
+                content: JsonSerializer.Serialize(persistentEvent, eventType, OutboxJson.Options),
+                occurredOn: persistentEvent.OccurredOn);
+
+            _context.Set<OutboxMessage>().Add(outboxMessage);
         }
+
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

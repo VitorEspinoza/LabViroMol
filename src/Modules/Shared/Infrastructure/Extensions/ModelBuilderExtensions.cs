@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,8 @@ public static class ModelBuilderExtensions
 {
     public static void ApplyPersistenceConfigs(this ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyOutbox();
+
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
             var clrType = entityType.ClrType;
@@ -50,5 +53,23 @@ public static class ModelBuilderExtensions
                     .IsConcurrencyToken();
             }
         }
+    }
+
+    private static void ApplyOutbox(this ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<OutboxMessage>(builder =>
+        {
+            builder.ToTable("OutboxMessages");
+            builder.HasKey(m => m.Id);
+            builder.Property(m => m.Id).ValueGeneratedNever();
+            builder.Property(m => m.Type).IsRequired().HasMaxLength(500);
+            builder.Property(m => m.Content).IsRequired().HasColumnType("jsonb");
+            builder.Property(m => m.OccurredOn).IsRequired();
+            builder.Property(m => m.ProcessedOn);
+            builder.Property(m => m.Error);
+            builder.Property(m => m.RetryCount);
+
+            builder.HasIndex(m => new { m.ProcessedOn, m.OccurredOn });
+        });
     }
 }

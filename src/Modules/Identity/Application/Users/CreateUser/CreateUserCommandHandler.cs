@@ -60,7 +60,7 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Resul
                 return Result.Validation(rolesResult.Errors);
         }
 
-        _unitOfWork.AddIntegrationEvent(new UserRegisteredIntegrationEvent(
+        _unitOfWork.AddPersistentEvent(new UserRegisteredPersistentEvent(
             userId,
             command.Email,
             data.FirstName,

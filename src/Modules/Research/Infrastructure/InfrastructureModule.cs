@@ -3,6 +3,7 @@ namespace LabViroMol.Modules.Research.Infrastructure;
 using LabViroMol.Modules.Identity.Contracts;
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Contracts;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Research.Domain.Projects;
@@ -64,6 +65,8 @@ public static class InfrastructureModule
                 npgsqlOptions.MigrationsHistoryTable("__ResearchMigrationsHistory", "research");
                 npgsqlOptions.MigrationsAssembly(typeof(ResearchDbContext).Assembly.FullName);
             }));
+
+        services.AddOutbox<ResearchDbContext>();
 
         return services;
     }

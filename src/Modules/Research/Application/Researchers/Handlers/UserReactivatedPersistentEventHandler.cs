@@ -5,12 +5,12 @@ using Mediator;
 
 namespace LabViroMol.Modules.Research.Application.Researchers.Handlers;
 
-public class UserDeactivatedIntegrationEventHandler(
+public class UserReactivatedPersistentEventHandler(
     IResearcherRepository researcherRepository,
     IResearchUnitOfWork unitOfWork)
-    : INotificationHandler<UserDeactivatedIntegrationEvent>
+    : INotificationHandler<UserReactivatedPersistentEvent>
 {
-    public async ValueTask Handle(UserDeactivatedIntegrationEvent notification, CancellationToken ct)
+    public async ValueTask Handle(UserReactivatedPersistentEvent notification, CancellationToken ct)
     {
         var researcherId = ResearcherId.From(notification.UserId.Value);
         var researcher = await researcherRepository.GetByIdAsync(researcherId, ct);
@@ -18,7 +18,7 @@ public class UserDeactivatedIntegrationEventHandler(
         if (researcher is null)
             return;
 
-        researcher.Deactivate();
+        researcher.Reactivate();
         await unitOfWork.CompleteAsync(ct);
     }
 }

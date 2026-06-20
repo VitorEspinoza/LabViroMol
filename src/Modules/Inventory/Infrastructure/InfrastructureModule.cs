@@ -8,6 +8,7 @@ using LabViroMol.Modules.Inventory.Infrastructure.Materials;
 using LabViroMol.Modules.Inventory.Infrastructure.MaterialTypes;
 using LabViroMol.Modules.Inventory.Infrastructure.Orders;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -57,6 +58,8 @@ public static class InfrastructureModule
                 npgsqlOptions.MigrationsHistoryTable("__InventoryMigrationsHistory", "inventory");
                 npgsqlOptions.MigrationsAssembly(typeof(InventoryDbContext).Assembly.FullName);
             }));
+
+        services.AddOutbox<InventoryDbContext>();
 
         return services;
     }

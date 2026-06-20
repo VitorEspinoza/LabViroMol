@@ -44,7 +44,7 @@ public class UpdateProfileCommandHandler : ICommandHandler<UpdateProfileCommand,
             ? data.ResearchData with { PositionId = null }
             : null;
 
-        _unitOfWork.AddIntegrationEvent(new UserUpdatedIntegrationEvent(
+        _unitOfWork.AddPersistentEvent(new UserUpdatedPersistentEvent(
             userId,
             data.FirstName,
             data.LastName,
