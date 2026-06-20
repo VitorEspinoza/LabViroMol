@@ -41,7 +41,7 @@ public class UpdateUserCommandHandler : ICommandHandler<UpdateUserCommand, Resul
         if (rolesResult.IsFailure)
             return rolesResult;
 
-        _unitOfWork.AddIntegrationEvent(new UserUpdatedIntegrationEvent(
+        _unitOfWork.AddPersistentEvent(new UserUpdatedPersistentEvent(
             userId,
             data.FirstName,
             data.LastName,

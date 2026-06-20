@@ -3,6 +3,7 @@ using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Infrastructure.Persistence;
 using LabViroMol.Modules.Scheduling.Infrastructure.Schedules;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,6 +45,8 @@ public static class InfrastructureModule
                 npgsqlOptions.MigrationsHistoryTable("__SchedulingMigrationsHistory", "scheduling");
                 npgsqlOptions.MigrationsAssembly(typeof(SchedulingDbContext).Assembly.FullName);
             }));
+
+        services.AddOutbox<SchedulingDbContext>();
 
         return services;
     }

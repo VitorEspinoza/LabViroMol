@@ -3,13 +3,15 @@ using LabViroMol.Modules.Shared.Kernel.Messaging;
 
 namespace LabViroMol.Modules.Identity.Contracts;
 
-public record UserRegisteredIntegrationEvent(
+public record UserUpdatedPersistentEvent(
     UserId UserId,
-    string Email,
     string FirstName,
     string LastName,
+    string? PhoneNumber,
+    string? EmergencyContactName,
+    string? EmergencyContactNumber,
     List<Guid> RoleIds,
-    ResearchRegistrationData? ResearchData) : IIntegrationEvent
+    ResearchRegistrationData? ResearchData) : IPersistentEvent
 {
     public Guid EventId { get; } = Guid.CreateVersion7();
     public DateTimeOffset OccurredOn { get; } = DateTimeOffset.UtcNow;

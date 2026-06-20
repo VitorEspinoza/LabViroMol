@@ -7,13 +7,13 @@ using Mediator;
 
 namespace LabViroMol.Modules.Research.Application.Researchers.Handlers;
 
-public class UserRegisteredIntegrationEventHandler(
+public class UserRegisteredPersistentEventHandler(
     IResearcherRepository researcherRepository,
     IPositionRepository positionRepository,
     IResearchUnitOfWork unitOfWork)
-    : INotificationHandler<UserRegisteredIntegrationEvent>
+    : INotificationHandler<UserRegisteredPersistentEvent>
 {
-    public async ValueTask Handle(UserRegisteredIntegrationEvent notification, CancellationToken ct)
+    public async ValueTask Handle(UserRegisteredPersistentEvent notification, CancellationToken ct)
     {
         if (notification.ResearchData is null)
             return;
