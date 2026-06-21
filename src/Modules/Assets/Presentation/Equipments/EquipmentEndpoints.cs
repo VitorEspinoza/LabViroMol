@@ -27,7 +27,7 @@ internal static class EquipmentEndpoints
         {
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Created());
-        });
+        }).RequireAuthorization(Permissions.Assets.EquipmentsManage);
 
         group.MapPut("{id:guid}", async (Guid id, UpdateEquipmentRequest request, IMediator mediator, CancellationToken ct) =>
         {
