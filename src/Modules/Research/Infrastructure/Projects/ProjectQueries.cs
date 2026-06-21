@@ -1,5 +1,6 @@
 namespace LabViroMol.Modules.Research.Infrastructure.Projects;
 
+using LabViroMol.Modules.Research.Application.Projects.Queries;
 using LabViroMol.Modules.Research.Application.Projects.ViewModels;
 using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Research.Domain.Projects;
@@ -10,7 +11,7 @@ using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
-public class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser)
+public class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser) : IProjectQueries
 {
     public async Task<PagedResponse<PublicProjectViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {

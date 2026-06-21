@@ -2,8 +2,8 @@ using LabViroMol.Modules.Inventory.Application.MaterialTypes.Commands.Activate;
 using LabViroMol.Modules.Inventory.Application.MaterialTypes.Commands.Create;
 using LabViroMol.Modules.Inventory.Application.MaterialTypes.Commands.Deactivate;
 using LabViroMol.Modules.Inventory.Application.MaterialTypes.Create;
+using LabViroMol.Modules.Inventory.Application.MaterialTypes.Queries;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
-using LabViroMol.Modules.Inventory.Infrastructure.MaterialTypes;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -27,11 +27,11 @@ internal static class MaterialTypeEndpoints
             return result.ToHttpResult(Results.Created());
         });
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, MaterialTypeQueries queries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IMaterialTypeQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))
             .RequireAuthorization(Permissions.Inventory.MaterialsView);
 
-        group.MapGet("/{id:guid}", async (Guid id, MaterialTypeQueries queries) =>
+        group.MapGet("/{id:guid}", async (Guid id, IMaterialTypeQueries queries) =>
         {
             var type = await queries.GetById(id);
 

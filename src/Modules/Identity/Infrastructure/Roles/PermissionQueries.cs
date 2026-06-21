@@ -1,9 +1,10 @@
 using System.Reflection;
+using LabViroMol.Modules.Identity.Application.Roles.Queries;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 
 namespace LabViroMol.Modules.Identity.Infrastructure.Roles;
 
-public class PermissionQueries
+public class PermissionQueries : IPermissionQueries
 {
     private static readonly Lazy<IReadOnlyCollection<string>> _permissions = new(() =>
         typeof(Permissions)

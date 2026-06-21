@@ -1,3 +1,7 @@
+using LabViroMol.Modules.Inventory.Application.Kits.Queries;
+using LabViroMol.Modules.Inventory.Application.MaterialTypes.Queries;
+using LabViroMol.Modules.Inventory.Application.Materials.Queries;
+using LabViroMol.Modules.Inventory.Application.Orders.Queries;
 using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.Kits;
 using LabViroMol.Modules.Inventory.Domain.Materials;
@@ -41,10 +45,10 @@ public static class InfrastructureModule
 
     private static IServiceCollection AddQueries(this IServiceCollection services)
     {
-        services.AddScoped<KitQueries>();
-        services.AddScoped<MaterialQueries>();
-        services.AddScoped<MaterialTypeQueries>();
-        services.AddScoped<OrderQueries>();
+        services.AddScoped<IKitQueries, KitQueries>();
+        services.AddScoped<IMaterialQueries, MaterialQueries>();
+        services.AddScoped<IMaterialTypeQueries, MaterialTypeQueries>();
+        services.AddScoped<IOrderQueries, OrderQueries>();
         return services;
     }
 

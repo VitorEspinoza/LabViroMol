@@ -1,4 +1,5 @@
 using LabViroMol.Modules.Inventory.Domain.Materials;
+using LabViroMol.Modules.Inventory.Domain.Orders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,6 +14,12 @@ public class StockTransactionConfiguration : IEntityTypeConfiguration<StockTrans
         builder.HasKey(t => t.Id);
         builder.Property(t => t.Id)
             .ValueGeneratedNever();
+
+        builder.HasOne<Order>()
+            .WithMany()
+            .HasForeignKey(t => t.OrderId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Property(t => t.Type)
             .HasConversion<string>();

@@ -2,8 +2,8 @@ using LabViroMol.Modules.Assets.Application.Equipments.Commands.Create;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.Delete;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.UploadImage;
+using LabViroMol.Modules.Assets.Application.Equipments.Queries;
 using LabViroMol.Modules.Assets.Domain.Equipments;
-using LabViroMol.Modules.Assets.Infrastructure.Equipments;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -44,11 +44,11 @@ internal static class EquipmentEndpoints
             return result.ToHttpResult(Results.NoContent());
         }).RequireAuthorization(Permissions.Assets.EquipmentsManage);
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, EquipmentQueries equipmentQueries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IEquipmentQueries equipmentQueries) =>
             Results.Ok(await equipmentQueries.GetAllAdminAsync(request)))
             .RequireAuthorization(Permissions.Assets.EquipmentsView);
 
-        group.MapGet("{id:guid}", async (Guid id, EquipmentQueries equipmentQueries) =>
+        group.MapGet("{id:guid}", async (Guid id, IEquipmentQueries equipmentQueries) =>
         {
             var equipment = await equipmentQueries.GetAdminByIdAsync(id);
             return equipment is null
@@ -75,18 +75,18 @@ internal static class EquipmentEndpoints
     {
         var group = app.MapGroup("/equipments").WithTags("Equipment-Public");
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, [FromQuery] string? language, EquipmentQueries equipmentQueries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, [FromQuery] string? language, IEquipmentQueries equipmentQueries) =>
             Results.Ok(await equipmentQueries.GetAllInstitutionalAsync(request, language)));
 
-        group.MapGet("{id:guid}", async (Guid id, [FromQuery] string? language, EquipmentQueries equipmentQueries) =>
+        group.MapGet("{id:guid}", async (Guid id, [FromQuery] string? language, IEquipmentQueries equipmentQueries) =>
         {
             var equipment = await equipmentQueries.GetEquipmentByIdInstitutional(id, language);
             return equipment is null
                 ? Results.NotFound()
                 : Results.Ok(equipment);
         });
-        
-        group.MapGet("/schedulable", async ([FromQuery] string? language, EquipmentQueries equipmentQueries) =>
+
+        group.MapGet("/schedulable", async ([FromQuery] string? language, IEquipmentQueries equipmentQueries) =>
             Results.Ok(await equipmentQueries.GetSchedulableEquipments(language)));
     }
 }

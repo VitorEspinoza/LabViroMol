@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Inventory.Application.Orders.Queries;
 using LabViroMol.Modules.Inventory.Application.Orders.ViewModels;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.Orders;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.Orders;
 
-public class OrderQueries
+public class OrderQueries : IOrderQueries
 {
     private readonly InventoryDbContext _context;
     private readonly IProjectCatalog _projectCatalog;

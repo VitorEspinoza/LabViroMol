@@ -3,8 +3,8 @@ using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Cancel;
 using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Create;
 using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Refuse;
 using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.UploadTerm;
+using LabViroMol.Modules.Scheduling.Application.Schedules.Queries;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
-using LabViroMol.Modules.Scheduling.Infrastructure.Schedules;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -25,15 +25,15 @@ internal static class ScheduleEndpoints
     {
         var group = app.MapGroup("/schedules").WithTags("Schedules");
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, ScheduleQueries scheduleQueries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IScheduleQueries scheduleQueries) =>
             Results.Ok(await scheduleQueries.GetAllAsync(request)))
             .RequireAuthorization(Permissions.Scheduling.SchedulesView);
 
-        group.MapGet("/pending", async ([AsParameters] PagedRequest request, ScheduleQueries scheduleQueries) =>
+        group.MapGet("/pending", async ([AsParameters] PagedRequest request, IScheduleQueries scheduleQueries) =>
             Results.Ok(await scheduleQueries.GetAllPendingAsync(request)))
             .RequireAuthorization(Permissions.Scheduling.SchedulesView);
 
-        group.MapGet("/{id:guid}", async (Guid id, ScheduleQueries scheduleQueries) =>
+        group.MapGet("/{id:guid}", async (Guid id, IScheduleQueries scheduleQueries) =>
         {
             var schedule = await scheduleQueries.GetByIdAsync(id);
             return schedule is null ? Results.NotFound() : Results.Ok(schedule);

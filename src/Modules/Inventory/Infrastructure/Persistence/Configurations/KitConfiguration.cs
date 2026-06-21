@@ -25,7 +25,12 @@ public class KitConfiguration : IEntityTypeConfiguration<Kit>
             
             kitItemBuilder.HasKey("KitId", nameof(KitItem.MaterialId));
             kitItemBuilder.Property(i => i.Quantity)
-                .HasPrecision(18, 4); 
+                .HasPrecision(18, 4);
+
+            kitItemBuilder.HasOne<Material>()
+                .WithMany()
+                .HasForeignKey(i => i.MaterialId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
         
         builder.Metadata.FindNavigation(nameof(Kit.Materials))!

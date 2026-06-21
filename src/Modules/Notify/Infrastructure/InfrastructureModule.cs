@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Notify.Application.Notifications.Queries;
 using LabViroMol.Modules.Notify.Application.Shared;
 using LabViroMol.Modules.Notify.Contracts;
 using LabViroMol.Modules.Notify.Domain.Notifications;
@@ -28,22 +29,18 @@ public static class InfrastructureModule
         services
             .AddScoped<INotificationRepository, NotificationRepository>()
             .AddScoped<INotifyUnitOfWork, NotifyUnitOfWork>();
-        
+
         return services;
     }
 
     public static IServiceCollection AddQueries(this IServiceCollection services)
     {
         services
-<<<<<<< Updated upstream
-            .AddScoped<NotificationQueries>();
-=======
             .AddScoped<INotificationQueries, NotificationQueries>();
->>>>>>> Stashed changes
-        
+
         return services;
     }
-    
+
     private static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("LabViroMol");
@@ -59,7 +56,7 @@ public static class InfrastructureModule
 
         services.Configure<EmailOptions>(
             configuration.GetSection("Email"));
-        
+
         services.AddScoped<ISendEmail, SmtpEmailSender>();
 
         return services;
