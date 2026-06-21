@@ -3,7 +3,7 @@ using LabViroMol.Modules.Research.Domain.Projects;
 using LabViroMol.Modules.Shared.Infrastructure.Translation;
 using Mediator;
 
-namespace LabViroMol.Modules.Research.Application.Projects.Jobs;
+namespace LabViroMol.Modules.Research.Application.Projects.EventHandlers;
 
 public class ProjectTranslationHandler : INotificationHandler<ProjectTranslationPersistentEvent>
 {
