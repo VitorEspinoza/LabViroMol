@@ -3,7 +3,7 @@ using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Shared.Infrastructure.Translation;
 using Mediator;
 
-namespace LabViroMol.Modules.Research.Application.Positions.EventHandlers;
+namespace LabViroMol.Modules.Research.Application.Positions.Jobs;
 
 public class PositionTranslationHandler : INotificationHandler<PositionTranslationPersistentEvent>
 {
