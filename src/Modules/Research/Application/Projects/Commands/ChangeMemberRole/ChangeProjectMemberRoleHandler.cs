@@ -17,7 +17,7 @@ public class ChangeProjectMemberRoleHandler(
         if (project is null)
             return Result.NotFound("Projeto nao encontrado.");
 
-        var role = ProjectRole.FromString(command.NewRole);
+        var role = Enum.Parse<ProjectRole>(command.NewRole);
 
         var result = project.ChangeMemberRole(
             ResearcherId.From(command.ResearcherId),

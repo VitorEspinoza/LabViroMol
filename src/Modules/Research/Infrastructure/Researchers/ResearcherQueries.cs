@@ -43,7 +43,7 @@ public class ResearcherQueries(ResearchDbContext context) : IResearcherQueries
             .Select(x => new ResearcherSummaryViewModel(
                 x.Researcher.Id.Value,
                 x.Researcher.Name.PublicDisplayName,
-                x.Researcher.AcademicBackground.DegreeLevel.Value,
+                x.Researcher.AcademicBackground.DegreeLevel.ToString(),
                 x.PositionName,
                 x.Researcher.LattesUrl))
             .ToListAsync();

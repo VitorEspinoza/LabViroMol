@@ -1,6 +1,7 @@
 using LabViroMol.Modules.Inventory.Application.MaterialTypes.Commands.Create;
 using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
+using LabViroMol.Modules.Shared.Kernel.Exceptions;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
@@ -23,7 +24,16 @@ public class CreateMaterialTypeHandler : ICommandHandler<CreateMaterialTypeComma
     {
         var materialType = MaterialType.Create(command.Name);
         await _repository.AddAsync(materialType, ct);
-        await _unitOfWork.CompleteAsync(ct);
+
+        try
+        {
+            await _unitOfWork.CompleteAsync(ct);
+        }
+        catch (UniqueConstraintViolationException)
+        {
+            return Result.Conflict("Já existe um tipo de material com este nome.");
+        }
+
         return Result.Success();
     }
 }

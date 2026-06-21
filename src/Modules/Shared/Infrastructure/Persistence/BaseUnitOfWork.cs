@@ -1,10 +1,12 @@
 using System.Text.Json;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
+using LabViroMol.Modules.Shared.Kernel.Exceptions;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Messaging;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace LabViroMol.Modules.Shared.Infrastructure.Persistence;
 
@@ -104,6 +106,13 @@ public abstract class BaseUnitOfWork<TContext> : IUnitOfWork where TContext : Db
             _context.Set<OutboxMessage>().Add(outboxMessage);
         }
 
-        await _context.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } postgresException)
+        {
+            throw new UniqueConstraintViolationException(postgresException.MessageText, ex);
+        }
     }
 }
