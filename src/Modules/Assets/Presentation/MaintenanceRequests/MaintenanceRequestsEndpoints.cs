@@ -2,8 +2,8 @@ using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Cancel;
 using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Create;
 using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Done;
 using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Start;
+using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Queries;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
-using LabViroMol.Modules.Assets.Infrastructure.MaintenanceRequests;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -26,7 +26,7 @@ internal static class MaintenanceRequestsEndpoints
             return result.ToHttpResult(Results.Created());
         }).RequireAuthorization(Permissions.Assets.MaintenanceManage);
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, MaintenanceRequestQueries maintenanceRequestQueries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IMaintenanceRequestQueries maintenanceRequestQueries) =>
             Results.Ok(await maintenanceRequestQueries.GetAllAsync(request)))
             .RequireAuthorization(Permissions.Assets.MaintenanceView);
 

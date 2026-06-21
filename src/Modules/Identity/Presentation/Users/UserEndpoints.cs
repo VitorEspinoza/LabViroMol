@@ -4,13 +4,13 @@ using LabViroMol.Modules.Identity.Application.Users.DeactivateUser;
 using LabViroMol.Modules.Identity.Application.Users.ForgotPassword;
 using LabViroMol.Modules.Identity.Application.Users.Login;
 using LabViroMol.Modules.Identity.Application.Users.Logout;
+using LabViroMol.Modules.Identity.Application.Users.Queries;
 using LabViroMol.Modules.Identity.Application.Users.ReactivateUser;
 using LabViroMol.Modules.Identity.Application.Users.RefreshToken;
 using LabViroMol.Modules.Identity.Application.Users.ResetPassword;
 using LabViroMol.Modules.Identity.Application.Users.UpdateProfile;
 using LabViroMol.Modules.Identity.Application.Users.UpdateUser;
 using LabViroMol.Modules.Identity.Contracts;
-using LabViroMol.Modules.Identity.Infrastructure.Users;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
@@ -32,17 +32,17 @@ internal static class UserEndpoints
     {
         var group = app.MapGroup("/users");
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, UserQueries queries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IUserQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))
             .RequireAuthorization(Permissions.Identity.UsersView);
 
-        group.MapGet("/me", async (ICurrentUser currentUser, UserQueries queries, CancellationToken ct) =>
+        group.MapGet("/me", async (ICurrentUser currentUser, IUserQueries queries, CancellationToken ct) =>
         {
             var user = await queries.GetByIdAsync(currentUser.Id.Value, ct);
             return user is null ? Results.NotFound() : Results.Ok(user);
         }).RequireAuthorization();
 
-        group.MapGet("/{id:guid}", async (Guid id, UserQueries queries, CancellationToken ct) =>
+        group.MapGet("/{id:guid}", async (Guid id, IUserQueries queries, CancellationToken ct) =>
         {
             var user = await queries.GetByIdAsync(id, ct);
             return user is null ? Results.NotFound() : Results.Ok(user);

@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Inventory.Application.Kits.Queries;
 using LabViroMol.Modules.Inventory.Application.Kits.ViewModels;
 using LabViroMol.Modules.Inventory.Domain.Kits;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.Kits;
 
-public class KitQueries
+public class KitQueries : IKitQueries
 {
     private readonly InventoryDbContext _context;
 

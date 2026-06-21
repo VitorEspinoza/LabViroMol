@@ -2,7 +2,7 @@ namespace LabViroMol.Modules.Research.Presentation.Positions;
 
 using LabViroMol.Modules.Research.Application.Positions.Commands.Create;
 using LabViroMol.Modules.Research.Application.Positions.Commands.Delete;
-using LabViroMol.Modules.Research.Infrastructure.Positions;
+using LabViroMol.Modules.Research.Application.Positions.Queries;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -23,11 +23,11 @@ internal static class PositionEndpoints
             return result.ToHttpResult(Results.Created());
         }).RequireAuthorization(Permissions.Research.PositionsManage);
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, PositionQueries queries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IPositionQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))
             .RequireAuthorization(Permissions.Research.PositionsView);
 
-        group.MapGet("/{id:guid}", async (Guid id, PositionQueries queries) =>
+        group.MapGet("/{id:guid}", async (Guid id, IPositionQueries queries) =>
         {
             var position = await queries.GetById(id);
             return position is null

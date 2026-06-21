@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Inventory.Application.MaterialTypes.Queries;
 using LabViroMol.Modules.Inventory.Application.MaterialTypes.ViewModels;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.MaterialTypes;
 
-public class MaterialTypeQueries
+public class MaterialTypeQueries : IMaterialTypeQueries
 {
     private readonly InventoryDbContext _context;
 

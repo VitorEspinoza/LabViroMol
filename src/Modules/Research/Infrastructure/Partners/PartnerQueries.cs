@@ -2,12 +2,13 @@ using LabViroMol.Modules.Research.Domain.Partners;
 
 namespace LabViroMol.Modules.Research.Infrastructure.Partners;
 
+using LabViroMol.Modules.Research.Application.Partners.Queries;
 using LabViroMol.Modules.Research.Application.Partners.ViewModels;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
-public class PartnerQueries(ResearchDbContext context)
+public class PartnerQueries(ResearchDbContext context) : IPartnerQueries
 {
     public async Task<PagedResponse<PartnerSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request)
     {

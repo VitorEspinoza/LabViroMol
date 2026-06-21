@@ -1,7 +1,7 @@
 using LabViroMol.Modules.Notify.Application.Notifications.Commands.Dismiss;
 using LabViroMol.Modules.Notify.Application.Notifications.Commands.DismissAll;
+using LabViroMol.Modules.Notify.Application.Notifications.Queries;
 using LabViroMol.Modules.Notify.Domain.Notifications;
-using LabViroMol.Modules.Notify.Infrastructure.Notifications;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
@@ -31,7 +31,7 @@ internal static class NotificationEndpoints
             return result.ToHttpResult(Results.NoContent());
         }).RequireAuthorization();
 
-        group.MapGet("/", async (ICurrentUser currentUser, NotificationQueries queries, CancellationToken ct) =>
+        group.MapGet("/", async (ICurrentUser currentUser, INotificationQueries queries, CancellationToken ct) =>
         {
             var results = await queries.GetUnreadByUserAsync(currentUser.Id, currentUser.Permissions.ToList(), ct);
             return Results.Ok(results);

@@ -31,7 +31,10 @@ public class ApproveScheduleCommandHandler : ICommandHandler<ApproveScheduleComm
             return Result.NotFound("Agendamento não encontrado.");
         
         var result = schedule.Approve(_currentUser.Id);
-        
+
+        if (result.IsFailure)
+            return result;
+
         await RefuseConflictingSchedules(schedule, ct);
         
         _unitOfWork.AddPersistentEvent(new ApproveSchedulePersistentEvent(

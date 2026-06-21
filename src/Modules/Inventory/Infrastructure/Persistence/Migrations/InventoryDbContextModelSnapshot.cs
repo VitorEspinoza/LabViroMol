@@ -104,6 +104,9 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("MaterialTypes", "inventory");
                 });
 
@@ -198,6 +201,14 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("MaterialId");
 
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("TransactedAt");
+
+                    b.HasIndex("ProjectId", "Type", "TransactedAt");
+
+                    b.HasIndex("Type", "TransactedAt", "MaterialId");
+
                     b.ToTable("StockTransactions", "inventory");
                 });
 
@@ -245,7 +256,42 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MaterialId");
+
                     b.ToTable("InventoryOrders", "inventory");
+                });
+
+            modelBuilder.Entity("LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("OccurredOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("ProcessedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProcessedOn", "OccurredOn");
+
+                    b.ToTable("OutboxMessages", "inventory");
                 });
 
             modelBuilder.Entity("LabViroMol.Modules.Inventory.Domain.Kits.Kit", b =>
@@ -264,10 +310,18 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("KitId", "MaterialId");
 
+                            b1.HasIndex("MaterialId");
+
                             b1.ToTable("KitItems", "inventory");
 
                             b1.WithOwner()
                                 .HasForeignKey("KitId");
+
+                            b1.HasOne("LabViroMol.Modules.Inventory.Domain.Materials.Material", null)
+                                .WithMany()
+                                .HasForeignKey("MaterialId")
+                                .OnDelete(DeleteBehavior.Restrict)
+                                .IsRequired();
                         });
 
                     b.Navigation("Materials");
@@ -289,10 +343,21 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
                         .HasForeignKey("MaterialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("LabViroMol.Modules.Inventory.Domain.Orders.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("LabViroMol.Modules.Inventory.Domain.Orders.Order", b =>
                 {
+                    b.HasOne("LabViroMol.Modules.Inventory.Domain.Materials.Material", null)
+                        .WithMany()
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.OwnsOne("LabViroMol.Modules.Inventory.Domain.Orders.OrderProcessing", "Processing", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
@@ -313,7 +378,8 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
 
                             b1.Property<string>("ProcessedByName")
                                 .IsRequired()
-                                .HasColumnType("text");
+                                .HasColumnType("text")
+                                .HasColumnName("ProcessedByName");
 
                             b1.HasKey("OrderId");
 

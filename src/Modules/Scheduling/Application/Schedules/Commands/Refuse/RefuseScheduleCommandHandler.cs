@@ -30,7 +30,10 @@ public class RefuseScheduleCommandHandler : ICommandHandler<RefuseScheduleComman
         if (schedule is null)
             return Result.NotFound("Agendamento não encontrado.");
         
-        schedule.Refuse(_currentUser.Id, command.Justification);
+        var result = schedule.Refuse(_currentUser.Id, command.Justification);
+
+        if (result.IsFailure)
+            return result;
         
         _unitOfWork.AddPersistentEvent(new ReprovedSchedulePersistentEvent(
             schedule.Scheduler.Email,

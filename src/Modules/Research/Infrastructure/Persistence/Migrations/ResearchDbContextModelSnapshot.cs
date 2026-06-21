@@ -166,6 +166,8 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PartnerId");
+
                     b.ToTable("Projects", "research");
                 });
 
@@ -208,6 +210,8 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("ResearcherId");
 
                     b.ToTable("ProjectMembers", "research");
                 });
@@ -330,7 +334,51 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PositionId");
+
                     b.ToTable("Researchers", "research");
+                });
+
+            modelBuilder.Entity("LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("OccurredOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("ProcessedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProcessedOn", "OccurredOn");
+
+                    b.ToTable("OutboxMessages", "research");
+                });
+
+            modelBuilder.Entity("LabViroMol.Modules.Research.Domain.Projects.Project", b =>
+                {
+                    b.HasOne("LabViroMol.Modules.Research.Domain.Partners.Partner", null)
+                        .WithMany()
+                        .HasForeignKey("PartnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LabViroMol.Modules.Research.Domain.Projects.ProjectMember", b =>
@@ -339,6 +387,12 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
                         .WithMany("Members")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("LabViroMol.Modules.Research.Domain.Researchers.Researcher", null)
+                        .WithMany()
+                        .HasForeignKey("ResearcherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("LabViroMol.Modules.Research.Domain.Publications.Publication", b =>
@@ -356,10 +410,18 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("PublicationId", "ResearcherId");
 
+                            b1.HasIndex("ResearcherId");
+
                             b1.ToTable("PublicationResearchers", "research");
 
                             b1.WithOwner()
                                 .HasForeignKey("PublicationId");
+
+                            b1.HasOne("LabViroMol.Modules.Research.Domain.Researchers.Researcher", null)
+                                .WithMany()
+                                .HasForeignKey("ResearcherId")
+                                .OnDelete(DeleteBehavior.Restrict)
+                                .IsRequired();
                         });
 
                     b.Navigation("Researchers");
@@ -367,6 +429,12 @@ namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("LabViroMol.Modules.Research.Domain.Researchers.Researcher", b =>
                 {
+                    b.HasOne("LabViroMol.Modules.Research.Domain.Positions.Position", null)
+                        .WithMany()
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.OwnsOne("LabViroMol.Modules.Research.Domain.Researchers.AcademicBackground", "AcademicBackground", b1 =>
                         {
                             b1.Property<Guid>("ResearcherId")

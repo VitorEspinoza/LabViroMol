@@ -1,4 +1,4 @@
-using System.Net.Http.Headers;
+using LabViroMol.IntegrationTests.Shared;
 using LabViroMol.Modules.Identity.Infrastructure.Identity;
 using LabViroMol.Modules.Identity.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
@@ -10,23 +10,25 @@ namespace LabViroMol.Modules.Identity.IntegrationTests;
 public class IdentityTestCollection : ICollectionFixture<IdentityIntegrationTestWebAppFactory> { }
 
 [Collection("IdentityIntegrationTests")]
-public abstract class BaseIdentityIntegrationTest : IDisposable
+public abstract class BaseIdentityIntegrationTest : BaseIntegrationTest<LabViroMolIdentityDbContext>
 {
-    protected readonly HttpClient Client;
-    private readonly IServiceScope _scope;
-    protected readonly LabViroMolIdentityDbContext DbContext;
     protected readonly UserManager<ApplicationUser> UserManager;
     protected readonly RoleManager<ApplicationRole> RoleManager;
-    protected readonly IdentityIntegrationTestWebAppFactory Factory;
+    protected new readonly IdentityIntegrationTestWebAppFactory Factory;
+    private readonly IServiceScope _identityScope;
 
-    protected BaseIdentityIntegrationTest(IdentityIntegrationTestWebAppFactory factory)
+    protected BaseIdentityIntegrationTest(IdentityIntegrationTestWebAppFactory factory) : base(factory)
     {
         Factory = factory;
-        Client = factory.CreateClient();
-        _scope = factory.Services.CreateScope();
-        DbContext = _scope.ServiceProvider.GetRequiredService<LabViroMolIdentityDbContext>();
-        UserManager = _scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        RoleManager = _scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+        _identityScope = factory.Services.CreateScope();
+        UserManager = _identityScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        RoleManager = _identityScope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+    }
+
+    public override async Task DisposeAsync()
+    {
+        _identityScope.Dispose();
+        await base.DisposeAsync();
     }
 
     protected void AuthenticateAs(
@@ -34,21 +36,6 @@ public abstract class BaseIdentityIntegrationTest : IDisposable
         string email,
         string firstName,
         string lastName,
-        IEnumerable<string>? permissions = null)
-    {
-        var token = JwtTokenHelper.GenerateToken(userId, email, firstName, lastName, permissions: permissions);
-        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-    }
-
-    protected void ClearAuthentication()
-    {
-        Client.DefaultRequestHeaders.Authorization = null;
-    }
-
-    public void Dispose()
-    {
-        DbContext.Database.EnsureDeleted();
-        DbContext.Database.EnsureCreated();
-        _scope.Dispose();
-    }
+        IEnumerable<string>? permissions = null) =>
+        AuthenticateAs(permissions ?? [], userId, email, firstName, lastName);
 }

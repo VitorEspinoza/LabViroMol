@@ -3,6 +3,7 @@ using LabViroMol.Modules.Shared.Infrastructure.Persistence.Extensions;
 
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Configurations;
 
+using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Research.Domain.Projects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -15,6 +16,11 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
         builder.HasKey(p => p.Id);
         builder.Property(p => p.Id).ValueGeneratedNever();
+
+        builder.HasOne<Partner>()
+            .WithMany()
+            .HasForeignKey(p => p.PartnerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(p => p.Title)
             .HasMaxLength(200)
@@ -29,6 +35,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
             .OnDelete(DeleteBehavior.Cascade);
         
         builder.Property(p => p.Status)
+            .HasConversion<string>()
             .HasMaxLength(50)
             .IsRequired();
 

@@ -1,12 +1,13 @@
 namespace LabViroMol.Modules.Research.Infrastructure.Positions;
 
+using LabViroMol.Modules.Research.Application.Positions.Queries;
 using LabViroMol.Modules.Research.Application.Positions.ViewModels;
 using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
-public class PositionQueries(ResearchDbContext context)
+public class PositionQueries(ResearchDbContext context) : IPositionQueries
 {
     public async Task<PagedResponse<PositionViewModel>> GetAllAsync(PagedRequest request)
     {

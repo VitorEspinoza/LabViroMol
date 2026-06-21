@@ -1,4 +1,5 @@
-﻿using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
+﻿using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,6 +16,11 @@ public class MaintenanceRequestConfiguration : IEntityTypeConfiguration<Maintena
             .ValueGeneratedNever();
 
         builder.Property(m => m.EquipmentId).IsRequired();
+
+        builder.HasOne<Equipment>()
+            .WithMany()
+            .HasForeignKey(m => m.EquipmentId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.Property(m => m.Description).IsRequired();
         builder.Property(m => m.ProblemDescription).IsRequired();
         builder.Property(m => m.Status)

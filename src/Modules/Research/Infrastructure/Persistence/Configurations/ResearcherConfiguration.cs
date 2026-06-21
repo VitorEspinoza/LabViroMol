@@ -1,5 +1,6 @@
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Configurations;
 
+using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Research.Domain.Researchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,6 +13,11 @@ public class ResearcherConfiguration : IEntityTypeConfiguration<Researcher>
 
         builder.HasKey(r => r.Id);
         builder.Property(r => r.Id).ValueGeneratedNever();
+
+        builder.HasOne<Position>()
+            .WithMany()
+            .HasForeignKey(r => r.PositionId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.OwnsOne(r => r.Name, n =>
         {
@@ -36,6 +42,7 @@ public class ResearcherConfiguration : IEntityTypeConfiguration<Researcher>
         builder.OwnsOne(r => r.AcademicBackground, ab =>
         {
             ab.Property(a => a.DegreeLevel)
+                .HasConversion<string>()
                 .HasMaxLength(50)
                 .HasColumnName("DegreeLevel")
                 .IsRequired();

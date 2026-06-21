@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,8 +21,6 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "Exceção capturada: {Message}", exception.Message);
-
         var (statusCode, title, detail) = exception switch
         {
             DomainException domainEx => (
@@ -37,6 +36,21 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
             )
         };
 
+        if (exception is DomainException)
+        {
+            _logger.LogWarning(exception, "Regra de negócio violada: {Message}", exception.Message);
+        }
+        else
+        {
+            _logger.LogError(exception, "Exceção capturada: {Message}", exception.Message);
+        }
+
+        var traceId = Activity.Current?.TraceId.ToHexString();
+        if (string.IsNullOrEmpty(traceId))
+        {
+            traceId = httpContext.TraceIdentifier;
+        }
+
         var problemDetails = new ProblemDetails
         {
             Status = statusCode,
@@ -44,6 +58,8 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
             Detail = detail,
             Instance = httpContext.Request.Path
         };
+
+        problemDetails.Extensions["traceId"] = traceId;
 
         problemDetails.Type = statusCode switch
         {

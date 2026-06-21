@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Scheduling.Application.Schedules.Queries;
 using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Infrastructure.Persistence;
@@ -23,7 +24,7 @@ public static class InfrastructureModule
 
     private static IServiceCollection AddQueries(this IServiceCollection services)
     {
-        services.AddScoped<ScheduleQueries>();
+        services.AddScoped<IScheduleQueries, ScheduleQueries>();
         return services;
     }
 
