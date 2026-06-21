@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using LabViroMol.Modules.AdminBff.Presentation;
 using LabViroMol.Modules.Assets.Presentation;
 using LabViroMol.Modules.Inventory.Presentation;
 using LabViroMol.Modules.Notify.Presentation;
@@ -8,13 +9,21 @@ using LabViroMol.Modules.Scheduling.Presentation;
 using LabViroMol.Modules.Shared.Infrastructure;
 using LabViroMol.Modules.Shared.Infrastructure.Behaviors;
 using LabViroMol.Modules.Shared.Infrastructure.Converters;
+using LabViroMol.Modules.Shared.Infrastructure.Observability;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using Mediator;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.FileProviders;
+using QuestPDF.Infrastructure;
 using Scalar.AspNetCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
+
+builder.AddObservability();
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
 {
@@ -56,6 +65,9 @@ builder.Services.AddMediator(options =>
 builder.Services.AddScoped(
     typeof(IPipelineBehavior<,>),
     typeof(ValidationBehavior<,>));
+builder.Services.AddScoped(
+    typeof(IPipelineBehavior<,>),
+    typeof(LoggingBehavior<,>));
 
 builder.Services
     .AddSharedModule()
@@ -65,6 +77,7 @@ builder.Services
     .AddAssetsModule(builder.Configuration)
     .AddResearchModule(builder.Configuration)
     .AddNotifyModule(builder.Configuration)
+    .AddAdminBffModule(builder.Configuration)
     .AddStorages(builder.Configuration)
     .AddTranslator(builder.Configuration)
     .AddOutboxDispatcher(builder.Configuration);
@@ -92,6 +105,25 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler();
+
+// O TLS é terminado no gateway nginx (container "labviromol-gateway"); a API
+// só recebe tráfego HTTP puro dentro da rede interna do compose. Sem confiar
+// nos headers X-Forwarded-Proto/X-Forwarded-For que o nginx envia,
+// HttpContext.Request.IsHttps fica sempre false aqui dentro - quebrando tanto
+// o cookie Secure quanto o UseHttpsRedirection abaixo. KnownNetworks/KnownProxies
+// ficam vazios de propósito: a porta 8080 da API nunca é publicada para fora
+// do host (só o gateway nginx alcança via rede interna do Docker), então não
+// há risco de um cliente externo falsificar esses headers diretamente.
+var forwardedHeadersOptions = new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+};
+forwardedHeadersOptions.KnownNetworks.Clear();
+forwardedHeadersOptions.KnownProxies.Clear();
+app.UseForwardedHeaders(forwardedHeadersOptions);
+
+app.UseSerilogRequestLogging();
+
 app.UseHttpsRedirection();
 
 app.UseStaticFiles(new StaticFileOptions
@@ -111,6 +143,7 @@ app.MapResearchEndpoints();
 app.MapSchedulingEndpoints();
 app.MapAssetsEndpoints();
 app.MapNotifyEndpoints();
+app.MapAdminBffEndpoints();
 
 app.Run();
 

@@ -33,5 +33,11 @@ public class StockTransactionConfiguration : IEntityTypeConfiguration<StockTrans
 
         builder.Property(t => t.Justification)
             .HasMaxLength(1000);
+
+        builder.HasIndex(t => new { t.Type, t.TransactedAt, t.MaterialId });
+
+        builder.HasIndex(t => new { t.ProjectId, t.Type, t.TransactedAt });
+
+        builder.HasIndex(t => t.TransactedAt);
     }
 }
