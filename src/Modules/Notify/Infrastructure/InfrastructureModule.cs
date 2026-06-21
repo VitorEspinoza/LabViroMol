@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Notify.Application.Notifications.Queries;
 using LabViroMol.Modules.Notify.Application.Shared;
 using LabViroMol.Modules.Notify.Contracts;
 using LabViroMol.Modules.Notify.Domain.Notifications;
