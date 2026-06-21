@@ -6,12 +6,12 @@ using Mediator;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Create;
 
-public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Result>
+public class CreateScheduleCommandHandler : ICommandHandler<CreateScheduleCommand, Result>
 {
     private readonly IScheduleRepository _scheduleRepository;
     private readonly ISchedulingUnitOfWork _unitOfWork;
 
-    public CreateScheduleHandler(
+    public CreateScheduleCommandHandler(
         IScheduleRepository scheduleRepository,
         ISchedulingUnitOfWork unitOfWork)
     {
@@ -88,15 +88,14 @@ public class CreateScheduleHandler : ICommandHandler<CreateScheduleCommand, Resu
     
     private async Task PersistAsync(Schedule schedule, CancellationToken ct)
     {
-        _unitOfWork.AddPersistentEvent(new NewScheduleNotificationPersistentEvent(
+        _unitOfWork.AddPersistentEvent(new CreateScheduleNotificationPersistentEvent(
             schedule.Id,
-            schedule.Scheduler.Email,
             schedule.Scheduler.Name,
-            schedule.ProjectTitle,
             schedule.Scheduling.Date,
             schedule.Scheduling.StartDateHour,
             schedule.Scheduling.EndDateHour,
             schedule.Equipments));
+        
         await _scheduleRepository.AddAsync(schedule, ct);
         await _unitOfWork.CompleteAsync(ct);
     }

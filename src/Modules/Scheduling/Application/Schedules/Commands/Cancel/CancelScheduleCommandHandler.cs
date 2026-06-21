@@ -1,7 +1,5 @@
-using LabViroMol.Modules.Scheduling.Application.Schedules.EventHandlers;
 using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
-using LabViroMol.Modules.Scheduling.Domain.Schedules.Events;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
@@ -9,14 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Cancel;
 
-public class CancelScheduleHandler : ICommandHandler<CancelScheduleCommand, Result>
+public class CancelScheduleCommandHandler : ICommandHandler<CancelScheduleCommand, Result>
 {
     private readonly IScheduleRepository _scheduleRepository;
     private readonly ISchedulingUnitOfWork _unitOfWork;
     private readonly ICurrentUser _currentUser;
     private readonly IServiceScopeFactory _scopeFactory;
     
-    public CancelScheduleHandler(
+    public CancelScheduleCommandHandler(
         IScheduleRepository scheduleRepository,
         ISchedulingUnitOfWork unitOfWork,
         ICurrentUser currentUser,

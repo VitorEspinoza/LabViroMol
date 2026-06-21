@@ -1,23 +1,21 @@
 using LabViroMol.Modules.Notify.Contracts;
 using LabViroMol.Modules.Scheduling.Contracts;
-using LabViroMol.Modules.Scheduling.Domain.Schedules;
-using LabViroMol.Modules.Scheduling.Domain.Schedules.Events;
 using Mediator;
 
-namespace LabViroMol.Modules.Scheduling.Application.Schedules.EventHandlers;
+namespace LabViroMol.Modules.Notify.Application.Emails.Handlers;
 
-public class NewScheduleEmailEventHandler : INotificationHandler<NewScheduleEmailPersistentEvent>
+public class CreateScheduleEmailHandler : INotificationHandler<CreateScheduleEmailPersistentEvent>
 {
     private readonly ISendEmail _emailSender;
 
-    public NewScheduleEmailEventHandler(
+    public CreateScheduleEmailHandler(
         ISendEmail emailSender)
     {
         _emailSender = emailSender;
     }
     
     public async ValueTask Handle(
-        NewScheduleEmailPersistentEvent notification,
+        CreateScheduleEmailPersistentEvent notification,
         CancellationToken ct)
     {
 
@@ -32,7 +30,7 @@ public class NewScheduleEmailEventHandler : INotificationHandler<NewScheduleEmai
             ct);
     }
 
-    private string MountEmailBody(NewScheduleEmailPersistentEvent notification)
+    private string MountEmailBody(CreateScheduleEmailPersistentEvent notification)
     {
         var body = $"""
                     <p>Olá, {notification.SchedulerName}.</p>

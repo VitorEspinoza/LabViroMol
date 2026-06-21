@@ -1,27 +1,27 @@
+using LabViroMol.Modules.Notify.Application.Notifications.ViewModels;
 using LabViroMol.Modules.Notify.Contracts;
-using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Shared;
 using LabViroMol.Modules.Scheduling.Contracts;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using Mediator;
 
-namespace LabViroMol.Modules.Scheduling.Application.Schedules.EventHandlers;
+namespace LabViroMol.Modules.Notify.Application.Notifications.Handlers;
 
-public class NewScheduleNotificationEventHandler : INotificationHandler<NewScheduleNotificationPersistentEvent>
+public class CreateScheduleNotificationHandler : INotificationHandler<CreateScheduleNotificationPersistentEvent>
 {
     private readonly ISendNotification _sendNotification;
 
-    public NewScheduleNotificationEventHandler(
+    public CreateScheduleNotificationHandler(
         ISendNotification sendNotification)
     {
         _sendNotification = sendNotification;
     }
     
-    public async ValueTask Handle(NewScheduleNotificationPersistentEvent notification, CancellationToken ct)
+    public async ValueTask Handle(CreateScheduleNotificationPersistentEvent notification, CancellationToken ct)
     {
         var equipments = string.Join(", ", 
             notification.Equipments?
-                .Select(e => new ScheduleEquipmentInput(e.EquipmentId, e.Name))
-                .ToList() ?? new List<ScheduleEquipmentInput>());
+                .Select(e => new ScheduleEquipmentViewModel(e.EquipmentId, e.Name))
+                .ToList() ?? new List<ScheduleEquipmentViewModel>());
 
         var message = $"""
                        Novo agendamento solicitado.
