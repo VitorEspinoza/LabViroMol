@@ -35,6 +35,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
             .OnDelete(DeleteBehavior.Cascade);
         
         builder.Property(p => p.Status)
+            .HasConversion<string>()
             .HasMaxLength(50)
             .IsRequired();
 

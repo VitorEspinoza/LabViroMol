@@ -22,6 +22,7 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(m => m.Role)
+            .HasConversion<string>()
             .HasMaxLength(50)
             .IsRequired();
 
