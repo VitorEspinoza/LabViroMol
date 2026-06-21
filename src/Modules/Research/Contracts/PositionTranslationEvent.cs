@@ -1,8 +1,12 @@
 using LabViroMol.Modules.Research.Domain.Positions;
-using Mediator;
+using LabViroMol.Modules.Shared.Kernel.Messaging;
 
-namespace LabViroMol.Modules.Research.Application.Positions.EventHandlers;
+namespace LabViroMol.Modules.Research.Contracts;
 
 public sealed record PositionTranslationEvent(
     PositionId PositionId
-) : INotification;
+) : IPersistentEvent
+{
+    public Guid EventId { get; }
+    public DateTimeOffset OccurredOn { get; }
+}
