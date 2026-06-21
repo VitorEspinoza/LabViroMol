@@ -4,7 +4,7 @@ using LabViroMol.Modules.Assets.Domain.Equipments.Events;
 using LabViroMol.Modules.Shared.Infrastructure.Translation;
 using Mediator;
 
-namespace LabViroMol.Modules.Assets.Application.Equipments.Jobs;
+namespace LabViroMol.Modules.Assets.Application.Equipments.EventHandlers;
 
 public class EquipmentTranslationHandler : INotificationHandler<EquipmentTranslationPersistentEvent>
 {
