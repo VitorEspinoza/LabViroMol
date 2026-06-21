@@ -43,7 +43,6 @@ public class CancelScheduleCommandHandler : ICommandHandler<CancelScheduleComman
             schedule.Scheduling.StartDateHour,
             schedule.Scheduling.EndDateHour,
             command.Justification));
-
         await _unitOfWork.CompleteAsync(ct);
 
         return Result.Success();

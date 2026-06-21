@@ -46,6 +46,6 @@ public class RefuseScheduleCommandHandler : ICommandHandler<RefuseScheduleComman
             command.Justification));
 
         await _unitOfWork.CompleteAsync(ct);
-        return result;
+        return Result.Success();
     }
 }
