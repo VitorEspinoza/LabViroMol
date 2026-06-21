@@ -79,7 +79,7 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
         if (!Status.Equals(ScheduleStatus.PENDING))
             return Result.BusinessRule("Agendamento n\u00E3o est\u00E1 pendente.");
 
-        if (Scheduling.Date.IsBefore(DateOnly.FromDateTime(DateTime.Now)))
+        if (Scheduling.Date.IsBefore(DateOnly.FromDateTime(DateTimeOffset.Now.DateTime)))
             return Result.BusinessRule("N\u00E3o \u00E9 poss\u00EDvel alterar agendamento com data passada.");
 
         return Result.Success();

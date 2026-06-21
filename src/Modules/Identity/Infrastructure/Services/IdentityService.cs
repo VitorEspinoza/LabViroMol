@@ -344,7 +344,7 @@ public class IdentityService : IIdentityService
             issuer: _jwtIssuer,
             audience: _jwtAudience,
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(2),
+            expires: DateTimeOffset.UtcNow.AddHours(2).UtcDateTime,
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
@@ -368,7 +368,7 @@ public class IdentityService : IIdentityService
             issuer: _jwtIssuer,
             audience: _jwtAudience,
             claims: claims,
-            expires: DateTime.UtcNow.AddDays(7),
+            expires: DateTimeOffset.UtcNow.AddDays(7).UtcDateTime,
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

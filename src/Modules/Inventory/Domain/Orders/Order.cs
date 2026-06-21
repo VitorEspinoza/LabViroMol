@@ -22,8 +22,8 @@ public class Order : AggregateRoot<OrderId>, ICreationAuditable, IModificationAu
     public ProjectId ProjectId { get; private set; }
     public OrderStatus Status { get; private set; }
     public Quantity RequestedQuantity { get; private set; }
-    public OrderProcessing? Processing { get; set; }
-    public OrderReceipt? Receipt { get; set; }
+    public OrderProcessing? Processing { get; private set; }
+    public OrderReceipt? Receipt { get; private set; }
     public string Description { get; private set; }
 
     public static Order Create(MaterialId materialId, ProjectId projectId, Quantity quantity, string description)

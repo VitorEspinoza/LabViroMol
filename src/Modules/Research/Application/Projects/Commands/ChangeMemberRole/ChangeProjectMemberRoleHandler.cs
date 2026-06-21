@@ -6,7 +6,7 @@ using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class ChangeProjectMemberRoleHandler(
+public sealed class ChangeProjectMemberRoleHandler(
     IProjectRepository projectRepository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<ChangeProjectMemberRoleCommand, Result>

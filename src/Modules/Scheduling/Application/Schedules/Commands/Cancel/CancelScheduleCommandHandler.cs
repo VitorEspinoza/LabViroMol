@@ -7,7 +7,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Cancel;
 
-public class CancelScheduleCommandHandler : ICommandHandler<CancelScheduleCommand, Result>
+public sealed class CancelScheduleCommandHandler : ICommandHandler<CancelScheduleCommand, Result>
 {
     private readonly IScheduleRepository _scheduleRepository;
     private readonly ISchedulingUnitOfWork _unitOfWork;

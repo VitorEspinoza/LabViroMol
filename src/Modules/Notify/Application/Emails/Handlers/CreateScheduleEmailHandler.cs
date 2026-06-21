@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Notify.Application.Emails.Handlers;
 
-public class CreateScheduleEmailHandler : INotificationHandler<CreateScheduleEmailPersistentEvent>
+public sealed class CreateScheduleEmailHandler : INotificationHandler<CreateScheduleEmailPersistentEvent>
 {
     private readonly ISendEmail _emailSender;
 

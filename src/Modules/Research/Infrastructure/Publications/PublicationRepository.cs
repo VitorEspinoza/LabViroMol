@@ -4,7 +4,7 @@ using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-public class PublicationRepository(ResearchDbContext context) : IPublicationRepository
+internal sealed class PublicationRepository(ResearchDbContext context) : IPublicationRepository
 {
     public async Task<Publication?> GetByIdAsync(PublicationId id, CancellationToken ct)
         => await context.Publications

@@ -3,6 +3,7 @@ using LabViroMol.Modules.Assets.Infrastructure;
 using LabViroMol.Modules.Assets.Presentation.Equipments;
 using LabViroMol.Modules.Assets.Presentation.MaintenanceRequests;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +30,9 @@ public static class AssetsModule
         group.MapEquipmentEndpoints();
         group.MapMaintenanceRequestsEndpoints();
 
-        var publicGroup = group.MapGroup("/public").WithTags("Assets-Public");
+        var publicGroup = group.MapGroup("/public")
+            .WithTags("Assets-Public")
+            .WithMetadata(new AllowAnonymousAttribute());
         publicGroup.MapInstitutionalEquipmentEndpoints();
 
         return app;

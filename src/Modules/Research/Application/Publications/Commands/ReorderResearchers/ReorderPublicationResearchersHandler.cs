@@ -6,7 +6,7 @@ using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class ReorderPublicationResearchersHandler(
+public sealed class ReorderPublicationResearchersHandler(
     IPublicationRepository publicationRepository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<ReorderPublicationResearchersCommand, Result>

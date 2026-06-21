@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Notify.Application.Notifications.Handlers;
 
-public class CreateScheduleNotificationHandler : INotificationHandler<CreateScheduleNotificationPersistentEvent>
+public sealed class CreateScheduleNotificationHandler : INotificationHandler<CreateScheduleNotificationPersistentEvent>
 {
     private readonly ISendNotification _sendNotification;
 

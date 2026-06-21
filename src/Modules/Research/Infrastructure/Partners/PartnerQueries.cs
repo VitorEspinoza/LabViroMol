@@ -8,7 +8,7 @@ using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
-public class PartnerQueries(ResearchDbContext context) : IPartnerQueries
+internal sealed class PartnerQueries(ResearchDbContext context) : IPartnerQueries
 {
     public async Task<PagedResponse<PartnerSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request)
     {

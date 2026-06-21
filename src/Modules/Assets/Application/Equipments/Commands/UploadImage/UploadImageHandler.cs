@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.UploadImage;
 
-public class UploadImageHandler : ICommandHandler<UploadImageCommand, Result>
+public sealed class UploadImageHandler : ICommandHandler<UploadImageCommand, Result>
 {
     private readonly IEquipmentRepository _equipmentRepository;
     private readonly IAssetsUnitOfWork _unitOfWork;

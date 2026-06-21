@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Orders.Commands.Process;
 
-public class ProcessOrderCommandHandler : ICommandHandler<ProcessOrderCommand, Result>
+public sealed class ProcessOrderCommandHandler : ICommandHandler<ProcessOrderCommand, Result>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly ICurrentUser _currentUser;

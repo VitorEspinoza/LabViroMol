@@ -38,7 +38,7 @@ public class StockTransaction : BaseEntity<StockTransactionId>
             OrderId = orderId,
             Quantity = quantity, 
             Type = TransactionType.OrderReceipt,
-            TransactedAt = DateTime.UtcNow,
+            TransactedAt = DateTimeOffset.UtcNow.UtcDateTime,
             TransactedByUserId = userId,
             Justification = null
         };
@@ -60,7 +60,7 @@ public class StockTransaction : BaseEntity<StockTransactionId>
             ProjectId = projectId,
             Quantity = quantity, 
             Type = TransactionType.ProjectConsumption,
-            TransactedAt = DateTime.UtcNow,
+            TransactedAt = DateTimeOffset.UtcNow.UtcDateTime,
             TransactedByUserId = userId,
             Justification = null
         };
@@ -77,7 +77,7 @@ public class StockTransaction : BaseEntity<StockTransactionId>
             MaterialId = materialId,
             Quantity = quantity,
             Type = TransactionType.ExceptionIn,
-            TransactedAt = DateTime.UtcNow,
+            TransactedAt = DateTimeOffset.UtcNow.UtcDateTime,
             TransactedByUserId = userId,
             Justification = Guard.AgainstMinLength(justification, 10, "Para entradas de exceção, uma justificativa detalhada (mínimo 10 caracteres) é obrigatória."),
             
@@ -99,7 +99,7 @@ public class StockTransaction : BaseEntity<StockTransactionId>
             MaterialId = materialId,
             Quantity = quantity, 
             Type = TransactionType.ExceptionOut,
-            TransactedAt = DateTime.UtcNow,
+            TransactedAt = DateTimeOffset.UtcNow.UtcDateTime,
             TransactedByUserId = userId,
             Justification = Guard.AgainstMinLength(justification, 10, "Para saídas de exceção, uma justificativa detalhada (mínimo 10 caracteres) é obrigatória."),
         };

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Assets.Infrastructure.MaintenanceRequests;
 
-public class MaintenanceRequestQueries : IMaintenanceRequestQueries
+internal sealed class MaintenanceRequestQueries : IMaintenanceRequestQueries
 {
     private readonly AssetsDbContext _context;
 

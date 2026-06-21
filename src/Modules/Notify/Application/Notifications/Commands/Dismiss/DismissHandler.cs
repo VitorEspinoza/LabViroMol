@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Notify.Application.Notifications.Commands.Dismiss;
 
-public class DismissHandler : ICommandHandler<DismissCommand, Result>
+public sealed class DismissHandler : ICommandHandler<DismissCommand, Result>
 {
     private readonly INotificationRepository _notificationRepository;
     private readonly INotifyUnitOfWork _unitOfWork;

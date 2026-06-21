@@ -12,6 +12,7 @@ using LabViroMol.Modules.Shared.Infrastructure.Converters;
 using LabViroMol.Modules.Shared.Infrastructure.Observability;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.FileProviders;
@@ -50,10 +51,13 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddRateLimiter(options =>
 {
+    var permitLimit = builder.Configuration.GetValue("RateLimiting:SchedulingPolicy:PermitLimit", 5);
+    var windowHours = builder.Configuration.GetValue("RateLimiting:SchedulingPolicy:WindowHours", 1);
+
     options.AddFixedWindowLimiter("SchedulingPolicy", opt =>
     {
-        opt.PermitLimit = 5;
-        opt.Window = TimeSpan.FromHours(1);
+        opt.PermitLimit = permitLimit;
+        opt.Window = TimeSpan.FromHours(windowHours);
     });
 });
 
@@ -99,8 +103,8 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapOpenApi().AllowAnonymous();
+    app.MapScalarApiReference().AllowAnonymous();
 }
 
 app.UseExceptionHandler();

@@ -5,7 +5,7 @@ using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class AssignPublicationDoiHandler(
+public sealed class AssignPublicationDoiHandler(
     IPublicationRepository publicationRepository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<AssignPublicationDoiCommand, Result>

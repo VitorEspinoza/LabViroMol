@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.ForgotPassword;
 
-public class ForgotPasswordCommandHandler : ICommandHandler<ForgotPasswordCommand, Result>
+public sealed class ForgotPasswordCommandHandler : ICommandHandler<ForgotPasswordCommand, Result>
 {
     private readonly IIdentityService _identityService;
     private readonly IIdentityUnitOfWork _unitOfWork;

@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Notify.Application.Notifications.Commands.DismissAll;
 
-public class DismissAllHandler : ICommandHandler<DismissAllCommand, Result>
+public sealed class DismissAllHandler : ICommandHandler<DismissAllCommand, Result>
 {
     private readonly INotificationRepository _notificationRepository;
     private readonly INotifyUnitOfWork _unitOfWork;

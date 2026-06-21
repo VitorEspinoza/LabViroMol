@@ -1,10 +1,10 @@
-﻿using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Assets.Infrastructure.Equipments;
 
-public class EquipmentRepository : IEquipmentRepository
+internal sealed class EquipmentRepository : IEquipmentRepository
 {
     private readonly AssetsDbContext _context;
     

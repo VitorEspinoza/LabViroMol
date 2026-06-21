@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Assets.Application.Equipments.EventHandlers;
 
-public class EquipmentTranslationHandler : INotificationHandler<EquipmentTranslationPersistentEvent>
+public sealed class EquipmentTranslationHandler : INotificationHandler<EquipmentTranslationPersistentEvent>
 {
     private readonly IEquipmentRepository _repository;
     private readonly ITextTranslator _translator;

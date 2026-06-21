@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Scheduling.Infrastructure.Schedules;
 
-public class ScheduleQueries : IScheduleQueries
+internal sealed class ScheduleQueries : IScheduleQueries
 {
     private readonly SchedulingDbContext _context;
 

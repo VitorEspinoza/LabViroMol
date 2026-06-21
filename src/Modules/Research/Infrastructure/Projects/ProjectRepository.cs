@@ -4,7 +4,7 @@ using LabViroMol.Modules.Research.Domain.Projects;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-public class ProjectRepository(ResearchDbContext context) : IProjectRepository
+internal sealed class ProjectRepository(ResearchDbContext context) : IProjectRepository
 {
     public async Task<Project?> GetByIdAsync(ProjectId id, CancellationToken ct)
         => await context.Projects

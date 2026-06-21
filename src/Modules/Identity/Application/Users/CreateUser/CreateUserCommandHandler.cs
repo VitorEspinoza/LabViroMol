@@ -8,7 +8,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.CreateUser;
 
-public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Result>
+public sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Result>
 {
     private readonly IIdentityService _identityService;
     private readonly IUserRepository _userRepository;

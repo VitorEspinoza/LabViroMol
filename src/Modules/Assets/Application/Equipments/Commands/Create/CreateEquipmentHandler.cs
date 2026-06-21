@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.Create;
 
-public class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Result>
+public sealed class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Result>
 {
     private readonly IEquipmentRepository _equipmentRepository;
     private readonly IAssetsUnitOfWork _unitOfWork;

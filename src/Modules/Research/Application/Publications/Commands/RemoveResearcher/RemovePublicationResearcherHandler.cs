@@ -6,7 +6,7 @@ using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class RemovePublicationResearcherHandler(
+public sealed class RemovePublicationResearcherHandler(
     IPublicationRepository publicationRepository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<RemovePublicationResearcherCommand, Result>

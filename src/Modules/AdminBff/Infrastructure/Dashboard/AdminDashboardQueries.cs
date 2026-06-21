@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.AdminBff.Infrastructure.Dashboard;
 
-public class AdminDashboardQueries : IAdminDashboardQueries
+internal sealed class AdminDashboardQueries : IAdminDashboardQueries
 {
     private const int PreviewSize = 5;
 

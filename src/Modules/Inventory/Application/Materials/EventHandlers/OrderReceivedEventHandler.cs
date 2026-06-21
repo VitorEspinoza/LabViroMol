@@ -1,4 +1,4 @@
-﻿using LabViroMol.Modules.Inventory.Application.Shared;
+using LabViroMol.Modules.Inventory.Application.Shared;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 
@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Materials.EventHandlers;
 
-public class OrderReceivedEventHandler : INotificationHandler<OrderReceivedDomainEvent>
+public sealed class OrderReceivedEventHandler : INotificationHandler<OrderReceivedDomainEvent>
 {
     private readonly IMaterialRepository _materialRepository;
     private readonly IInventoryUnitOfWork _unitOfWork;

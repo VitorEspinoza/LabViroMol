@@ -8,7 +8,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Materials.Commands.ConsumeForProject;
 
-public class ConsumeMaterialForProjectCommandHandler : ICommandHandler<ConsumeMaterialForProjectCommand, Result>
+public sealed class ConsumeMaterialForProjectCommandHandler : ICommandHandler<ConsumeMaterialForProjectCommand, Result>
 {
     private readonly IMaterialRepository _repository;
     private readonly IProjectChecker _projectChecker;

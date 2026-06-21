@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Create;
 
-public class CreateMaintenanceHandler(
+public sealed class CreateMaintenanceHandler(
     IMaintenanceRequestRepository maintenanceRequestRepository,
     IEquipmentRepository equipmentRepository,
     IAssetsUnitOfWork unitOfWork) : ICommandHandler<CreateMaintenanceCommand, Result>

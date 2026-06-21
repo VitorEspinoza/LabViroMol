@@ -1,10 +1,10 @@
-﻿using LabViroMol.Modules.Scheduling.Domain.Schedules;
+using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Scheduling.Infrastructure.Schedules;
 
-public class ScheduleRepository : IScheduleRepository
+internal sealed class ScheduleRepository : IScheduleRepository
 {
     private readonly SchedulingDbContext _context;
 

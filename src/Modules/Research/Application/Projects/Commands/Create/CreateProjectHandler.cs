@@ -8,7 +8,7 @@ using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class CreateProjectHandler(
+public sealed class CreateProjectHandler(
     IProjectRepository projectRepository,
     IResearcherRepository researcherRepository,
     IResearchUnitOfWork unitOfWork)

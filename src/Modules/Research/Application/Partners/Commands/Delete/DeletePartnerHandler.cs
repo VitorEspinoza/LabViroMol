@@ -5,7 +5,7 @@ using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class DeletePartnerHandler(
+public sealed class DeletePartnerHandler(
     IPartnerRepository partnerRepository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<DeletePartnerCommand, Result>

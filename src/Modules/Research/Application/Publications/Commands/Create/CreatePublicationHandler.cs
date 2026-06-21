@@ -7,7 +7,7 @@ using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class CreatePublicationHandler(
+public sealed class CreatePublicationHandler(
     IPublicationRepository repository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<CreatePublicationCommand, Result<Guid>>

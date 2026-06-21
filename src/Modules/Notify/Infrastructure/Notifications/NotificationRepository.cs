@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Notify.Infrastructure.Notifications;
 
-public class NotificationRepository(NotifyDbContext context) : INotificationRepository
+internal sealed class NotificationRepository(NotifyDbContext context) : INotificationRepository
 {
     public async Task AddAsync(Notification notification, CancellationToken ct) 
         => await context.Notifications.AddAsync(notification, ct);

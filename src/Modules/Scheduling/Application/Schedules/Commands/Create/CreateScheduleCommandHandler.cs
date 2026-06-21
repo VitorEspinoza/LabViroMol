@@ -1,4 +1,4 @@
-Ôªøusing LabViroMol.Modules.Scheduling.Application.Shared;
+using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Contracts;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Create;
 
-public class CreateScheduleCommandHandler : ICommandHandler<CreateScheduleCommand, Result>
+public sealed class CreateScheduleCommandHandler : ICommandHandler<CreateScheduleCommand, Result>
 {
     private readonly IScheduleRepository _scheduleRepository;
     private readonly ISchedulingUnitOfWork _unitOfWork;
@@ -57,7 +57,7 @@ public class CreateScheduleCommandHandler : ICommandHandler<CreateScheduleComman
     }
 
     private Result ConflictResult() =>
-        Result.BusinessRule("N√£o √© poss√≠vel solicitar o agendamento, pois possui hor√°rio conflitante com outros agendamentos confirmados");
+        Result.BusinessRule("N„o È possÌvel solicitar o agendamento, pois possui hor·rio conflitante com outros agendamentos confirmados");
 
     private Result<Domain.Schedules.Scheduling> CreateScheduling(CreateScheduleCommand command) =>
         Domain.Schedules.Scheduling.Create(
@@ -97,12 +97,14 @@ public class CreateScheduleCommandHandler : ICommandHandler<CreateScheduleComman
             schedule.Scheduling.EndDateHour));
 
         _unitOfWork.AddPersistentEvent(new CreateScheduleNotificationPersistentEvent(
-            schedule.Id,
+            schedule.Id.Value,
             schedule.Scheduler.Name,
             schedule.Scheduling.Date,
             schedule.Scheduling.StartDateHour,
             schedule.Scheduling.EndDateHour,
-            schedule.Equipments));
+            schedule.Equipments
+                .Select(e => new ScheduleEquipmentInfo(e.EquipmentId, e.Name))
+                .ToList()));
 
         await _scheduleRepository.AddAsync(schedule, ct);
         await _unitOfWork.CompleteAsync(ct);

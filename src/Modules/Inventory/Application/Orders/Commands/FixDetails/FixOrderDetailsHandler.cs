@@ -7,7 +7,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Orders.Commands.FixDetails;
 
-public class FixOrderDetailsHandler : ICommandHandler<FixOrderDetailsCommand, Result>
+public sealed class FixOrderDetailsHandler : ICommandHandler<FixOrderDetailsCommand, Result>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProjectChecker _projectChecker;

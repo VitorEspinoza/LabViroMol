@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.Login;
 
-public class LoginCommandHandler
+public sealed class LoginCommandHandler
     : ICommandHandler<LoginCommand, Result<(string AccessToken, string RefreshToken)>>
 {
     private readonly IIdentityService _identityService;

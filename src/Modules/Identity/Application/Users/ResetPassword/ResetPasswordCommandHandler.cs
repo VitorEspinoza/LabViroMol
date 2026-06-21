@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.ResetPassword;
 
-public class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand, Result>
+public sealed class ResetPasswordCommandHandler : ICommandHandler<ResetPasswordCommand, Result>
 {
     private readonly IIdentityService _identityService;
 

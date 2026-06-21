@@ -5,6 +5,7 @@ using LabViroMol.Modules.Notify.Domain.Notifications;
 using LabViroMol.Modules.Notify.Infrastructure.Emails;
 using LabViroMol.Modules.Notify.Infrastructure.Notifications;
 using LabViroMol.Modules.Notify.Infrastructure.Persistence;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -43,7 +44,7 @@ public static class InfrastructureModule
 
     private static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("LabViroMol");
+        var connectionString = configuration.ResolveLabViroMolConnectionString();
 
         services.AddDbContext<NotifyDbContext>(options =>
             options.UseNpgsql(connectionString, npgsqlOptions =>
@@ -57,7 +58,10 @@ public static class InfrastructureModule
         services.Configure<EmailOptions>(
             configuration.GetSection("Email"));
 
-        services.AddScoped<ISendEmail, SmtpEmailSender>();
+        if (configuration.GetValue("LoadTest:UseNoOpEmail", false))
+            services.AddScoped<ISendEmail, NoOpEmailSender>();
+        else
+            services.AddScoped<ISendEmail, SmtpEmailSender>();
 
         return services;
     }

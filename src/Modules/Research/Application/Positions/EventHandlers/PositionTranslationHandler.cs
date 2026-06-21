@@ -5,7 +5,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Research.Application.Positions.EventHandlers;
 
-public class PositionTranslationHandler : INotificationHandler<PositionTranslationPersistentEvent>
+public sealed class PositionTranslationHandler : INotificationHandler<PositionTranslationPersistentEvent>
 {
     private readonly IPositionRepository _repository;
     private readonly ITextTranslator _translator;

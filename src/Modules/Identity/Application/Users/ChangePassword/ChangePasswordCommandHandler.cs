@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.ChangePassword;
 
-public class ChangePasswordCommandHandler : ICommandHandler<ChangePasswordCommand, Result>
+public sealed class ChangePasswordCommandHandler : ICommandHandler<ChangePasswordCommand, Result>
 {
     private readonly IIdentityService _identityService;
 

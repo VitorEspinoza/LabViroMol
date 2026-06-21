@@ -5,7 +5,7 @@ using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class CreatePositionHandler : ICommandHandler<CreatePositionCommand, Result>
+public sealed class CreatePositionHandler : ICommandHandler<CreatePositionCommand, Result>
 {
     private readonly IPositionRepository _repository;
     private readonly IResearchUnitOfWork _unitOfWork;

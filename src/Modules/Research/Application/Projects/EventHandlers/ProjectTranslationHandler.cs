@@ -5,7 +5,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Research.Application.Projects.EventHandlers;
 
-public class ProjectTranslationHandler : INotificationHandler<ProjectTranslationPersistentEvent>
+public sealed class ProjectTranslationHandler : INotificationHandler<ProjectTranslationPersistentEvent>
 {
     private readonly IProjectRepository _repository;
     private readonly ITextTranslator _translator;

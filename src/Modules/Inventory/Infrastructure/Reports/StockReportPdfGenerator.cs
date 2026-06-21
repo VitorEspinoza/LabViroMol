@@ -36,6 +36,7 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
             .FirstOrDefault();
 
         return Generate(new ReportDocument(
+            report.GeneratedAtUtc,
             "Saidas de material por projeto",
             "Consumo por projeto",
             "Visao consolidada das baixas vinculadas a projetos, com ranking de consumo e rastreabilidade por material.",
@@ -83,6 +84,7 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
             .FirstOrDefault();
 
         return Generate(new ReportDocument(
+            report.GeneratedAtUtc,
             "Saidas de material por mes",
             "Serie mensal",
             "Evolucao mensal das saidas, separando consumo de projeto e saidas excepcionais.",
@@ -134,6 +136,7 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
         var exceptionShare = totalQuantity == 0 ? 0 : Math.Round(exceptionQuantity / totalQuantity * 100, 2);
 
         return Generate(new ReportDocument(
+            report.GeneratedAtUtc,
             "Saidas totais por material",
             "Ranking geral de saidas",
             "Consolidado por material, com separacao entre consumo de projeto e baixas excepcionais.",
@@ -185,6 +188,7 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
             .Sum(r => r.TotalQuantity);
 
         return Generate(new ReportDocument(
+            report.GeneratedAtUtc,
             "Entradas por pedido, material e mes",
             "Recebimentos e entradas excepcionais",
             "Controle das entradas de estoque por origem, material e competencia.",
@@ -235,6 +239,7 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
         var largestGap = rows.OrderBy(r => r.Difference).FirstOrDefault();
 
         return Generate(new ReportDocument(
+            report.GeneratedAtUtc,
             "Saldo critico de estoque",
             "Estoque atual vs minimo",
             "Mapa de risco para reposicao, destacando materiais abaixo ou no limite minimo.",
@@ -291,6 +296,7 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
         var totalQuantity = rows.Sum(r => r.Quantity);
 
         return Generate(new ReportDocument(
+            report.GeneratedAtUtc,
             "Movimentacoes auditaveis por material",
             "Trilha de auditoria",
             "Registro das movimentacoes com usuario, origem, data e justificativa operacional.",
@@ -344,6 +350,7 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
         var totalQuantity = rows.Sum(r => r.Quantity);
 
         return Generate(new ReportDocument(
+            report.GeneratedAtUtc,
             "Ajustes manuais de estoque",
             "Auditoria de excecoes",
             "Foco em ExceptionIn e ExceptionOut para revisao de lancamentos manuais.",
@@ -434,7 +441,7 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                     column.Spacing(3);
                     column.Item().AlignRight().Text("LabViroMol").FontSize(14).Bold().FontColor(White);
                     column.Item().AlignRight().Text("Relatorio de estoque").FontSize(8).FontColor(PrimarySoft);
-                    column.Item().AlignRight().Text($"Gerado em UTC: {FormatDate(DateTime.UtcNow)}").FontSize(7).FontColor(PrimarySoft);
+                    column.Item().AlignRight().Text($"Gerado em UTC: {FormatDate(report.GeneratedAtUtc)}").FontSize(7).FontColor(PrimarySoft);
                 });
             });
     }
@@ -711,6 +718,7 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
     }
 
     private sealed record ReportDocument(
+        DateTime GeneratedAtUtc,
         string Title,
         string Subtitle,
         string Description,

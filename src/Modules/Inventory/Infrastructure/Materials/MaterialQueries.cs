@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.Materials;
 
-public class MaterialQueries : IMaterialQueries
+internal sealed class MaterialQueries : IMaterialQueries
 {
     private readonly InventoryDbContext _context;
 

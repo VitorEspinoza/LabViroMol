@@ -1,11 +1,11 @@
-﻿using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Assets.Infrastructure.MaintenanceRequests;
 
-public class MaintenanceRequestRepository : IMaintenanceRequestRepository
+internal sealed class MaintenanceRequestRepository : IMaintenanceRequestRepository
 {
     private readonly AssetsDbContext _context;
 

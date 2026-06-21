@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Notify.Application.Emails.Handlers;
 
-public class ResetPasswordEmailHandler : INotificationHandler<ResetPasswordPersistentEvent>
+public sealed class ResetPasswordEmailHandler : INotificationHandler<ResetPasswordPersistentEvent>
 {
     private readonly ISendEmail _emailSender;
 

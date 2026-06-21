@@ -6,7 +6,7 @@ using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class UpdateProjectHandler(
+public sealed class UpdateProjectHandler(
     IProjectRepository repository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<UpdateProjectCommand, Result>

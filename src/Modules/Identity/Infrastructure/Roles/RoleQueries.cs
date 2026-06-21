@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Identity.Infrastructure.Roles;
 
-public class RoleQueries(LabViroMolIdentityDbContext context) : IRoleQueries
+internal sealed class RoleQueries(LabViroMolIdentityDbContext context) : IRoleQueries
 {
     public async Task<IReadOnlyCollection<RoleViewModel>> GetAll()
         => await context.Roles.AsNoTracking()

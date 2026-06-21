@@ -7,7 +7,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Materials.Commands.AddStock;
 
-public class AddStockMaterialExceptionHandler : ICommandHandler<AddStockMaterialExceptionCommand, Result>
+public sealed class AddStockMaterialExceptionHandler : ICommandHandler<AddStockMaterialExceptionCommand, Result>
 {
     private readonly IMaterialRepository _repository;
     private readonly ICurrentUser _currentUser;

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Identity.Infrastructure.Users;
 
-public class UserQueries(LabViroMolIdentityDbContext context, IResearcherProfileProvider researcherProfileProvider) : IUserQueries
+internal sealed class UserQueries(LabViroMolIdentityDbContext context, IResearcherProfileProvider researcherProfileProvider) : IUserQueries
 {
     public async Task<PagedResponse<UserSummaryViewModel>> GetAllAsync(PagedRequest request)
     {
