@@ -22,19 +22,19 @@ public class RefuseScheduleCommandHandler : ICommandHandler<RefuseScheduleComman
         _unitOfWork = unitOfWork;
         _currentUser = currentUser;
     }
-    
+
     public async ValueTask<Result> Handle(RefuseScheduleCommand command, CancellationToken ct)
     {
         var schedule = await _scheduleRepository.GetByIdAsync(command.ScheduleId.Value, ct);
 
         if (schedule is null)
             return Result.NotFound("Agendamento não encontrado.");
-        
+
         var result = schedule.Refuse(_currentUser.Id, command.Justification);
 
         if (result.IsFailure)
             return result;
-        
+
         _unitOfWork.AddPersistentEvent(new ReprovedSchedulePersistentEvent(
             schedule.Scheduler.Email,
             schedule.Scheduler.Name,
@@ -44,7 +44,7 @@ public class RefuseScheduleCommandHandler : ICommandHandler<RefuseScheduleComman
             schedule.Scheduling.StartDateHour,
             schedule.Scheduling.EndDateHour,
             command.Justification));
-        
+
         await _unitOfWork.CompleteAsync(ct);
         return Result.Success();
     }
