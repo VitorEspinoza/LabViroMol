@@ -2,71 +2,50 @@ using LabViroMol.Modules.Assets.Application.Shared;
 using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Shared.Infrastructure.Translation;
 using Mediator;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
-namespace LabViroMol.Modules.Assets.Application.Equipments.EventHandlers;
+namespace LabViroMol.Modules.Assets.Application.Equipments.Jobs;
 
-public class EquipmentTranslationHandler : INotificationHandler<EquipmentTranslationEvent>
+public class EquipmentTranslationHandler : INotificationHandler<EquipmentTranslationPersistentEvent>
 {
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<EquipmentTranslationHandler> _logger;
+    private readonly IEquipmentRepository _repository;
+    private readonly ITextTranslator _translator;
+    private readonly IAssetsUnitOfWork _unitOfWork;
 
     public EquipmentTranslationHandler(
-        IServiceScopeFactory scopeFactory,
-        ILogger<EquipmentTranslationHandler> logger)
+        IEquipmentRepository repository,
+        ITextTranslator translator,
+        IAssetsUnitOfWork unitOfWork)
     {
-        _scopeFactory = scopeFactory;
-        _logger = logger;
+        _repository = repository;
+        _translator = translator;
+        _unitOfWork = unitOfWork;
     }
     
-    public async ValueTask Handle(EquipmentTranslationEvent notification, CancellationToken cancellationToken)
+    public async ValueTask Handle(EquipmentTranslationPersistentEvent notification, CancellationToken ct)
     {
-        try
+        var equipments =
+            await _repository.GetMissingEnglishTranslationAsync(5,ct);
+
+        foreach (var equipment in equipments)
         {
-            using var scope = _scopeFactory.CreateScope();
-
-            var repository =
-                scope.ServiceProvider
-                    .GetRequiredService<IEquipmentRepository>();
-
-            var translator =
-                scope.ServiceProvider
-                    .GetRequiredService<ITextTranslator>();
-
-            var unitOfWork =
-                scope.ServiceProvider
-                    .GetRequiredService<IAssetsUnitOfWork>();
-
-            var equipment =
-                await repository.GetByIdAsync(notification.EquipmentId, CancellationToken.None);
-
-            if (equipment is null)
-                return;
-
-            var englishTitle =
-                await translator.TranslateAsync(
+            var englishName =
+                await _translator.TranslateAsync(
                     "pt",
                     "en",
                     equipment.Name);
 
             var englishDescription =
-                await translator.TranslateAsync(
+                await _translator.TranslateAsync(
                     "pt",
                     "en",
                     equipment.Description);
 
             equipment.AddTranslation(
                 "en",
-                englishTitle,
+                englishName,
                 englishDescription);
+        }
 
-            await unitOfWork.CompleteAsync(
-                CancellationToken.None);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("Erro na tradução: {erro}", ex.Message);
-        }
+        await _unitOfWork.CompleteAsync(ct);
     }
 }
