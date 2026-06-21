@@ -198,7 +198,7 @@ public class AddMemberTests : ProjectEndpointsTestBase
 
         var response = await Client.PostAsJsonAsync(
             $"{BaseRoute}/{projectId}/members",
-            new AddProjectMemberRequest(newMemberId, ProjectRole.Collaborator.Value, leadId));
+            new AddProjectMemberRequest(newMemberId, ProjectRole.Collaborator.ToString(), leadId));
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
@@ -211,7 +211,7 @@ public class AddMemberTests : ProjectEndpointsTestBase
 
         var response = await Client.PostAsJsonAsync(
             $"{BaseRoute}/{Guid.NewGuid()}/members",
-            new AddProjectMemberRequest(newMemberId, ProjectRole.Collaborator.Value, leadId));
+            new AddProjectMemberRequest(newMemberId, ProjectRole.Collaborator.ToString(), leadId));
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -228,7 +228,7 @@ public class TransferLeadershipTests : ProjectEndpointsTestBase
         var (memberId, _) = await ResearcherDataSeeder.SeedResearcherAsync(DbContext);
 
         await Client.PostAsJsonAsync($"{BaseRoute}/{projectId}/members",
-            new AddProjectMemberRequest(memberId, ProjectRole.Collaborator.Value, leadId));
+            new AddProjectMemberRequest(memberId, ProjectRole.Collaborator.ToString(), leadId));
 
         var response = await Client.PostAsJsonAsync(
             $"{BaseRoute}/{projectId}/transfer-leadership",
@@ -262,11 +262,11 @@ public class ChangeMemberRoleTests : ProjectEndpointsTestBase
         var (memberId, _) = await ResearcherDataSeeder.SeedResearcherAsync(DbContext);
 
         await Client.PostAsJsonAsync($"{BaseRoute}/{projectId}/members",
-            new AddProjectMemberRequest(memberId, ProjectRole.Collaborator.Value, leadId));
+            new AddProjectMemberRequest(memberId, ProjectRole.Collaborator.ToString(), leadId));
 
         var response = await Client.PutAsJsonAsync(
             $"{BaseRoute}/{projectId}/members/{memberId}/role",
-            new ChangeMemberRoleRequest(ProjectRole.Manager.Value, leadId));
+            new ChangeMemberRoleRequest(ProjectRole.Manager.ToString(), leadId));
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
@@ -279,7 +279,7 @@ public class ChangeMemberRoleTests : ProjectEndpointsTestBase
 
         var response = await Client.PutAsJsonAsync(
             $"{BaseRoute}/{Guid.NewGuid()}/members/{memberId}/role",
-            new ChangeMemberRoleRequest(ProjectRole.Manager.Value, leadId));
+            new ChangeMemberRoleRequest(ProjectRole.Manager.ToString(), leadId));
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -296,7 +296,7 @@ public class RemoveMemberTests : ProjectEndpointsTestBase
         var (memberId, _) = await ResearcherDataSeeder.SeedResearcherAsync(DbContext);
 
         await Client.PostAsJsonAsync($"{BaseRoute}/{projectId}/members",
-            new AddProjectMemberRequest(memberId, ProjectRole.Collaborator.Value, leadId));
+            new AddProjectMemberRequest(memberId, ProjectRole.Collaborator.ToString(), leadId));
 
         var response = await Client.DeleteAsync($"{BaseRoute}/{projectId}/members/{memberId}?requestedById={leadId}");
 
