@@ -1,4 +1,4 @@
-﻿using LabViroMol.Modules.Scheduling.Application.Shared;
+using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Contracts;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
@@ -18,7 +18,7 @@ public class CreateScheduleCommandHandler : ICommandHandler<CreateScheduleComman
         _scheduleRepository = scheduleRepository;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async ValueTask<Result> Handle(CreateScheduleCommand command, CancellationToken ct)
     {
         var equipmentIds = GetEquipmentIds(command);
@@ -35,13 +35,13 @@ public class CreateScheduleCommandHandler : ICommandHandler<CreateScheduleComman
             return scheduleResult;
 
         await PersistAsync(scheduleResult.Data!, ct);
-        
+
         return Result.Success();
     }
-    
+
     private List<Guid> GetEquipmentIds(CreateScheduleCommand command) =>
         command.Equipments.Select(e => e.EquipmentId).ToList();
-    
+
     private async Task<bool> HasConflictAsync(
         CreateScheduleCommand command,
         List<Guid> equipmentIds,
@@ -55,16 +55,16 @@ public class CreateScheduleCommandHandler : ICommandHandler<CreateScheduleComman
 
         return conflicts.Count > 0;
     }
-    
+
     private Result ConflictResult() =>
         Result.BusinessRule("Não é possível solicitar o agendamento, pois possui horário conflitante com outros agendamentos confirmados");
-    
+
     private Result<Domain.Schedules.Scheduling> CreateScheduling(CreateScheduleCommand command) =>
         Domain.Schedules.Scheduling.Create(
             command.Scheduling.Date,
             command.Scheduling.Start.ToUniversalTime(),
             command.Scheduling.End.ToUniversalTime());
-    
+
     private Result<Schedule> CreateSchedule(
         CreateScheduleCommand command,
         Domain.Schedules.Scheduling scheduling)
@@ -85,9 +85,17 @@ public class CreateScheduleCommandHandler : ICommandHandler<CreateScheduleComman
             command.Description,
             equipments);
     }
-    
+
     private async Task PersistAsync(Schedule schedule, CancellationToken ct)
     {
+        _unitOfWork.AddPersistentEvent(new CreateScheduleEmailPersistentEvent(
+            schedule.Scheduler.Email,
+            schedule.Scheduler.Name,
+            schedule.ProjectTitle,
+            schedule.Scheduling.Date,
+            schedule.Scheduling.StartDateHour,
+            schedule.Scheduling.EndDateHour));
+
         _unitOfWork.AddPersistentEvent(new CreateScheduleNotificationPersistentEvent(
             schedule.Id,
             schedule.Scheduler.Name,
@@ -95,7 +103,7 @@ public class CreateScheduleCommandHandler : ICommandHandler<CreateScheduleComman
             schedule.Scheduling.StartDateHour,
             schedule.Scheduling.EndDateHour,
             schedule.Equipments));
-        
+
         await _scheduleRepository.AddAsync(schedule, ct);
         await _unitOfWork.CompleteAsync(ct);
     }
