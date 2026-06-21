@@ -72,7 +72,7 @@ public class ScheduleQueries : IScheduleQueries
 
         IQueryable<Schedule> query = _context.Schedules
             .Where(s => s.Status.Equals(ScheduleStatus.PENDING) &&
-                        s.Scheduling.StartDateHour > DateTimeOffset.Now);
+                        s.Scheduling.StartDateHour > DateTimeOffset.UtcNow);
 
         query = query.WhereSearch(request.Search,
             s => s.ProjectTitle, s => s.Description, s => s.AdvisorProfessor,

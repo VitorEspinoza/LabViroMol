@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.FileProviders;
 using QuestPDF.Infrastructure;
 using Scalar.AspNetCore;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -121,8 +120,6 @@ var forwardedHeadersOptions = new ForwardedHeadersOptions
 forwardedHeadersOptions.KnownNetworks.Clear();
 forwardedHeadersOptions.KnownProxies.Clear();
 app.UseForwardedHeaders(forwardedHeadersOptions);
-
-app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
