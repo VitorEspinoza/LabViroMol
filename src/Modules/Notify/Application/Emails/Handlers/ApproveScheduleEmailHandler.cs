@@ -1,40 +1,37 @@
 using LabViroMol.Modules.Notify.Contracts;
-using LabViroMol.Modules.Scheduling.Domain.Schedules;
-using LabViroMol.Modules.Scheduling.Domain.Schedules.Events;
+using LabViroMol.Modules.Scheduling.Contracts;
 using Mediator;
 
-namespace LabViroMol.Modules.Scheduling.Application.Schedules.EventHandlers;
+namespace LabViroMol.Modules.Notify.Application.Emails.Handlers;
 
-public class ApprovedScheduleEmailEventHandler : INotificationHandler<ApprovedScheduleDomainEvent>
+public class ApproveScheduleEmailHandler : INotificationHandler<ApproveSchedulePersistentEvent>
 {
     private readonly ISendEmail _emailSender;
 
-    public ApprovedScheduleEmailEventHandler(ISendEmail emailSender)
+    public ApproveScheduleEmailHandler(ISendEmail emailSender)
     {
         _emailSender = emailSender;
     }
 
     public async ValueTask Handle(
-        ApprovedScheduleDomainEvent notification,
+        ApproveSchedulePersistentEvent notification,
         CancellationToken ct)
     {
-        var schedule = notification.Schedule;
-
         var subject = "Agendamento Confirmado";
 
-        var body = MountEmailBody(schedule);
+        var body = MountEmailBody(notification);
 
         await _emailSender.SendEmail(
-            schedule.Scheduler.Email,
+            notification.SchedulerEmail,
             subject,
             body,
             ct);
     }
 
-    private string MountEmailBody(Schedule schedule)
+    private string MountEmailBody(ApproveSchedulePersistentEvent schedule)
     {
         var body = $"""
-                    <p>Olá, {schedule.Scheduler.Name}.</p>
+                    <p>Olá, {schedule.SchedulerName}.</p>
 
                     <p>
                         Temos o prazer de informar que sua solicitação de agendamento foi
@@ -46,8 +43,8 @@ public class ApprovedScheduleEmailEventHandler : INotificationHandler<ApprovedSc
                     <ul>
                         <li><strong>Projeto:</strong> {schedule.ProjectTitle}</li>
                         <li><strong>Professor Orientador:</strong> {schedule.AdvisorProfessor}</li>
-                        <li><strong>Data:</strong> {schedule.Scheduling.Date:dd/MM/yyyy}</li>
-                        <li><strong>Horário:</strong> {schedule.Scheduling.StartDateHour:HH:mm} às {schedule.Scheduling.EndDateHour:HH:mm}</li>
+                        <li><strong>Data:</strong> {schedule.Date:dd/MM/yyyy}</li>
+                        <li><strong>Horário:</strong> {schedule.Start:HH:mm} às {schedule.End:HH:mm}</li>
                     </ul>
 
                     <p>

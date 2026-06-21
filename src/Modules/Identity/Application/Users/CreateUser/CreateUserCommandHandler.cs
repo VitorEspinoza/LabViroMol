@@ -2,7 +2,6 @@ using LabViroMol.Modules.Identity.Application.Users.Abstractions;
 using LabViroMol.Modules.Identity.Application.Users.Emails;
 using LabViroMol.Modules.Identity.Contracts;
 using LabViroMol.Modules.Identity.Domain.Users;
-using LabViroMol.Modules.Notify.Contracts;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
@@ -14,18 +13,15 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Resul
     private readonly IIdentityService _identityService;
     private readonly IUserRepository _userRepository;
     private readonly IIdentityUnitOfWork _unitOfWork;
-    private readonly ISendEmail _emailSender;
 
     public CreateUserCommandHandler(
         IIdentityService identityService,
         IUserRepository userRepository,
-        IIdentityUnitOfWork unitOfWork,
-        ISendEmail emailSender)
+        IIdentityUnitOfWork unitOfWork)
     {
         _identityService = identityService;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
-        _emailSender = emailSender;
     }
 
     public async ValueTask<Result> Handle(CreateUserCommand command, CancellationToken ct)
@@ -67,11 +63,15 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Resul
             data.LastName,
             command.RoleIds,
             data.ResearchData));
+        
+        var (subject, body) = PasswordEmailTemplates.BuildWelcomeEmail(data.FirstName, resetLink);
+        
+        _unitOfWork.AddPersistentEvent(new ResetPasswordPersistentEvent(
+            command.Email,
+            subject,
+            body));
 
         await _unitOfWork.CompleteAsync(ct);
-
-        var (subject, body) = PasswordEmailTemplates.BuildWelcomeEmail(data.FirstName, resetLink);
-        await _emailSender.SendEmail(command.Email, subject, body, ct);
 
         return Result.Success();
     }

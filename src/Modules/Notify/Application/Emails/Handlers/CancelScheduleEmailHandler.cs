@@ -1,45 +1,41 @@
 using LabViroMol.Modules.Notify.Contracts;
-using LabViroMol.Modules.Scheduling.Domain.Schedules;
-using LabViroMol.Modules.Scheduling.Domain.Schedules.Events;
+using LabViroMol.Modules.Scheduling.Contracts;
 using Mediator;
 
-namespace LabViroMol.Modules.Scheduling.Application.Schedules.EventHandlers;
+namespace LabViroMol.Modules.Notify.Application.Emails.Handlers;
 
-public class ReprovedScheduleEmailEventHandler : INotificationHandler<ReprovedScheduleDomainEvent>
+public class CancelScheduleEmailHandler : INotificationHandler<CancelSchedulePersistentEvent>
 {
     private readonly ISendEmail _emailSender;
 
-    public ReprovedScheduleEmailEventHandler(ISendEmail emailSender)
+    public CancelScheduleEmailHandler(ISendEmail emailSender)
     {
         _emailSender = emailSender;
     }
 
     public async ValueTask Handle(
-        ReprovedScheduleDomainEvent notification,
+        CancelSchedulePersistentEvent notification,
         CancellationToken cancellationToken)
     {
-        var schedule = notification.Schedule;
+        var subject = "Agendamento Cancelado";
 
-        var subject = "Solicitação de Agendamento Não Aprovada";
-
-        var body = MountEmailBody(schedule, notification.Justification);
+        var body = MountEmailBody(notification, notification.Justification);
 
         await _emailSender.SendEmail(
-            schedule.Scheduler.Email,
+            notification.SchedulerEmail,
             subject,
             body,
             cancellationToken);
     }
 
-    private string MountEmailBody(Schedule schedule, string justification)
+    private string MountEmailBody(CancelSchedulePersistentEvent schedule, string justification)
     {
         var body = $"""
-                    <p>Olá, {schedule.Scheduler.Name}.</p>
+                    <p>Olá, {schedule.SchedulerName}.</p>
 
                     <p>
                         Informamos que sua solicitação de agendamento para o projeto
-                        <strong>{schedule.ProjectTitle}</strong> foi analisada e,
-                        neste momento, <strong>não foi aprovada</strong>.
+                        <strong>{schedule.ProjectTitle}</strong> foi <strong>cancelada</strong>.
                     </p>
                     
                     <p>
@@ -51,8 +47,8 @@ public class ReprovedScheduleEmailEventHandler : INotificationHandler<ReprovedSc
                     <ul>
                         <li><strong>Projeto:</strong> {schedule.ProjectTitle}</li>
                         <li><strong>Professor Orientador:</strong> {schedule.AdvisorProfessor}</li>
-                        <li><strong>Data solicitada:</strong> {schedule.Scheduling.Date:dd/MM/yyyy}</li>
-                        <li><strong>Horário:</strong> {schedule.Scheduling.StartDateHour:HH:mm} às {schedule.Scheduling.EndDateHour:HH:mm}</li>
+                        <li><strong>Data solicitada:</strong> {schedule.Date:dd/MM/yyyy}</li>
+                        <li><strong>Horário:</strong> {schedule.Start:HH:mm} às {schedule.End:HH:mm}</li>
                     </ul>
 
                     <p>
