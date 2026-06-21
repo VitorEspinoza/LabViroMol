@@ -14,7 +14,6 @@ public static class OutboxJson
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
-        options.Converters.Add(new SmartEnumJsonConverterFactory());
         options.Converters.Add(new StrongIdJsonConverterFactory());
         options.Converters.Add(new JsonStringEnumConverter());
         return options;

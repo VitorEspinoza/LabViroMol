@@ -24,8 +24,8 @@ public class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser)
         {
             var search = request.Search;
 
-            var matchingStatuses = ProjectStatus.List()
-                .Where(s => s.Value.Contains(search, StringComparison.OrdinalIgnoreCase))
+            var matchingStatuses = Enum.GetValues<ProjectStatus>()
+                .Where(s => s.ToString().Contains(search, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
             var ownFieldMatchIds = await context.Projects
@@ -93,7 +93,7 @@ public class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser)
                 : string.Empty;
             var partnerName = partnerNames.GetValueOrDefault(p.PartnerId, string.Empty);
 
-            return new PublicProjectViewModel(p.Id.Value, p.GetTitle(language), p.GetDescription(language), p.Status.Value, leadName, partnerName);
+            return new PublicProjectViewModel(p.Id.Value, p.GetTitle(language), p.GetDescription(language), p.Status.ToString(), leadName, partnerName);
         }).ToList();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);
@@ -110,8 +110,8 @@ public class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser)
         {
             var search = request.Search;
 
-            var matchingStatuses = ProjectStatus.List()
-                .Where(s => s.Value.Contains(search, StringComparison.OrdinalIgnoreCase))
+            var matchingStatuses = Enum.GetValues<ProjectStatus>()
+                .Where(s => s.ToString().Contains(search, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
             var ownFieldMatchIds = await context.Projects
@@ -159,7 +159,7 @@ public class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser)
                     : string.Empty;
                 var partnerName = allPartnerNames.GetValueOrDefault(p.PartnerId, string.Empty);
 
-                return new ProjectAdminSummaryViewModel(p.Id.Value, p.Title, partnerName, leadName, p.Status.Value, r.CreatedAt);
+                return new ProjectAdminSummaryViewModel(p.Id.Value, p.Title, partnerName, leadName, p.Status.ToString(), r.CreatedAt);
             });
 
             allItems = sortBy == "partnername"
@@ -208,7 +208,7 @@ public class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser)
                 : string.Empty;
             var partnerName = partnerNames.GetValueOrDefault(p.PartnerId, string.Empty);
 
-            return new ProjectAdminSummaryViewModel(p.Id.Value, p.Title, partnerName, leadName, p.Status.Value, r.CreatedAt);
+            return new ProjectAdminSummaryViewModel(p.Id.Value, p.Title, partnerName, leadName, p.Status.ToString(), r.CreatedAt);
         }).ToList();
 
         return PagedResult.Create(items, pageNumber, pageSize, totalCount);

@@ -17,7 +17,7 @@ internal class ResearcherProfileProvider(IResearcherRepository researcherReposit
 
         return new ResearchRegistrationData(
             researcher.PositionId.Value,
-            researcher.AcademicBackground.DegreeLevel.Value,
+            researcher.AcademicBackground.DegreeLevel.ToString(),
             researcher.AcademicBackground.FieldOfStudy,
             researcher.LattesUrl,
             researcher.Name.CitationName,

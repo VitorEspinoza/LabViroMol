@@ -32,7 +32,7 @@ public class UserRegisteredPersistentEventHandler(
             throw new DomainException("Cargo inválido selecionado para usuário");
 
         var background = new AcademicBackground(
-            DegreeLevel.FromString(data.DegreeLevel),
+            Enum.Parse<DegreeLevel>(data.DegreeLevel),
             data.FieldOfStudy);
 
         var name = new ResearcherName(

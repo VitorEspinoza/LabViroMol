@@ -13,21 +13,9 @@ public class ChangeProjectMemberRoleValidator : AbstractValidator<ChangeProjectM
         RuleFor(x => x.NewRole)
             .NotEmpty().WithMessage("O papel e obrigatorio.")
             .Must(BeAValidProjectRole)
-            .WithMessage(x => $"'{x.NewRole}' nao e um ProjectRole valido. Opcoes: {string.Join(", ", ProjectRole.List().Select(r => r.Value))}");
+            .WithMessage(x => $"'{x.NewRole}' nao e um ProjectRole valido. Opcoes: {string.Join(", ", Enum.GetNames<ProjectRole>())}");
     }
 
     private static bool BeAValidProjectRole(string role)
-    {
-        if (string.IsNullOrWhiteSpace(role)) return false;
-
-        try
-        {
-            ProjectRole.FromString(role);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
+        => !string.IsNullOrWhiteSpace(role) && Enum.TryParse<ProjectRole>(role, out _);
 }

@@ -18,8 +18,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
 {
-    options.SerializerOptions.Converters.Add(new SmartEnumJsonConverterFactory());
-    
     options.SerializerOptions.Converters.Add(new StrongIdJsonConverterFactory());
     
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());

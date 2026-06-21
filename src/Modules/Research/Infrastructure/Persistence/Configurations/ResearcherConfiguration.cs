@@ -42,6 +42,7 @@ public class ResearcherConfiguration : IEntityTypeConfiguration<Researcher>
         builder.OwnsOne(r => r.AcademicBackground, ab =>
         {
             ab.Property(a => a.DegreeLevel)
+                .HasConversion<string>()
                 .HasMaxLength(50)
                 .HasColumnName("DegreeLevel")
                 .IsRequired();

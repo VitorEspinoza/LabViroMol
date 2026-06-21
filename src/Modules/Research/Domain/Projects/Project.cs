@@ -31,7 +31,7 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
 
     private bool HasAdministrativePrivileges(ResearcherId id)
         => _members.Any(m => m.ResearcherId == id && m.IsActive &&
-            m.Role.In(ProjectRole.ResearchLead, ProjectRole.Manager));
+            (m.Role == ProjectRole.ResearchLead || m.Role == ProjectRole.Manager));
 
     public static Result<Project> Create(ResearcherId principalInvestigatorId,
         string title, string description, PartnerId partnerId)
@@ -67,7 +67,7 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
     {
         if (!IsResearchLead(requestedBy))
             return Result.BusinessRule("Apenas o lider de pesquisa pode alterar o status do projeto.");
-        if (Status.In(ProjectStatus.Completed, ProjectStatus.Canceled))
+        if (Status is ProjectStatus.Completed or ProjectStatus.Canceled)
             return Result.BusinessRule("Projetos concluídos ou cancelados não podem ter seu status alterado.");
 
         Status = ProjectStatus.Canceled;
