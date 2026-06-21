@@ -20,10 +20,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\..\src\Modules\Identity\Infrastructure\LabViroMol.Modules.Identity.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\..\..\src\LabViroMol.Api\LabViroMol.Api.csproj" />
-      <ProjectReference Include="..\..\..\..\src\Modules\Scheduling\Infrastructure\LabViroMol.Modules.Scheduling.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\Shared\LabViroMol.IntegrationTests.Shared.csproj" />
+      <ProjectReference Include="..\..\..\src\Modules\Identity\Infrastructure\LabViroMol.Modules.Identity.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\src\Modules\Research\Infrastructure\LabViroMol.Modules.Research.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\src\Modules\Inventory\Infrastructure\LabViroMol.Modules.Inventory.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\src\Modules\Notify\Infrastructure\LabViroMol.Modules.Notify.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\..\src\LabViroMol.Api\LabViroMol.Api.csproj" />
+      <ProjectReference Include="..\Shared\LabViroMol.IntegrationTests.Shared.csproj" />
     </ItemGroup>
 
 </Project>
