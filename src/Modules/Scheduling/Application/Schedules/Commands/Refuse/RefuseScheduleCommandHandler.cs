@@ -1,4 +1,4 @@
-using LabViroMol.Modules.Scheduling.Application.Shared;
+﻿using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Contracts;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
