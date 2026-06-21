@@ -42,7 +42,7 @@ public class Notification : AggregateRoot<NotificationId>, ICreationAuditable
 
     public static Result<Notification> Create(string title, string message, string targetPermission, string referenceId, string referenceModule, string type)
     {
-        var creationDate = DateTimeOffset.Now;
+        var creationDate = DateTimeOffset.UtcNow;
         var notification = new Notification(
             IdFactory.New<NotificationId>(),
             title,

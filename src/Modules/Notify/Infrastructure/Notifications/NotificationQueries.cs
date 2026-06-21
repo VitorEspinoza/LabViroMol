@@ -11,7 +11,7 @@ public class NotificationQueries(NotifyDbContext context) : INotificationQueries
     public async Task<List<NotificationViewModel>> GetUnreadByUserAsync(UserId userId, List<string> permissions, CancellationToken ct)
     {
         return await context.Notifications.AsNoTracking()
-            .Where(n => n.ExpiresOn > DateTimeOffset.Now)
+            .Where(n => n.ExpiresOn > DateTimeOffset.UtcNow)
             .Where(n => permissions.Contains(n.TargetPermission))
             .Where(n => n.NotificationDismissals.All(d => d.UserId != userId))
             .OrderByDescending(n => EF.Property<DateTimeOffset>(n, "CreatedAt"))

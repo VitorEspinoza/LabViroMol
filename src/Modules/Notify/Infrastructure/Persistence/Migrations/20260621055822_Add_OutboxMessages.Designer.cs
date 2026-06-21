@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NotifyDbContext))]
-    [Migration("20260619185656_Add_OutboxMessages")]
+    [Migration("20260621055822_Add_OutboxMessages")]
     partial class Add_OutboxMessages
     {
         /// <inheritdoc />
