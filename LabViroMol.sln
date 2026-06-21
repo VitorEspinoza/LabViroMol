@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36401.2
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -205,8 +204,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{F172CD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Assets.IntegrationTests", "tests\IntegrationTests\Modules\Assets\LabViroMol.Modules.Assets.IntegrationTests.csproj", "{E9EA6181-A639-473F-ADDF-38D821B055EB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{4AF7AE62-D6B5-1212-BDE3-5148F3084C5E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scheduling", "Scheduling", "{3DFB8682-D46B-2781-8759-54CB398D38BB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.Scheduling.IntegrationTests", "tests\IntegrationTests\Modules\Scheduling\LabViroMol.Modules.Scheduling.IntegrationTests.csproj", "{4753D828-D553-497C-B392-FEDAF3E0E686}"
@@ -234,6 +231,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.AdminBff.Infrastructure", "src\Modules\AdminBff\Infrastructure\LabViroMol.Modules.AdminBff.Infrastructure.csproj", "{BADF1D22-6CBA-42DA-9C93-33DCB4C21CC1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.AdminBff.Presentation", "src\Modules\AdminBff\Presentation\LabViroMol.Modules.AdminBff.Presentation.csproj", "{874CDCB8-9722-4D13-BE99-A67D9A7F1225}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabViroMol.Modules.AdminBff.IntegrationTests", "tests\IntegrationTests\Modules\AdminBff\LabViroMol.Modules.AdminBff.IntegrationTests.csproj", "{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -741,6 +740,18 @@ Global
 		{874CDCB8-9722-4D13-BE99-A67D9A7F1225}.Release|x64.Build.0 = Release|Any CPU
 		{874CDCB8-9722-4D13-BE99-A67D9A7F1225}.Release|x86.ActiveCfg = Release|Any CPU
 		{874CDCB8-9722-4D13-BE99-A67D9A7F1225}.Release|x86.Build.0 = Release|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Debug|x64.Build.0 = Debug|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Debug|x86.Build.0 = Debug|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Release|x64.ActiveCfg = Release|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Release|x64.Build.0 = Release|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Release|x86.ActiveCfg = Release|Any CPU
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -842,9 +853,9 @@ Global
 		{39BC7CB9-A0B6-4733-8D8B-C32071078635} = {FE8C1504-0BE1-4576-9EB9-635412B1CE80}
 		{B7D23768-E3ED-7AE3-DA56-412A296A6829} = {827281F7-33FC-4ACF-A195-886122BF3481}
 		{9E39117D-CDC0-42F9-9580-3F5B27B2784A} = {B7D23768-E3ED-7AE3-DA56-412A296A6829}
+		{7435FDE6-9449-4F4E-9D66-D606BD88F543} = {1257C29E-61F1-4854-9AE8-02D0FA1A6F8E}
 		{F172CD46-8FEA-D542-48F6-E7AC4126BAA4} = {BE3AF575-4C87-4A91-9DCF-66A73BB6F055}
 		{E9EA6181-A639-473F-ADDF-38D821B055EB} = {F172CD46-8FEA-D542-48F6-E7AC4126BAA4}
-		{4AF7AE62-D6B5-1212-BDE3-5148F3084C5E} = {1257C29E-61F1-4854-9AE8-02D0FA1A6F8E}
 		{3DFB8682-D46B-2781-8759-54CB398D38BB} = {BE3AF575-4C87-4A91-9DCF-66A73BB6F055}
 		{4753D828-D553-497C-B392-FEDAF3E0E686} = {3DFB8682-D46B-2781-8759-54CB398D38BB}
 		{B9DCD583-B13E-1D67-D0E0-2D8692399C7A} = {BE3AF575-4C87-4A91-9DCF-66A73BB6F055}
@@ -859,9 +870,9 @@ Global
 		{63E96518-B39C-4C3B-B669-172778390658} = {8EC4C247-F354-43B2-CAB9-B211097843CA}
 		{BADF1D22-6CBA-42DA-9C93-33DCB4C21CC1} = {5AD49D94-04C8-DD8B-7B38-A582D23F14AA}
 		{874CDCB8-9722-4D13-BE99-A67D9A7F1225} = {04FAF2F1-50F2-2604-C68C-00FFE0C80EC9}
-		{7435FDE6-9449-4F4E-9D66-D606BD88F543} = {4AF7AE62-D6B5-1212-BDE3-5148F3084C5E}
+		{C1D2E3F4-A5B6-47C8-D9E0-F1A2B3C4D5E6} = {4B22917A-4B62-8B61-1F53-3E359F804F95}
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
+	GlobalSection(ExtensibilityGlobals) = preSolution
 		SolutionGuid = {62F99306-E0EA-47D3-A6A7-7B0499A189B8}
 	EndGlobalSection
 EndGlobal
