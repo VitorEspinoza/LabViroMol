@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application\LabViroMol.Modules.AdminBff.Application.csproj" />
+    <ProjectReference Include="..\..\Assets\Infrastructure\LabViroMol.Modules.Assets.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Inventory\Infrastructure\LabViroMol.Modules.Inventory.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Scheduling\Infrastructure\LabViroMol.Modules.Scheduling.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shared\Kernel\LabViroMol.Modules.Shared.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>
