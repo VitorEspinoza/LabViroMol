@@ -2,56 +2,40 @@ using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Projects;
 using LabViroMol.Modules.Shared.Infrastructure.Translation;
 using Mediator;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace LabViroMol.Modules.Research.Application.Projects.EventHandlers;
 
-public class ProjectTranslationHandler : INotificationHandler<ProjectTranslationEvent>
+public class ProjectTranslationHandler : INotificationHandler<ProjectTranslationPersistentEvent>
 {
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<ProjectTranslationHandler> _logger;
-
+    private readonly IProjectRepository _repository;
+    private readonly ITextTranslator _translator;
+    private readonly IResearchUnitOfWork _unitOfWork;
+    
     public ProjectTranslationHandler(
-        IServiceScopeFactory scopeFactory,
-        ILogger<ProjectTranslationHandler> logger)
+        IProjectRepository repository,
+        ITextTranslator translator,
+        IResearchUnitOfWork unitOfWork)
     {
-        _scopeFactory = scopeFactory;
-        _logger = logger;
+        _repository = repository;
+        _translator = translator;
+        _unitOfWork = unitOfWork;
     }
-
-    public async ValueTask Handle(ProjectTranslationEvent notification, CancellationToken cancellationToken)
+    
+    public async ValueTask Handle(ProjectTranslationPersistentEvent notification, CancellationToken ct)
     {
-        try
+        var projects =
+            await _repository.GetMissingEnglishTranslationAsync(5,ct);
+
+        foreach (var project in projects)
         {
-            using var scope = _scopeFactory.CreateScope();
-
-            var repository =
-                scope.ServiceProvider
-                    .GetRequiredService<IProjectRepository>();
-
-            var translator =
-                scope.ServiceProvider
-                    .GetRequiredService<ITextTranslator>();
-
-            var unitOfWork =
-                scope.ServiceProvider
-                    .GetRequiredService<IResearchUnitOfWork>();
-
-            var project =
-                await repository.GetByIdAsync(notification.ProjectId, CancellationToken.None);
-
-            if (project is null)
-                return;
-
             var englishTitle =
-                await translator.TranslateAsync(
+                await _translator.TranslateAsync(
                     "pt",
                     "en",
                     project.Title);
 
             var englishDescription =
-                await translator.TranslateAsync(
+                await _translator.TranslateAsync(
                     "pt",
                     "en",
                     project.Description);
@@ -60,13 +44,8 @@ public class ProjectTranslationHandler : INotificationHandler<ProjectTranslation
                 "en",
                 englishTitle,
                 englishDescription);
-
-            await unitOfWork.CompleteAsync(
-                CancellationToken.None);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError("Erro na tradução: {erro}", ex.Message);
-        }
+        
+        await _unitOfWork.CompleteAsync(ct);
     }
 }

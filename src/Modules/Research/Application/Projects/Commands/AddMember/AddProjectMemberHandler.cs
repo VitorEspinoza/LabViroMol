@@ -23,7 +23,7 @@ public class AddProjectMemberHandler(
         if (researcher is null)
             return Result.NotFound("Pesquisador nao encontrado.");
 
-        var role = ProjectRole.FromString(command.Role);
+        var role = Enum.Parse<ProjectRole>(command.Role);
         var result = project.AddMember(researcherId, role, ResearcherId.From(command.RequestedById));
         if (result.IsFailure)
             return result;

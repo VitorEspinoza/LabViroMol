@@ -1,6 +1,7 @@
 using LabViroMol.Modules.Assets.Application.Equipments.EventHandlers;
 using LabViroMol.Modules.Assets.Application.Shared;
 using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Assets.Domain.Equipments.Events;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,19 +45,10 @@ public class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Re
         var equipment = result.Data!;
 
         await _equipmentRepository.AddAsync(equipment, ct);
+        
+        _unitOfWork.AddPersistentEvent(new EquipmentTranslationPersistentEvent());
+        
         await _unitOfWork.CompleteAsync(ct);
-
-        _ = Task.Run(async () =>
-        {
-            using var scope = _scopeFactory.CreateScope();
-
-            var publisher =
-                scope.ServiceProvider.GetRequiredService<IPublisher>();
-            
-            await publisher.Publish(
-                new EquipmentTranslationEvent(equipment.Id),
-                CancellationToken.None);
-        });
             
 
         return Result.Success();

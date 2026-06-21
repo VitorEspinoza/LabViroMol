@@ -104,6 +104,9 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("MaterialTypes", "inventory");
                 });
 
@@ -199,6 +202,12 @@ namespace LabViroMol.Modules.Inventory.Infrastructure.Persistence.Migrations
                     b.HasIndex("MaterialId");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("TransactedAt");
+
+                    b.HasIndex("ProjectId", "Type", "TransactedAt");
+
+                    b.HasIndex("Type", "TransactedAt", "MaterialId");
 
                     b.ToTable("StockTransactions", "inventory");
                 });
