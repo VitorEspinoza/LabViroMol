@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Queries;
 using LabViroMol.Modules.Assets.Application.MaintenanceRequests.ViewModels;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.Persistence;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Assets.Infrastructure.MaintenanceRequests;
 
-public class MaintenanceRequestQueries
+public class MaintenanceRequestQueries : IMaintenanceRequestQueries
 {
     private readonly AssetsDbContext _context;
 

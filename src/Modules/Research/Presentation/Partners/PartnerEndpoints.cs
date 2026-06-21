@@ -3,7 +3,7 @@ namespace LabViroMol.Modules.Research.Presentation.Partners;
 using LabViroMol.Modules.Research.Application.Partners.Commands.Create;
 using LabViroMol.Modules.Research.Application.Partners.Commands.Delete;
 using LabViroMol.Modules.Research.Application.Partners.Commands.Update;
-using LabViroMol.Modules.Research.Infrastructure.Partners;
+using LabViroMol.Modules.Research.Application.Partners.Queries;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -26,11 +26,11 @@ internal static class PartnerEndpoints
             return result.ToHttpResult(Results.Created());
         });
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, PartnerQueries queries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IPartnerQueries queries) =>
             Results.Ok(await queries.GetAllAdminAsync(request)))
             .RequireAuthorization(Permissions.Research.PartnersView);
 
-        group.MapGet("/{id:guid}", async (Guid id, PartnerQueries queries) =>
+        group.MapGet("/{id:guid}", async (Guid id, IPartnerQueries queries) =>
         {
             var partner = await queries.GetById(id);
             return partner is null
@@ -57,7 +57,7 @@ internal static class PartnerEndpoints
     {
         var group = app.MapGroup("/partners").WithTags("Partners-Public");
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, PartnerQueries queries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IPartnerQueries queries) =>
             Results.Ok(await queries.GetAllInstitutionalAsync(request)));
     }
 }

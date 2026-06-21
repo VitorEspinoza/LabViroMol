@@ -13,7 +13,7 @@ public class NotificationRepository(NotifyDbContext context) : INotificationRepo
     public async Task<List<Notification>> GetNotificationsByUserNotDismissed(UserId userId, List<string> permissions, CancellationToken ct)
         => await context.Notifications
             .Include(n => n.NotificationDismissals)
-            .Where(n => n.ExpiresOn > DateTimeOffset.Now)
+            .Where(n => n.ExpiresOn > DateTimeOffset.UtcNow)
             .Where(n => permissions.Contains(n.TargetPermission))
             .Where(n => n.NotificationDismissals
                 .All(d => d.UserId != userId))

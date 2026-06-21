@@ -5,6 +5,7 @@ using LabViroMol.Modules.Shared.Infrastructure.Persistence.Extensions;
 namespace LabViroMol.Modules.Research.Infrastructure.Persistence.Configurations;
 
 using LabViroMol.Modules.Research.Domain.Publications;
+using LabViroMol.Modules.Research.Domain.Researchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -46,6 +47,11 @@ public class PublicationConfiguration : IEntityTypeConfiguration<Publication>
 
             r.Property(r => r.ResearcherId)
                 .IsRequired();
+
+            r.HasOne<Researcher>()
+                .WithMany()
+                .HasForeignKey(r => r.ResearcherId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             r.Property(r => r.Order)
                 .IsRequired();

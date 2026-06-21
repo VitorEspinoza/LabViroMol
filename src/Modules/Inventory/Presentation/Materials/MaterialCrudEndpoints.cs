@@ -1,8 +1,8 @@
 using LabViroMol.Modules.Inventory.Application.Materials.Commands.Create;
 using LabViroMol.Modules.Inventory.Application.Materials.Commands.Update;
+using LabViroMol.Modules.Inventory.Application.Materials.Queries;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
-using LabViroMol.Modules.Inventory.Infrastructure.Materials;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -39,11 +39,11 @@ internal static class MaterialCrudEndpoints
         }).Accepts<CreateMaterialRequest>("application/json")
           .RequireAuthorization(Permissions.Inventory.MaterialsManage);
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, MaterialQueries queries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IMaterialQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))
             .RequireAuthorization(Permissions.Inventory.MaterialsView);
 
-        group.MapGet("/{id:guid}", async (Guid id, MaterialQueries queries) =>
+        group.MapGet("/{id:guid}", async (Guid id, IMaterialQueries queries) =>
         {
             var material = await queries.GetById(id);
 

@@ -9,8 +9,8 @@ using LabViroMol.Modules.Research.Application.Publications.Commands.AddResearche
 using LabViroMol.Modules.Research.Application.Publications.Commands.RemoveResearcher;
 using LabViroMol.Modules.Research.Application.Publications.Commands.ReorderResearchers;
 using LabViroMol.Modules.Research.Application.Publications.Commands.Update;
+using LabViroMol.Modules.Research.Application.Publications.Queries;
 using LabViroMol.Modules.Research.Application.Publications.ViewModels;
-using LabViroMol.Modules.Research.Infrastructure.Publications;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -43,11 +43,11 @@ internal static class PublicationEndpoints
             return result.ToHttpResult(id => Results.Created($"/api/research/publications/{id}", new { id }));
         }).RequireAuthorization(Permissions.Research.PublicationsManage);
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, PublicationQueries queries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IPublicationQueries queries) =>
             Results.Ok(await queries.GetAllAdminAsync(request)))
             .RequireAuthorization(Permissions.Research.PublicationsView);
 
-        group.MapGet("/{id:guid}", async (Guid id, PublicationQueries queries) =>
+        group.MapGet("/{id:guid}", async (Guid id, IPublicationQueries queries) =>
         {
             var publication = await queries.GetById(id);
             return publication is null
@@ -102,7 +102,7 @@ internal static class PublicationEndpoints
     {
         var group = app.MapGroup("/publications").WithTags("Publications-Public");
 
-        group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, PublicationQueries queries) =>
+        group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, IPublicationQueries queries) =>
             Results.Ok(await queries.GetAllInstitutionalAsync(request, language)));
     }
 }

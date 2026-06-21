@@ -1,4 +1,5 @@
 ﻿using LabViroMol.Modules.Shared.Infrastructure.Exceptions;
+using LabViroMol.Modules.Shared.Infrastructure.Observability;
 using LabViroMol.Modules.Shared.Infrastructure.Storage;
 using LabViroMol.Modules.Shared.Infrastructure.Translation;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +13,9 @@ public static class SharedModule
     {
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
-                
+        services.AddHttpContextAccessor();
+        services.AddSingleton<LabViroMolMetrics>();
+
         return services;
     }
     

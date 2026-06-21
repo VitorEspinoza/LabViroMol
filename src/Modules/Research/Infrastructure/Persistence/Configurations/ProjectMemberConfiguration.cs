@@ -1,4 +1,5 @@
 using LabViroMol.Modules.Research.Domain.Projects;
+using LabViroMol.Modules.Research.Domain.Researchers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,7 +16,13 @@ public class ProjectMemberConfiguration : IEntityTypeConfiguration<ProjectMember
 
         builder.Property(m => m.ResearcherId).IsRequired();
 
+        builder.HasOne<Researcher>()
+            .WithMany()
+            .HasForeignKey(m => m.ResearcherId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.Property(m => m.Role)
+            .HasConversion<string>()
             .HasMaxLength(50)
             .IsRequired();
 

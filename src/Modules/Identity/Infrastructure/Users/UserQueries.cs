@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Identity.Application.Users.Queries;
 using LabViroMol.Modules.Identity.Application.Users.ViewModels;
 using LabViroMol.Modules.Identity.Contracts;
 using LabViroMol.Modules.Identity.Domain.Users;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Identity.Infrastructure.Users;
 
-public class UserQueries(LabViroMolIdentityDbContext context, IResearcherProfileProvider researcherProfileProvider)
+public class UserQueries(LabViroMolIdentityDbContext context, IResearcherProfileProvider researcherProfileProvider) : IUserQueries
 {
     public async Task<PagedResponse<UserSummaryViewModel>> GetAllAsync(PagedRequest request)
     {

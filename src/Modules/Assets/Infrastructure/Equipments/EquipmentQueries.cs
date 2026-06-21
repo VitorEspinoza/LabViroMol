@@ -1,3 +1,4 @@
+using LabViroMol.Modules.Assets.Application.Equipments.Queries;
 using LabViroMol.Modules.Assets.Application.Equipments.ViewModels;
 using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Assets.Infrastructure.Equipments;
 
-public class EquipmentQueries
+public class EquipmentQueries : IEquipmentQueries
 {
     private readonly AssetsDbContext _context;
 

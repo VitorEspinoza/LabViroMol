@@ -1,8 +1,8 @@
 using LabViroMol.Modules.Inventory.Application.Kits.Commands.Create;
 using LabViroMol.Modules.Inventory.Application.Kits.Commands.Shared;
 using LabViroMol.Modules.Inventory.Application.Kits.Commands.Update;
+using LabViroMol.Modules.Inventory.Application.Kits.Queries;
 using LabViroMol.Modules.Inventory.Domain.Kits;
-using LabViroMol.Modules.Inventory.Infrastructure.Kits;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -28,11 +28,11 @@ internal static class KitEndpoints
             return result.ToHttpResult(Results.Created());
         }).RequireAuthorization(Permissions.Inventory.KitsManage);
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, KitQueries kitQueries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IKitQueries kitQueries) =>
             Results.Ok(await kitQueries.GetAllAsync(request)))
             .RequireAuthorization(Permissions.Inventory.KitsView);
 
-        group.MapGet("/{id:guid}", async (Guid id, KitQueries kitQueries) =>
+        group.MapGet("/{id:guid}", async (Guid id, IKitQueries kitQueries) =>
         {
             var kit = await kitQueries.GetKitById(id);
 

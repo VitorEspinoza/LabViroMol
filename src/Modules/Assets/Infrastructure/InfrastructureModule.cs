@@ -1,3 +1,5 @@
+using LabViroMol.Modules.Assets.Application.Equipments.Queries;
+using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Queries;
 using LabViroMol.Modules.Assets.Application.Shared;
 using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
@@ -25,8 +27,8 @@ public static class InfrastructureModule
 
     private static IServiceCollection AddQueries(this IServiceCollection services)
     {
-        services.AddScoped<EquipmentQueries>();
-        services.AddScoped<MaintenanceRequestQueries>();
+        services.AddScoped<IEquipmentQueries, EquipmentQueries>();
+        services.AddScoped<IMaintenanceRequestQueries, MaintenanceRequestQueries>();
         return services;
     }
 

@@ -35,7 +35,7 @@ public class UserUpdatedPersistentEventHandler(
 
             existing.UpdateName(updatedName);
 
-            var degreeLevel = DegreeLevel.FromString(notification.ResearchData.DegreeLevel);
+            var degreeLevel = Enum.Parse<DegreeLevel>(notification.ResearchData.DegreeLevel);
             var positionId = notification.ResearchData.PositionId.HasValue
                 ? PositionId.From(notification.ResearchData.PositionId.Value)
                 : existing.PositionId;
@@ -61,7 +61,7 @@ public class UserUpdatedPersistentEventHandler(
             throw new DomainException("Cargo inválido selecionado para usuário");
 
         var background = new AcademicBackground(
-            DegreeLevel.FromString(data.DegreeLevel),
+            Enum.Parse<DegreeLevel>(data.DegreeLevel),
             data.FieldOfStudy);
 
         var name = new ResearcherName(

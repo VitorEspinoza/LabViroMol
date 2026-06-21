@@ -33,7 +33,7 @@ internal class ProjectIntegrationService(IProjectRepository projectRepository) :
 
         if (project is null) return Result.InvalidReference("Projeto não encontrado");
 
-        if (!project.Status.In(ProjectStatus.InProgress, ProjectStatus.Planned))
+        if (project.Status is not (ProjectStatus.InProgress or ProjectStatus.Planned))
             return Result.BusinessRule("Apenas projetos planejados ou em andamento podem iniciar pedidos");
 
         return Result.Success();

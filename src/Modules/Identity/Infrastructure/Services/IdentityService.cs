@@ -247,7 +247,7 @@ public class IdentityService : IIdentityService
     {
         var existingRole = await _roleManager.FindByNameAsync(name);
         if (existingRole is not null)
-            return Result.BusinessRule("Perfil com este nome já existe.");
+            return Result.Conflict("Perfil com este nome já existe.");
 
         var role = new ApplicationRole { Name = name };
         var createResult = await _roleManager.CreateAsync(role);

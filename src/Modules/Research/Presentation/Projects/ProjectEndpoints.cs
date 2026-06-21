@@ -11,7 +11,7 @@ using LabViroMol.Modules.Research.Application.Projects.Commands.ChangeMemberRole
 using LabViroMol.Modules.Research.Application.Projects.Commands.TransferLeadership;
 using LabViroMol.Modules.Research.Application.Projects.Commands.Start;
 using LabViroMol.Modules.Research.Application.Projects.Commands.Update;
-using LabViroMol.Modules.Research.Infrastructure.Projects;
+using LabViroMol.Modules.Research.Application.Projects.Queries;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -38,11 +38,11 @@ internal static class ProjectEndpoints
             return result.ToHttpResult(id => Results.Created($"/api/research/projects/{id}", new { id }));
         }).RequireAuthorization(Permissions.Research.ProjectsManage);
 
-        group.MapGet("/", async ([AsParameters] PagedRequest request, ProjectQueries queries) =>
+        group.MapGet("/", async ([AsParameters] PagedRequest request, IProjectQueries queries) =>
             Results.Ok(await queries.GetAllAdminAsync(request)))
             .RequireAuthorization(Permissions.Research.ProjectsView);
 
-        group.MapGet("/{id:guid}", async (Guid id, ProjectQueries queries) =>
+        group.MapGet("/{id:guid}", async (Guid id, IProjectQueries queries) =>
         {
             var project = await queries.GetById(id);
             return project is null
@@ -111,7 +111,7 @@ internal static class ProjectEndpoints
     {
         var group = app.MapGroup("/projects").WithTags("Projects-Public");
 
-        group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, ProjectQueries queries) =>
+        group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, IProjectQueries queries) =>
             Results.Ok(await queries.GetAllInstitutionalAsync(request, language)));
     }
 }

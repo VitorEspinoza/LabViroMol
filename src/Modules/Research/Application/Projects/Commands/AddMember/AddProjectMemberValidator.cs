@@ -15,21 +15,9 @@ public class AddProjectMemberValidator : AbstractValidator<AddProjectMemberComma
             .NotEmpty()
             .WithMessage("Role é obrigatório.")
             .Must(BeAValidProjectRole)
-            .WithMessage(x => $"'{x.Role}' não é um ProjectRole válido. Opções: {string.Join(", ", ProjectRole.List().Select(r => r.Value))}");
+            .WithMessage(x => $"'{x.Role}' não é um ProjectRole válido. Opções: {string.Join(", ", Enum.GetNames<ProjectRole>())}");
     }
 
     private static bool BeAValidProjectRole(string role)
-    {
-        if (string.IsNullOrWhiteSpace(role)) return false;
-
-        try
-        {
-            ProjectRole.FromString(role);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
+        => !string.IsNullOrWhiteSpace(role) && Enum.TryParse<ProjectRole>(role, out _);
 }

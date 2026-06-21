@@ -18,7 +18,12 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.Property(o => o.Status)
             .HasConversion<string>();
-        
+
+        builder.HasOne<Material>()
+            .WithMany()
+            .HasForeignKey(o => o.MaterialId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         builder.OwnsOne(o => o.Processing, p =>
         {
             p.Property(x => x.Notes)
@@ -30,6 +35,9 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
             p.Property(x => x.ProcessedBy)
                 .HasColumnName("ProcessedByUser");
+
+            p.Property(x => x.ProcessedByName)
+                .HasColumnName("ProcessedByName");
         });
 
         builder.OwnsOne(o => o.Receipt, r =>
