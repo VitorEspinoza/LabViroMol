@@ -88,6 +88,14 @@ public class CreateScheduleCommandHandler : ICommandHandler<CreateScheduleComman
     
     private async Task PersistAsync(Schedule schedule, CancellationToken ct)
     {
+        _unitOfWork.AddPersistentEvent(new CreateScheduleEmailPersistentEvent(
+            schedule.Scheduler.Email,
+            schedule.Scheduler.Name,
+            schedule.ProjectTitle,
+            schedule.Scheduling.Date,
+            schedule.Scheduling.StartDateHour,
+            schedule.Scheduling.EndDateHour));
+        
         _unitOfWork.AddPersistentEvent(new CreateScheduleNotificationPersistentEvent(
             schedule.Id,
             schedule.Scheduler.Name,

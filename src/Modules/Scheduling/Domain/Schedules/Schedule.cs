@@ -22,7 +22,6 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
         Description = description;
         Status = ScheduleStatus.PENDING;
         Equipments = equipments;
-        AddEvent(new NewScheduleDomainEvent(this));
     }
 
     public Scheduler Scheduler { get; private set; }
@@ -60,7 +59,6 @@ public static Result<Schedule> Create(Scheduler scheduler, Scheduling scheduling
 
         Status = ScheduleStatus.SCHEDULED;
         ApprovedBy = userId;
-        AddEvent(new ApprovedScheduleDomainEvent(this));
         return Result.Success();
     }
 
@@ -74,7 +72,6 @@ public static Result<Schedule> Create(Scheduler scheduler, Scheduling scheduling
         Status = ScheduleStatus.REFUSED;
         RefusedBy = userId;
         RefuseJustification = justification;
-        AddEvent(new ReprovedScheduleDomainEvent(this, justification));
         return Result.Success();
     }
 
@@ -101,7 +98,6 @@ public static Result<Schedule> Create(Scheduler scheduler, Scheduling scheduling
         Status = ScheduleStatus.CANCELED;
         RefusedBy = userId;
         RefuseJustification =  justification;
-        AddEvent(new CanceledScheduleDomainEvent(this,  justification));
         return  Result.Success();
     }
     

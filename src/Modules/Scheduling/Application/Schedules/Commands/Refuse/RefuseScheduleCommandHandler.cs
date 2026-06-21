@@ -1,4 +1,5 @@
 ﻿using LabViroMol.Modules.Scheduling.Application.Shared;
+using LabViroMol.Modules.Scheduling.Contracts;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
@@ -30,6 +31,16 @@ public class RefuseScheduleCommandHandler : ICommandHandler<RefuseScheduleComman
             return Result.NotFound("Agendamento não encontrado.");
         
         schedule.Refuse(_currentUser.Id, command.Justification);
+        
+        _unitOfWork.AddPersistentEvent(new ReprovedSchedulePersistentEvent(
+            schedule.Scheduler.Email,
+            schedule.Scheduler.Name,
+            schedule.ProjectTitle,
+            schedule.AdvisorProfessor,
+            schedule.Scheduling.Date,
+            schedule.Scheduling.StartDateHour,
+            schedule.Scheduling.EndDateHour,
+            command.Justification));
         
         await _unitOfWork.CompleteAsync(ct);
         return Result.Success();
