@@ -108,6 +108,13 @@ public class DashboardSummaryEndpointTests : BaseIntegrationTest
     public async Task ShouldReturnSchedulingCountsAndUpcomingSchedules()
     {
         AuthenticateAs([Permissions.Scheduling.SchedulesView]);
+
+        // Calcula as datas antes de sedar para derivar o expected count dinamicamente.
+        // Se o teste rodar nos últimos dias úteis do mês, businessDaysFromToday: 3
+        // pode cair no mês seguinte — approvedSchedulesThisMonthCount só conta o mês atual.
+        var thisMonth = DateOnly.FromDateTime(DateTime.Today).Month;
+        var expectedApprovedThisMonth = new[] { 1, 2, 3 }.Count(n => NextBusinessDate(n).Month == thisMonth);
+
         await SeedScheduledAsync(businessDaysFromToday: 1, schedulerName: "Primeiro");
         await SeedScheduledAsync(businessDaysFromToday: 3, schedulerName: "Terceiro");
         await SeedScheduledAsync(businessDaysFromToday: 2, schedulerName: "Segundo");
@@ -120,7 +127,7 @@ public class DashboardSummaryEndpointTests : BaseIntegrationTest
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal(1, scheduling.GetProperty("pendingSchedulesCount").GetInt32());
-        Assert.Equal(3, scheduling.GetProperty("approvedSchedulesThisMonthCount").GetInt32());
+        Assert.Equal(expectedApprovedThisMonth, scheduling.GetProperty("approvedSchedulesThisMonthCount").GetInt32());
         Assert.Equal("Primeiro", upcoming[0].GetProperty("schedulerName").GetString());
         Assert.Equal("Segundo", upcoming[1].GetProperty("schedulerName").GetString());
         Assert.Equal("Terceiro", upcoming[2].GetProperty("schedulerName").GetString());
