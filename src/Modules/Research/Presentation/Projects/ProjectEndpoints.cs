@@ -12,6 +12,7 @@ using LabViroMol.Modules.Research.Application.Projects.Commands.TransferLeadersh
 using LabViroMol.Modules.Research.Application.Projects.Commands.Start;
 using LabViroMol.Modules.Research.Application.Projects.Commands.Update;
 using LabViroMol.Modules.Research.Application.Projects.Queries;
+using LabViroMol.Modules.Research.Application.Projects.ViewModels;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -40,6 +41,7 @@ internal static class ProjectEndpoints
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IProjectQueries queries) =>
             Results.Ok(await queries.GetAllAdminAsync(request)))
+            .Produces<PagedResponse<ProjectAdminSummaryViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Research.ProjectsView);
 
         group.MapGet("/{id:guid}", async (Guid id, IProjectQueries queries) =>
@@ -48,7 +50,9 @@ internal static class ProjectEndpoints
             return project is null
                 ? Results.NotFound()
                 : Results.Ok(project);
-        }).RequireAuthorization(Permissions.Research.ProjectsView);
+        }).Produces<ProjectViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization(Permissions.Research.ProjectsView);
 
         group.MapPut("/{id:guid}", async (Guid id, UpdateProjectRequest request, IMediator mediator, CancellationToken ct) =>
         {
@@ -112,6 +116,7 @@ internal static class ProjectEndpoints
         var group = app.MapGroup("/projects").WithTags("Projects-Public");
 
         group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, IProjectQueries queries) =>
-            Results.Ok(await queries.GetAllInstitutionalAsync(request, language)));
+            Results.Ok(await queries.GetAllInstitutionalAsync(request, language)))
+            .Produces<PagedResponse<PublicProjectViewModel>>(StatusCodes.Status200OK);
     }
 }

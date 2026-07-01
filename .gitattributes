@@ -4,6 +4,13 @@
 * text=auto
 
 ###############################################################################
+# Force LF line endings for shell scripts consumed by Linux containers
+# (Dockerfile.migrate roda esses scripts dentro de uma imagem Linux; CRLF
+# quebraria o shebang/interpretação no shell do container).
+###############################################################################
+*.sh text eol=lf
+
+###############################################################################
 # Set default behavior for command prompt diff.
 #
 # This is need for earlier builds of msysgit that does not have it on by

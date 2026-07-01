@@ -1,0 +1,93 @@
+name: Dynamic (DAST + Perf Smoke)
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "infra/**"
+
+concurrency:
+  group: dynamic-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  COMPOSE_FILES: "-f docker-compose.yaml -f docker-compose.ci.yaml"
+  BASE_URL: "http://localhost:8080"
+  JWT_KEY: "ci-fake-secret-key-must-be-at-least-32-characters-long"
+  JWT_ISSUER: "LabViroMol"
+  JWT_AUDIENCE: "LabViroMol"
+  POSTGRES_USER: "labviromol_ci"
+  POSTGRES_PASSWORD: "labviromol_ci"
+  POSTGRES_DB: "LabViroMol_CI"
+  DB_CONNECTION_STRING: "Host=postgres;Port=5432;Database=LabViroMol_CI;Username=labviromol_ci;Password=labviromol_ci"
+
+jobs:
+  dynamic-dast-perf:
+    name: Ephemeral stack -> NBomber smoke -> ZAP baseline
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: "**/*.csproj"
+
+      - name: Restore + build LoadTests project
+        run: dotnet build tests/LoadTests/LabViroMol.LoadTests.csproj -c Release
+
+      - name: Subir stack efêmera (postgres + migrate + api)
+        run: |
+          docker compose ${{ env.COMPOSE_FILES }} up -d --wait --wait-timeout 180
+
+      - name: Smoke check /health/ready
+        run: |
+          curl -fsS "${{ env.BASE_URL }}/health/ready" | tee /dev/stderr
+
+      - name: Seed (perfil ci-smoke)
+        working-directory: tests/LoadTests
+        env:
+          ConnectionStrings__LabViroMol: ${{ env.DB_CONNECTION_STRING }}
+        run: >
+          dotnet run -c Release --no-build --project LabViroMol.LoadTests.csproj --
+          seed --profile ci-smoke --baseUrl ${{ env.BASE_URL }}
+
+      - name: NBomber smoke (perfil ci-smoke, gate de thresholds via exit code)
+        working-directory: tests/LoadTests
+        env:
+          ConnectionStrings__LabViroMol: ${{ env.DB_CONNECTION_STRING }}
+        run: >
+          dotnet run -c Release --no-build --project LabViroMol.LoadTests.csproj --
+          --profile ci-smoke --campaign ci --scenario full --baseUrl ${{ env.BASE_URL }}
+
+      - name: Publicar relatório NBomber (artefato)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nbomber-ci-smoke-report
+          path: tests/LoadTests/bin/Release/net10.0/reports/ci/ci-smoke
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: ZAP baseline (DAST passivo)
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+          target: ${{ env.BASE_URL }}
+          rules_file_name: ".zap/rules.tsv"
+          cmd_options: "-a"
+          fail_action: true
+          artifact_name: "zap-baseline-report"
+
+      - name: Teardown stack efêmera
+        if: always()
+        run: docker compose ${{ env.COMPOSE_FILES }} down -v

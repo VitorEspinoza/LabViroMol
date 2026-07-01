@@ -1,4 +1,5 @@
 using LabViroMol.Modules.AdminBff.Application.Dashboard.Queries;
+using LabViroMol.Modules.AdminBff.Application.Dashboard.ViewModels;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -24,6 +25,8 @@ internal static class DashboardEndpoints
                    summary.Assets is null
                 ? Results.Forbid()
                 : Results.Ok(summary);
-        }).RequireAuthorization();
+        }).Produces<AdminDashboardSummaryViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status403Forbidden)
+          .RequireAuthorization();
     }
 }

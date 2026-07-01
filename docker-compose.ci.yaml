@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-labviromol_ci}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-labviromol_ci}
+      POSTGRES_DB: ${POSTGRES_DB:-LabViroMol_CI}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-labviromol_ci} -d ${POSTGRES_DB:-LabViroMol_CI}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrate
+    environment:
+      ConnectionStrings__LabViroMol: ${DB_CONNECTION_STRING:-Host=postgres;Port=5432;Database=LabViroMol_CI;Username=labviromol_ci;Password=labviromol_ci}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: LoadTest
+      ConnectionStrings__LabViroMol: ${DB_CONNECTION_STRING:-Host=postgres;Port=5432;Database=LabViroMol_CI;Username=labviromol_ci;Password=labviromol_ci}
+      Jwt__Key: ${JWT_KEY:-ci-fake-secret-key-must-be-at-least-32-characters-long}
+      Jwt__Issuer: ${JWT_ISSUER:-LabViroMol}
+      Jwt__Audience: ${JWT_AUDIENCE:-LabViroMol}
+      LoadTest__UseNoOpTranslator: "true"
+      LoadTest__UseNoOpEmail: "true"
+      Frontend__BaseUrl: ${FRONTEND_BASE_URL:-http://localhost:4200}
+      Cors__AllowedOrigins__0: ${CORS_ORIGIN:-http://localhost:4200}
+    ports:
+      - "8080:8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - >-
+          bash -c "
+            exec 3<>/dev/tcp/127.0.0.1/8080 &&
+            printf 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 &&
+            head -n 1 <&3 | grep -q ' 200 '
+          "
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s

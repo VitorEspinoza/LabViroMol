@@ -45,6 +45,7 @@ internal static class PublicationEndpoints
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IPublicationQueries queries) =>
             Results.Ok(await queries.GetAllAdminAsync(request)))
+            .Produces<PagedResponse<PublicationAdminSummaryViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Research.PublicationsView);
 
         group.MapGet("/{id:guid}", async (Guid id, IPublicationQueries queries) =>
@@ -53,7 +54,9 @@ internal static class PublicationEndpoints
             return publication is null
                 ? Results.NotFound()
                 : Results.Ok(publication);
-        }).RequireAuthorization(Permissions.Research.PublicationsView);
+        }).Produces<PublicationViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization(Permissions.Research.PublicationsView);
 
         group.MapPut("/{id:guid}", async (Guid id, UpdatePublicationRequest request, IMediator mediator, CancellationToken ct) =>
         {
@@ -103,6 +106,7 @@ internal static class PublicationEndpoints
         var group = app.MapGroup("/publications").WithTags("Publications-Public");
 
         group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, IPublicationQueries queries) =>
-            Results.Ok(await queries.GetAllInstitutionalAsync(request, language)));
+            Results.Ok(await queries.GetAllInstitutionalAsync(request, language)))
+            .Produces<PagedResponse<PublicationSummaryViewModel>>(StatusCodes.Status200OK);
     }
 }

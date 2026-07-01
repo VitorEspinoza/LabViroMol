@@ -16,7 +16,7 @@ public static class NotifyModule
         services
             .AddApplication()
             .AddInfrastructure(configuration);
-        
+
         return services;
     }
 
@@ -24,7 +24,7 @@ public static class NotifyModule
     {
         var group = app.MapGroup("/api/notify")
             .WithTags("Notify");
-        
+
         group.MapNotificationEndpoints();
         return app;
     }
