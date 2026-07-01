@@ -13,7 +13,7 @@ internal sealed class ProjectRepository(ResearchDbContext context) : IProjectRep
 
     public async Task AddAsync(Project project, CancellationToken ct)
         => await context.Projects.AddAsync(project, ct);
-    
+
     public async Task<List<Project>> GetMissingEnglishTranslationAsync(int limit,
         CancellationToken ct)
     {

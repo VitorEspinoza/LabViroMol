@@ -63,9 +63,9 @@ public sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand
             data.LastName,
             command.RoleIds,
             data.ResearchData));
-        
+
         var (subject, body) = PasswordEmailTemplates.BuildWelcomeEmail(data.FirstName, resetLink);
-        
+
         _unitOfWork.AddPersistentEvent(new ResetPasswordPersistentEvent(
             command.Email,
             subject,

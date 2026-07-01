@@ -13,7 +13,7 @@ public sealed class ResetPasswordEmailHandler : INotificationHandler<ResetPasswo
     {
         _emailSender = emailSender;
     }
-    
+
     public async ValueTask Handle(ResetPasswordPersistentEvent notification, CancellationToken ct)
     {
         await _emailSender.SendEmail(notification.Email, notification.Subject, notification.Body, ct);

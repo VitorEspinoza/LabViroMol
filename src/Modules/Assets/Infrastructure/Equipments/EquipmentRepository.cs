@@ -7,12 +7,12 @@ namespace LabViroMol.Modules.Assets.Infrastructure.Equipments;
 internal sealed class EquipmentRepository : IEquipmentRepository
 {
     private readonly AssetsDbContext _context;
-    
+
     public EquipmentRepository(AssetsDbContext context)
     {
         _context = context;
     }
-    
+
     public async Task<Equipment?> GetByCodeAsync(string code, CancellationToken ct)
     {
         return await _context.Equipments

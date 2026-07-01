@@ -61,7 +61,7 @@ public sealed class ApproveScheduleEmailHandler : INotificationHandler<ApproveSc
                         Laboratório de Virologia Molecular - Hospital de Curitiba UFPR
                     </p>
                     """;
-        
+
         return body;
     }
 }

@@ -10,7 +10,7 @@ public sealed class OrderReceivedEventHandler : INotificationHandler<OrderReceiv
 {
     private readonly IMaterialRepository _materialRepository;
     private readonly IInventoryUnitOfWork _unitOfWork;
-    
+
     public OrderReceivedEventHandler(IMaterialRepository materialRepository, IInventoryUnitOfWork unitOfWork)
     {
         _materialRepository = materialRepository;

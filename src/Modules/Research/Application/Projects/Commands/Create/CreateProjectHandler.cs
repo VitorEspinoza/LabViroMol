@@ -33,9 +33,9 @@ public sealed class CreateProjectHandler(
         var project = result.Data!;
 
         await projectRepository.AddAsync(project, ct);
-        
+
         unitOfWork.AddPersistentEvent(new ProjectTranslationPersistentEvent());
-        
+
         await unitOfWork.CompleteAsync(ct);
 
         return Result<Guid>.Success(result.Data!.Id);

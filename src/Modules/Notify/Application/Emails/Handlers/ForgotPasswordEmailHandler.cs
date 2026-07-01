@@ -13,7 +13,7 @@ public sealed class ForgotPasswordEmailHandler : INotificationHandler<ForgotPass
     {
         _emailSender = emailSender;
     }
-    
+
     public async ValueTask Handle(ForgotPasswordPersistentEvent notification, CancellationToken ct)
     {
         await _emailSender.SendEmail(notification.Email, notification.Subject, notification.Body, ct);

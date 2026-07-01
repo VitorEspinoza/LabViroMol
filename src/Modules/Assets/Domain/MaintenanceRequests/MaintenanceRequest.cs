@@ -51,7 +51,7 @@ public class MaintenanceRequest : AggregateRoot<MaintenanceRequestId>, IFullAudi
 
     public Result Cancel()
     {
-        if(Status == MaintenanceRequestStatus.Done)
+        if (Status == MaintenanceRequestStatus.Done)
             return Result.BusinessRule("Não é possível cancelar solicitações finalizadas.");
 
         Status = MaintenanceRequestStatus.Cancelled;

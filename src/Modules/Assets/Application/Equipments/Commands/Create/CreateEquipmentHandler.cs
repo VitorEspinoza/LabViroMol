@@ -23,7 +23,7 @@ public sealed class CreateEquipmentHandler : ICommandHandler<CreateEquipmentComm
         _unitOfWork = unitOfWork;
         _scopeFactory = scopeFactory;
     }
-    
+
     public async ValueTask<Result> Handle(CreateEquipmentCommand command, CancellationToken ct)
     {
         var existingCode = await _equipmentRepository.GetByCodeAsync(command.Code, ct);
@@ -45,11 +45,11 @@ public sealed class CreateEquipmentHandler : ICommandHandler<CreateEquipmentComm
         var equipment = result.Data!;
 
         await _equipmentRepository.AddAsync(equipment, ct);
-        
+
         _unitOfWork.AddPersistentEvent(new EquipmentTranslationPersistentEvent());
-        
+
         await _unitOfWork.CompleteAsync(ct);
-            
+
 
         return Result.Success();
     }

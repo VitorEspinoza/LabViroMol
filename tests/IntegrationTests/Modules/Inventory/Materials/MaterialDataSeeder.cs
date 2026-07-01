@@ -16,10 +16,10 @@ public static class MaterialDataSeeder
 
         var material = Material.Create("Material Teste", "Sala A",
             (Quantity)10m, (Quantity)stock, Unit.Gram, type).Data!;
-            
+
         await dbContext.Materials.AddAsync(material);
         await dbContext.SaveChangesAsync();
-        
+
         return material.Id.Value;
     }
 }

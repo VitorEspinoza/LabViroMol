@@ -10,7 +10,7 @@ public sealed class ProjectTranslationHandler : INotificationHandler<ProjectTran
     private readonly IProjectRepository _repository;
     private readonly ITextTranslator _translator;
     private readonly IResearchUnitOfWork _unitOfWork;
-    
+
     public ProjectTranslationHandler(
         IProjectRepository repository,
         ITextTranslator translator,
@@ -20,11 +20,11 @@ public sealed class ProjectTranslationHandler : INotificationHandler<ProjectTran
         _translator = translator;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async ValueTask Handle(ProjectTranslationPersistentEvent notification, CancellationToken ct)
     {
         var projects =
-            await _repository.GetMissingEnglishTranslationAsync(5,ct);
+            await _repository.GetMissingEnglishTranslationAsync(5, ct);
 
         foreach (var project in projects)
         {
@@ -45,7 +45,7 @@ public sealed class ProjectTranslationHandler : INotificationHandler<ProjectTran
                 englishTitle,
                 englishDescription);
         }
-        
+
         await _unitOfWork.CompleteAsync(ct);
     }
 }

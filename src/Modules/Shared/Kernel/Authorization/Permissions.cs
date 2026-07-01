@@ -6,7 +6,7 @@ public static class Permissions
     public const string Manage = "Manage";
 
     public static class Identity
-    { 
+    {
         public const string UsersManage = $"Identity.Users.{Manage}";
         public const string UsersView = $"Identity.Users.{View}";
 

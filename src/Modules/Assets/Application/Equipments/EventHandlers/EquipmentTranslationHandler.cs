@@ -21,11 +21,11 @@ public sealed class EquipmentTranslationHandler : INotificationHandler<Equipment
         _translator = translator;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async ValueTask Handle(EquipmentTranslationPersistentEvent notification, CancellationToken ct)
     {
         var equipments =
-            await _repository.GetMissingEnglishTranslationAsync(5,ct);
+            await _repository.GetMissingEnglishTranslationAsync(5, ct);
 
         foreach (var equipment in equipments)
         {

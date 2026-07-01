@@ -11,12 +11,12 @@ internal sealed class PositionRepository(ResearchDbContext context) : IPositionR
     public async Task<Position?> GetByIdAsync(PositionId id, CancellationToken ct)
         => await context.Positions.FirstOrDefaultAsync(p => p.Id == id, ct);
 
-    public async Task AddAsync(Position position, CancellationToken ct) 
+    public async Task AddAsync(Position position, CancellationToken ct)
         => await context.Positions.AddAsync(position, ct);
 
     public void Delete(Position position)
         => context.Positions.Remove(position);
-    
+
     public async Task<List<Position>> GetMissingEnglishTranslationAsync(int limit,
         CancellationToken ct)
     {

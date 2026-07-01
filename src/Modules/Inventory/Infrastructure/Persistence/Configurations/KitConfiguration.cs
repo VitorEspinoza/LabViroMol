@@ -14,7 +14,7 @@ public class KitConfiguration : IEntityTypeConfiguration<Kit>
         builder.HasKey(k => k.Id);
         builder.Property(k => k.Id)
             .ValueGeneratedNever();
-        
+
         builder.Property(k => k.Name).IsRequired().HasMaxLength(200);
         builder.Property(k => k.Description).HasMaxLength(1000);
 
@@ -22,7 +22,7 @@ public class KitConfiguration : IEntityTypeConfiguration<Kit>
         {
             kitItemBuilder.ToTable("KitItems");
             kitItemBuilder.WithOwner().HasForeignKey("KitId");
-            
+
             kitItemBuilder.HasKey("KitId", nameof(KitItem.MaterialId));
             kitItemBuilder.Property(i => i.Quantity)
                 .HasPrecision(18, 4);
@@ -32,7 +32,7 @@ public class KitConfiguration : IEntityTypeConfiguration<Kit>
                 .HasForeignKey(i => i.MaterialId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
-        
+
         builder.Metadata.FindNavigation(nameof(Kit.Materials))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
 

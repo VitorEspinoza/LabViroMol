@@ -13,7 +13,7 @@ public sealed class CreateScheduleEmailHandler : INotificationHandler<CreateSche
     {
         _emailSender = emailSender;
     }
-    
+
     public async ValueTask Handle(
         CreateScheduleEmailPersistentEvent notification,
         CancellationToken ct)

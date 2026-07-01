@@ -155,14 +155,14 @@ public class Project : AggregateRoot<ProjectId>, ICreationAuditable, IModificati
         member.RemoveFromProject();
         return Result.Success();
     }
-    
+
     public void AddTranslation(string languageCode, string title, string description)
     {
         if (string.IsNullOrWhiteSpace(languageCode)) return;
-        
+
         Translations[languageCode.ToLower()] = new ProjectTranslation(title, description);
     }
-    
+
     public string GetTitle(string? language)
     {
         if (language == "en"

@@ -12,7 +12,7 @@ internal sealed class ScheduleRepository : IScheduleRepository
     {
         _context = context;
     }
-    
+
     public async Task<Schedule?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _context.Schedules

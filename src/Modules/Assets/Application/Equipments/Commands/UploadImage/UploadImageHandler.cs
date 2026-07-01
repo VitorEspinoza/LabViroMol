@@ -25,7 +25,7 @@ public sealed class UploadImageHandler : ICommandHandler<UploadImageCommand, Res
         _storage = storage;
         _storageSettings = storageSettings.Value;
     }
-    
+
     public async ValueTask<Result> Handle(
         UploadImageCommand command,
         CancellationToken ct)

@@ -23,8 +23,8 @@ internal sealed class MaintenanceRequestQueries : IMaintenanceRequestQueries
         var pageNumber = Math.Max(request.PageNumber, 1);
 
         var query = from req in _context.MaintenanceRequests
-            join equipment in _context.Equipments on req.EquipmentId equals equipment.Id
-            select new { Request = req, EquipmentName = equipment.Name };
+                    join equipment in _context.Equipments on req.EquipmentId equals equipment.Id
+                    select new { Request = req, EquipmentName = equipment.Name };
 
         query = query.WhereSearch(request.Search, x => x.Request.Description, x => x.Request.ProblemDescription, x => x.EquipmentName);
 

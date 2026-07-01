@@ -11,19 +11,19 @@ public class OrderTests
         public void Create_ShouldInitializeWithCorrectProperties()
         {
             // Arrange
-            var materialId  = Fakers.AnyMaterialId();
-            var projectId   = Fakers.AnyProjectId();
-            var quantity    = Fakers.QuantityOf(25m);
+            var materialId = Fakers.AnyMaterialId();
+            var projectId = Fakers.AnyProjectId();
+            var quantity = Fakers.QuantityOf(25m);
 
             // Act
             var order = Fakers.CreateOrder(materialId, projectId, quantity, "Pedido de teste");
 
             // Assert
             Assert.Equal(OrderStatus.Pending, order.Status);
-            Assert.Equal(materialId,          order.MaterialId);
-            Assert.Equal(projectId,           order.ProjectId);
-            Assert.Equal(quantity,            order.RequestedQuantity);
-            Assert.Equal("Pedido de teste",   order.Description);
+            Assert.Equal(materialId, order.MaterialId);
+            Assert.Equal(projectId, order.ProjectId);
+            Assert.Equal(quantity, order.RequestedQuantity);
+            Assert.Equal("Pedido de teste", order.Description);
         }
     }
 
@@ -34,16 +34,16 @@ public class OrderTests
         {
             // Arrange
             var newProject = Fakers.AnyProjectId();
-            var newQty     = Fakers.QuantityOf(99m);
-            var order      = Fakers.CreateOrder();
+            var newQty = Fakers.QuantityOf(99m);
+            var order = Fakers.CreateOrder();
 
             // Act
             var result = order.FixDetails(newProject, newQty, "nova descrição");
 
             // Assert
             Assert.True(result.IsSuccess);
-            Assert.Equal(newProject,      order.ProjectId);
-            Assert.Equal(newQty,          order.RequestedQuantity);
+            Assert.Equal(newProject, order.ProjectId);
+            Assert.Equal(newQty, order.RequestedQuantity);
             Assert.Equal("nova descrição", order.Description);
         }
 
@@ -93,7 +93,7 @@ public class OrderTests
             // Arrange
             var userId = Fakers.AnyUserId();
             var before = DateTimeOffset.UtcNow;
-            var order  = Fakers.CreateOrder();
+            var order = Fakers.CreateOrder();
 
             // Act
             var result = order.Process(userId, "Nome Processador", null);
@@ -149,11 +149,11 @@ public class OrderTests
         public void Receive_WhenProcessing_ShouldCompleteOrderAndRaiseEvent()
         {
             // Arrange
-            var userId     = Fakers.AnyUserId();
+            var userId = Fakers.AnyUserId();
             var materialId = Fakers.AnyMaterialId();
-            var quantity   = Fakers.QuantityOf(50m);
-            var before     = DateTimeOffset.UtcNow;
-            var order      = Fakers.CreateOrder(materialId: materialId, quantity: quantity);
+            var quantity = Fakers.QuantityOf(50m);
+            var before = DateTimeOffset.UtcNow;
+            var order = Fakers.CreateOrder(materialId: materialId, quantity: quantity);
             order.Process(Fakers.AnyUserId(), "Nome", null);
 
             // Act
@@ -166,10 +166,10 @@ public class OrderTests
             Assert.True(order.Receipt!.ReceivedAt >= before);
 
             var evt = order.Events.OfType<OrderReceivedDomainEvent>().Single();
-            Assert.Equal(order.Id,         evt.OrderId);
-            Assert.Equal(materialId,       evt.MaterialId);
+            Assert.Equal(order.Id, evt.OrderId);
+            Assert.Equal(materialId, evt.MaterialId);
             Assert.Equal((decimal)quantity, evt.QuantityReceived);
-            Assert.Equal(userId,           evt.ReceivedBy);
+            Assert.Equal(userId, evt.ReceivedBy);
         }
 
         [Fact]
@@ -215,7 +215,7 @@ public class OrderTests
         public void Cancel_WhenPending_ShouldMarkAsCanceled()
         {
             // Arrange
-            var order  = Fakers.CreateOrder();
+            var order = Fakers.CreateOrder();
 
             // Act
             var result = order.Cancel();

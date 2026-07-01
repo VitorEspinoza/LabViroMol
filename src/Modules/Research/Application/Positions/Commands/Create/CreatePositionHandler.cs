@@ -17,7 +17,7 @@ public sealed class CreatePositionHandler : ICommandHandler<CreatePositionComman
         _repository = repository;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async ValueTask<Result> Handle(CreatePositionCommand command, CancellationToken ct)
     {
         var result = Position.Create(command.Name, command.Description);
@@ -26,9 +26,9 @@ public sealed class CreatePositionHandler : ICommandHandler<CreatePositionComman
         var position = result.Data!;
 
         await _repository.AddAsync(position, ct);
-        
+
         _unitOfWork.AddPersistentEvent(new PositionTranslationPersistentEvent());
-        
+
         await _unitOfWork.CompleteAsync(ct);
 
         return Result.Success();

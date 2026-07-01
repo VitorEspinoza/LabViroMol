@@ -31,8 +31,8 @@ public sealed class AddStockMaterialExceptionHandler : ICommandHandler<AddStockM
             return Result.NotFound("Material não encontrado.");
 
         material.AddStockException(exceptionCommand.Quantity, exceptionCommand.Reason, _currentUser.Id);
-        
-        
+
+
         await _unitOfWork.CompleteAsync(ct);
         return Result.Success();
     }

@@ -28,9 +28,9 @@ public sealed class CreatePublicationHandler(
         var publication = result.Data!;
 
         await repository.AddAsync(publication, ct);
-        
+
         unitOfWork.AddPersistentEvent(new PublicationTranslationPersistentEvent());
-        
+
         await unitOfWork.CompleteAsync(ct);
 
         return Result<Guid>.Success(result.Data!.Id);

@@ -53,7 +53,7 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
     {
         var valid = EnsureCanBeApprovedOrRefused();
 
-        if(valid.IsFailure)
+        if (valid.IsFailure)
             return valid;
 
         Status = ScheduleStatus.SCHEDULED;
@@ -65,7 +65,7 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
     {
         var valid = EnsureCanBeApprovedOrRefused();
 
-        if(valid.IsFailure)
+        if (valid.IsFailure)
             return valid;
 
         Status = ScheduleStatus.REFUSED;
@@ -95,8 +95,8 @@ public class Schedule : AggregateRoot<ScheduleId>, IModificationAuditable
 
         Status = ScheduleStatus.CANCELED;
         RefusedBy = userId;
-        RefuseJustification =  justification;
-        return  Result.Success();
+        RefuseJustification = justification;
+        return Result.Success();
     }
 
     public void AttachTermUrl(string url)

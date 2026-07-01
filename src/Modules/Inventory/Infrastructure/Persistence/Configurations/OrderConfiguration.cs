@@ -29,7 +29,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             p.Property(x => x.Notes)
                 .HasColumnName("ProcessingNotes")
                 .HasMaxLength(1000);
-            
+
             p.Property(x => x.ProcessedAt)
                 .HasColumnName("ProcessingDate");
 
@@ -45,21 +45,21 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             r.Property(x => x.ReceivedAt)
                 .HasColumnName("ReceivedAt")
                 .IsRequired();
-            
+
             r.Property(x => x.Notes)
                 .HasColumnName("ReceiptNotes")
                 .HasMaxLength(1000);
-            
+
             r.Property(x => x.Quantity)
                 .HasColumnName("ReceivedQuantity")
                 .HasPrecision(18, 4);
-            
+
             r.Property(x => x.ReceivedByName)
                 .HasColumnName("ReceivedByName");
-            
+
             r.Property(x => x.ReceivedBy)
                 .HasColumnName("ReceivedByUserId");
-            
+
         });
     }
 }

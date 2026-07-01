@@ -16,7 +16,7 @@ internal sealed class PublicationRepository(ResearchDbContext context) : IPublic
 
     public void Delete(Publication publication)
         => context.Publications.Remove(publication);
-    
+
     public async Task<List<Publication>> GetMissingEnglishTranslationAsync(int limit,
         CancellationToken ct)
     {

@@ -11,11 +11,8 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
     private const string Primary = "#14532D";
     private const string PrimarySoft = "#DCFCE7";
     private const string Accent = "#0F766E";
-    private const string AccentSoft = "#CCFBF1";
     private const string Warning = "#B45309";
-    private const string WarningSoft = "#FEF3C7";
     private const string Danger = "#B91C1C";
-    private const string DangerSoft = "#FEE2E2";
     private const string Ink = "#111827";
     private const string Muted = "#6B7280";
     private const string Line = "#E5E7EB";

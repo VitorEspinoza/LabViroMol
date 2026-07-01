@@ -19,7 +19,7 @@ public static class SharedModule
 
         return services;
     }
-    
+
     public static IServiceCollection AddStorages(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -39,7 +39,7 @@ public static class SharedModule
     {
         services.Configure<TranslationOptions>(
             configuration.GetSection("Translation"));
-        
+
         services.AddHostedService<TranslationBackgroundWorker>();
 
         if (configuration.GetValue("LoadTest:UseNoOpTranslator", false))

@@ -36,7 +36,7 @@ public sealed class ConsumeMaterialForProjectCommandHandler : ICommandHandler<Co
         var isEligibleResult = await _projectChecker.IsEligibleForConsumptionAsync(ProjectId.From(command.ProjectId), _currentUser.Id, ct);
         if (isEligibleResult.IsFailure)
             return isEligibleResult;
-        
+
         var result = material.ConsumeForProject(command.ProjectId, command.Quantity, _currentUser.Id);
 
         if (result.IsFailure)

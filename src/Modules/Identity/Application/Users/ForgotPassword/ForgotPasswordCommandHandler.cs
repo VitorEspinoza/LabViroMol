@@ -27,14 +27,14 @@ public sealed class ForgotPasswordCommandHandler : ICommandHandler<ForgotPasswor
         var (resetLink, firstName) = result.Data!;
 
         var (subject, body) = PasswordEmailTemplates.BuildPasswordResetEmail(firstName, resetLink);
-        
+
         _unitOfWork.AddPersistentEvent(new ForgotPasswordPersistentEvent(
             command.Email,
             subject,
             body));
-        
+
         await _unitOfWork.CompleteAsync(ct);
-        
+
         return Result.Success();
     }
 }

@@ -10,7 +10,7 @@ public sealed class PositionTranslationHandler : INotificationHandler<PositionTr
     private readonly IPositionRepository _repository;
     private readonly ITextTranslator _translator;
     private readonly IResearchUnitOfWork _unitOfWork;
-    
+
     public PositionTranslationHandler(
         IPositionRepository repository,
         ITextTranslator translator,
@@ -20,11 +20,11 @@ public sealed class PositionTranslationHandler : INotificationHandler<PositionTr
         _translator = translator;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async ValueTask Handle(PositionTranslationPersistentEvent notification, CancellationToken ct)
     {
         var positions =
-            await _repository.GetMissingEnglishTranslationAsync(5,ct);
+            await _repository.GetMissingEnglishTranslationAsync(5, ct);
 
         foreach (var position in positions)
         {
@@ -45,7 +45,7 @@ public sealed class PositionTranslationHandler : INotificationHandler<PositionTr
                 englishName,
                 englishDescription);
         }
-        
+
         await _unitOfWork.CompleteAsync(ct);
     }
 }

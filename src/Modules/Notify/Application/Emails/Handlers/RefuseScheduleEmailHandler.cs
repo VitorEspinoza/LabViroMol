@@ -66,7 +66,7 @@ public sealed class RefuseScheduleEmailHandler : INotificationHandler<ReprovedSc
                         Laboratório de Virologia Molecular - Hospital de Curitiba UFPR
                     </p>
                     """;
-        
+
         return body;
     }
 }

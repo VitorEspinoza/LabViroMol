@@ -14,7 +14,7 @@ public sealed class CreateMaintenanceHandler(
     public async ValueTask<Result> Handle(CreateMaintenanceCommand command, CancellationToken ct)
     {
         var equipment = await equipmentRepository.GetByIdAsync(command.EquipmentId, ct);
-        if(equipment is null)
+        if (equipment is null)
             return Result.NotFound("Equipamento não encontrado.");
 
         var openMaintenanceRequestForEquipment = await maintenanceRequestRepository.GetAllActiveByEquipmentIdAsync(command.EquipmentId, ct);

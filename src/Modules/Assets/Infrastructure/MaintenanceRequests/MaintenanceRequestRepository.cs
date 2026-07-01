@@ -14,19 +14,19 @@ internal sealed class MaintenanceRequestRepository : IMaintenanceRequestReposito
     {
         _context = context;
     }
-    
+
     public async Task AddAsync(MaintenanceRequest maintenanceRequest, CancellationToken cancellationToken)
     {
         await _context.MaintenanceRequests.AddAsync(maintenanceRequest, cancellationToken);
     }
 
     public async Task<List<MaintenanceRequest>> GetAllActiveByEquipmentIdAsync(
-        Guid equipmentId, 
+        Guid equipmentId,
         CancellationToken cancellationToken)
     {
         return await _context.MaintenanceRequests
-            .Where(req => req.EquipmentId == equipmentId 
-                          && (req.Status == MaintenanceRequestStatus.Requested 
+            .Where(req => req.EquipmentId == equipmentId
+                          && (req.Status == MaintenanceRequestStatus.Requested
                               || req.Status == MaintenanceRequestStatus.InProgress))
             .ToListAsync(cancellationToken);
     }

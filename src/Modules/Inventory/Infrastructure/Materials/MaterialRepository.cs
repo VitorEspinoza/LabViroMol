@@ -17,7 +17,7 @@ internal sealed class MaterialRepository : IMaterialRepository
     {
         return await _context.Materials
             .FirstOrDefaultAsync(m => m.Id == id, ct);
-     
+
     }
 
     public async Task AddAsync(Material material, CancellationToken ct)

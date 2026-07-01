@@ -19,10 +19,10 @@ public class MaterialTests
 
             // Assert
             Assert.True(result.IsSuccess);
-            Assert.Equal("Etanol",        result.Data!.Name);
-            Assert.Equal("Prateleira A",  result.Data.Location);
+            Assert.Equal("Etanol", result.Data!.Name);
+            Assert.Equal("Prateleira A", result.Data.Location);
             Assert.Equal(Unit.Milliliter, result.Data.Unit);
-            Assert.Equal(activeType.Id,   result.Data.TypeId);
+            Assert.Equal(activeType.Id, result.Data.TypeId);
             Assert.Equal(75m, (decimal)result.Data.StockQuantity);
         }
 
@@ -85,8 +85,8 @@ public class MaterialTests
             material.Update("Novo Nome", newMin, "Nova Localização");
 
             // Assert
-            Assert.Equal("Novo Nome",        material.Name);
-            Assert.Equal(newMin,             material.MinStock);
+            Assert.Equal("Novo Nome", material.Name);
+            Assert.Equal(newMin, material.MinStock);
             Assert.Equal("Nova Localização", material.Location);
         }
     }

@@ -10,7 +10,7 @@ public sealed class PublicationTranslationHandler : INotificationHandler<Publica
     private readonly IPublicationRepository _repository;
     private readonly ITextTranslator _translator;
     private readonly IResearchUnitOfWork _unitOfWork;
-    
+
     public PublicationTranslationHandler(
         IPublicationRepository repository,
         ITextTranslator translator,
@@ -20,11 +20,11 @@ public sealed class PublicationTranslationHandler : INotificationHandler<Publica
         _translator = translator;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async ValueTask Handle(PublicationTranslationPersistentEvent notification, CancellationToken ct)
     {
         var publications =
-            await _repository.GetMissingEnglishTranslationAsync(5,ct);
+            await _repository.GetMissingEnglishTranslationAsync(5, ct);
 
         foreach (var publication in publications)
         {
@@ -45,7 +45,7 @@ public sealed class PublicationTranslationHandler : INotificationHandler<Publica
                 englishTitle,
                 englishDescription);
         }
-        
+
         await _unitOfWork.CompleteAsync(ct);
     }
 }

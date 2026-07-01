@@ -15,10 +15,10 @@ public sealed class CreateScheduleNotificationHandler : INotificationHandler<Cre
     {
         _sendNotification = sendNotification;
     }
-    
+
     public async ValueTask Handle(CreateScheduleNotificationPersistentEvent notification, CancellationToken ct)
     {
-        var equipments = string.Join(", ", 
+        var equipments = string.Join(", ",
             notification.Equipments?
                 .Select(e => new ScheduleEquipmentViewModel(e.EquipmentId, e.Name))
                 .ToList() ?? new List<ScheduleEquipmentViewModel>());

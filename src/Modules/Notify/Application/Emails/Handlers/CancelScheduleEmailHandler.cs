@@ -65,7 +65,7 @@ public sealed class CancelScheduleEmailHandler : INotificationHandler<CancelSche
                         Laboratório de Virologia Molecular - Hospital de Curitiba UFPR
                     </p>
                     """;
-        
+
         return body;
     }
 }

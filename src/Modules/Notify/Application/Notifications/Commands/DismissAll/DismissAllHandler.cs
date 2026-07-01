@@ -21,7 +21,7 @@ public sealed class DismissAllHandler : ICommandHandler<DismissAllCommand, Resul
         _unitOfWork = unitOfWork;
         _currentUser = currentUser;
     }
-    
+
     public async ValueTask<Result> Handle(DismissAllCommand command, CancellationToken ct)
     {
         var notificationsNotReadedByUser = await _notificationRepository.GetNotificationsByUserNotDismissed(
@@ -31,9 +31,9 @@ public sealed class DismissAllHandler : ICommandHandler<DismissAllCommand, Resul
 
         if (notificationsNotReadedByUser.Count <= 0)
             return Result.Success();
-        
+
         notificationsNotReadedByUser.ForEach(n => n.Dismiss(_currentUser.Id));
-        
+
         await _unitOfWork.CompleteAsync(ct);
         return Result.Success();
     }

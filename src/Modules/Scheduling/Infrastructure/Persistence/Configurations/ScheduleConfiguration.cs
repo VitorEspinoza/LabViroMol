@@ -30,39 +30,39 @@ public class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
         {
             p.Property(x => x.Date)
                 .HasColumnName("SchedulingDate");
-            
+
             p.Property(x => x.StartDateHour)
                 .HasColumnName("SchedulingStartHour");
-            
+
             p.Property(x => x.EndDateHour)
                 .HasColumnName("SchedulingEndHour");
         });
-            
+
         builder.Property(s => s.AcceptTerm)
             .HasColumnName("AcceptTerm");
-        
+
         builder.Property(s => s.AdvisorProfessor)
             .HasColumnName("AdvisorProfessor");
-        
+
         builder.Property(s => s.ProjectTitle)
             .HasColumnName("ProjectTitle");
-        
+
         builder.Property(s => s.Description)
             .HasColumnName("Description");
 
         builder.Property(s => s.Status)
             .HasConversion<string>();
-        
+
         builder.Property(s => s.ApprovedBy)
             .HasColumnName("ApprovedBy");
-        
+
         builder.Property(s => s.RefusedBy)
             .HasColumnName("RefusedBy");
-        
+
         builder.Property(s => s.TermUrl)
             .HasColumnName("TermUrl")
             .IsRequired(false);
-        
+
         builder.OwnsMany(s => s.Equipments, p =>
         {
             p.ToTable("ScheduleEquipments");
@@ -75,7 +75,7 @@ public class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
             p.Property(e => e.EquipmentId)
                 .HasColumnName("EquipmentId")
                 .IsRequired();
-            
+
             p.Property(e => e.Name)
                 .HasColumnName("EquipmentName")
                 .IsRequired();
