@@ -1,0 +1,15 @@
+services:
+  api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: LoadTest
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 4G
+
+  gateway:
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
