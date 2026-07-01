@@ -5,7 +5,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Research.Application.Researchers.Handlers;
 
-public class UserDeactivatedPersistentEventHandler(
+public sealed class UserDeactivatedPersistentEventHandler(
     IResearcherRepository researcherRepository,
     IResearchUnitOfWork unitOfWork)
     : INotificationHandler<UserDeactivatedPersistentEvent>

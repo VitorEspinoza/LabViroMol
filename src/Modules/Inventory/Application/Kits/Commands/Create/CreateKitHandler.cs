@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Kits.Commands.Create;
 
-public class CreateKitHandler : ICommandHandler<CreateKitCommand, Result>
+public sealed class CreateKitHandler : ICommandHandler<CreateKitCommand, Result>
 {
     private readonly IKitRepository _kitRepository;
     private readonly MaterialValidatorService _materialValidatorService;

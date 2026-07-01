@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.ForgotPassword;
 
-public class ForgotPasswordCommandHandler : ICommandHandler<ForgotPasswordCommand, Result>
+public sealed class ForgotPasswordCommandHandler : ICommandHandler<ForgotPasswordCommand, Result>
 {
     private readonly IIdentityService _identityService;
     private readonly IIdentityUnitOfWork _unitOfWork;
@@ -27,14 +27,14 @@ public class ForgotPasswordCommandHandler : ICommandHandler<ForgotPasswordComman
         var (resetLink, firstName) = result.Data!;
 
         var (subject, body) = PasswordEmailTemplates.BuildPasswordResetEmail(firstName, resetLink);
-        
+
         _unitOfWork.AddPersistentEvent(new ForgotPasswordPersistentEvent(
             command.Email,
             subject,
             body));
-        
+
         await _unitOfWork.CompleteAsync(ct);
-        
+
         return Result.Success();
     }
 }

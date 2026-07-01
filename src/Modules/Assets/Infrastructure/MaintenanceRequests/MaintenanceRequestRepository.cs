@@ -1,11 +1,11 @@
-﻿using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Assets.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Assets.Infrastructure.MaintenanceRequests;
 
-public class MaintenanceRequestRepository : IMaintenanceRequestRepository
+internal sealed class MaintenanceRequestRepository : IMaintenanceRequestRepository
 {
     private readonly AssetsDbContext _context;
 
@@ -14,19 +14,19 @@ public class MaintenanceRequestRepository : IMaintenanceRequestRepository
     {
         _context = context;
     }
-    
+
     public async Task AddAsync(MaintenanceRequest maintenanceRequest, CancellationToken cancellationToken)
     {
         await _context.MaintenanceRequests.AddAsync(maintenanceRequest, cancellationToken);
     }
 
     public async Task<List<MaintenanceRequest>> GetAllActiveByEquipmentIdAsync(
-        Guid equipmentId, 
+        Guid equipmentId,
         CancellationToken cancellationToken)
     {
         return await _context.MaintenanceRequests
-            .Where(req => req.EquipmentId == equipmentId 
-                          && (req.Status == MaintenanceRequestStatus.Requested 
+            .Where(req => req.EquipmentId == equipmentId
+                          && (req.Status == MaintenanceRequestStatus.Requested
                               || req.Status == MaintenanceRequestStatus.InProgress))
             .ToListAsync(cancellationToken);
     }

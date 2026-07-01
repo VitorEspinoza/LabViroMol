@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.Reports;
 
-public sealed class StockEntryBalanceAuditReportQueries : IStockEntryBalanceAuditReportQueries
+internal sealed class StockEntryBalanceAuditReportQueries : IStockEntryBalanceAuditReportQueries
 {
     private const int DefaultAuditRowsLimit = 500;
     private const int MaxAuditRowsLimit = 5_000;

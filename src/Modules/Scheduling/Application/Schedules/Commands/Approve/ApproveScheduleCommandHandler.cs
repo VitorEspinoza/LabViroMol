@@ -1,4 +1,4 @@
-ï»¿using LabViroMol.Modules.Scheduling.Application.Shared;
+using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Contracts;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
@@ -7,7 +7,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Approve;
 
-public class ApproveScheduleCommandHandler : ICommandHandler<ApproveScheduleCommand, Result>
+public sealed class ApproveScheduleCommandHandler : ICommandHandler<ApproveScheduleCommand, Result>
 {
     private readonly IScheduleRepository _scheduleRepository;
     private readonly ISchedulingUnitOfWork _unitOfWork;
@@ -28,7 +28,7 @@ public class ApproveScheduleCommandHandler : ICommandHandler<ApproveScheduleComm
         var schedule = await _scheduleRepository.GetByIdAsync(command.ScheduleId.Value, ct);
 
         if (schedule is null)
-            return Result.NotFound("Agendamento nÃ£o encontrado.");
+            return Result.NotFound("Agendamento não encontrado.");
 
         var result = schedule.Approve(_currentUser.Id);
 
@@ -57,7 +57,7 @@ public class ApproveScheduleCommandHandler : ICommandHandler<ApproveScheduleComm
             equipmentIds,
             ct);
 
-        const string justification = "Outro agendamento com horÃ¡rio conflitante foi aprovado.";
+        const string justification = "Outro agendamento com horário conflitante foi aprovado.";
 
         foreach (var conflict in conflicts.Where(s =>
                      s.Id != schedule.Id &&

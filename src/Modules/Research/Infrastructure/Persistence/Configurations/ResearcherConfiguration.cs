@@ -35,7 +35,7 @@ public class ResearcherConfiguration : IEntityTypeConfiguration<Researcher>
                 .HasColumnName("CitationName")
                 .HasMaxLength(50);
         });
-        
+
         builder.Property(r => r.LattesUrl)
             .HasMaxLength(500);
 

@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Notify.Infrastructure.Notifications;
 
-public class NotificationRepository(NotifyDbContext context) : INotificationRepository
+internal sealed class NotificationRepository(NotifyDbContext context) : INotificationRepository
 {
-    public async Task AddAsync(Notification notification, CancellationToken ct) 
+    public async Task AddAsync(Notification notification, CancellationToken ct)
         => await context.Notifications.AddAsync(notification, ct);
-    
+
     public async Task<List<Notification>> GetNotificationsByUserNotDismissed(UserId userId, List<string> permissions, CancellationToken ct)
         => await context.Notifications
             .Include(n => n.NotificationDismissals)
@@ -18,7 +18,7 @@ public class NotificationRepository(NotifyDbContext context) : INotificationRepo
             .Where(n => n.NotificationDismissals
                 .All(d => d.UserId != userId))
             .ToListAsync(ct);
-    
+
     public async Task<Notification?> GetByNotificationId(NotificationId notificationId, CancellationToken ct)
-        => await context.Notifications.FindAsync(notificationId, ct);
+        => await context.Notifications.FindAsync(new object?[] { notificationId, ct }, cancellationToken: ct);
 }

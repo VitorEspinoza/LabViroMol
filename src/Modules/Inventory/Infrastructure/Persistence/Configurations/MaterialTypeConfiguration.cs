@@ -12,7 +12,7 @@ public class MaterialTypeConfiguration : IEntityTypeConfiguration<MaterialType>
         builder.ToTable("MaterialTypes");
 
         builder.HasKey(k => k.Id);
-   
+
         builder.Property(m => m.Name)
             .HasMaxLength(200)
             .IsRequired();

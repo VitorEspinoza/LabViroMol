@@ -28,12 +28,12 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
         builder.Property(p => p.Description)
             .HasMaxLength(2000);
-        
+
         builder.HasMany(p => p.Members)
             .WithOne()
-            .HasForeignKey("ProjectId") 
+            .HasForeignKey("ProjectId")
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         builder.Property(p => p.Status)
             .HasConversion<string>()
             .HasMaxLength(50)
@@ -41,7 +41,7 @@ public class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
         builder.Metadata.FindNavigation(nameof(Project.Members))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
-        
+
         builder.ConfigureTranslations<
             Project,
             ProjectTranslation>();

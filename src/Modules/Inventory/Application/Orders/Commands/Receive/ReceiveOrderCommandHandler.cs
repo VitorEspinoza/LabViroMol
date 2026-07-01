@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Orders.Commands.Receive;
 
-public class ReceiveOrderCommandHandler : ICommandHandler<ReceiveOrderCommand, Result>
+public sealed class ReceiveOrderCommandHandler : ICommandHandler<ReceiveOrderCommand, Result>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly ICurrentUser _currentUser;

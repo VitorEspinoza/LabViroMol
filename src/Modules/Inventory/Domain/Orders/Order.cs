@@ -8,7 +8,7 @@ namespace LabViroMol.Modules.Inventory.Domain.Orders;
 public class Order : AggregateRoot<OrderId>, ICreationAuditable, IModificationAuditable
 {
 
-    private Order() {}
+    private Order() { }
     private Order(OrderId id, MaterialId materialId, ProjectId projectId, Quantity requestedQuantity, string description)
         : base(id)
     {
@@ -22,8 +22,8 @@ public class Order : AggregateRoot<OrderId>, ICreationAuditable, IModificationAu
     public ProjectId ProjectId { get; private set; }
     public OrderStatus Status { get; private set; }
     public Quantity RequestedQuantity { get; private set; }
-    public OrderProcessing? Processing { get; set; }
-    public OrderReceipt? Receipt { get; set; }
+    public OrderProcessing? Processing { get; private set; }
+    public OrderReceipt? Receipt { get; private set; }
     public string Description { get; private set; }
 
     public static Order Create(MaterialId materialId, ProjectId projectId, Quantity quantity, string description)
@@ -54,7 +54,7 @@ public class Order : AggregateRoot<OrderId>, ICreationAuditable, IModificationAu
         return Result.Success();
     }
 
-    public Result Receive(UserId receivedBy, string receivedByName, Quantity quantityReceived,  string? receiptNotes)
+    public Result Receive(UserId receivedBy, string receivedByName, Quantity quantityReceived, string? receiptNotes)
     {
         if (Status != OrderStatus.Processing)
             return Result.BusinessRule("Apenas pedidos em processamento podem ser recebidos.");
@@ -62,7 +62,7 @@ public class Order : AggregateRoot<OrderId>, ICreationAuditable, IModificationAu
         Status = OrderStatus.Completed;
 
         Receipt = new OrderReceipt(receivedBy, receivedByName, receiptNotes, quantityReceived, DateTimeOffset.UtcNow);
-        AddEvent(new OrderReceivedDomainEvent(Id, MaterialId,quantityReceived, receivedBy));
+        AddEvent(new OrderReceivedDomainEvent(Id, MaterialId, quantityReceived, receivedBy));
 
         return Result.Success();
     }

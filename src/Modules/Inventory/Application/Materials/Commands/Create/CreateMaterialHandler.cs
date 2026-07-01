@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Materials.Commands.Create;
 
-public class CreateMaterialHandler : ICommandHandler<CreateMaterialCommand, Result>
+public sealed class CreateMaterialHandler : ICommandHandler<CreateMaterialCommand, Result>
 {
     private readonly IMaterialRepository _materialRepository;
     private readonly IMaterialTypeRepository _materialTypeRepository;

@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Assets.Application.Equipments.EventHandlers;
 
-public class EquipmentTranslationHandler : INotificationHandler<EquipmentTranslationPersistentEvent>
+public sealed class EquipmentTranslationHandler : INotificationHandler<EquipmentTranslationPersistentEvent>
 {
     private readonly IEquipmentRepository _repository;
     private readonly ITextTranslator _translator;
@@ -21,11 +21,11 @@ public class EquipmentTranslationHandler : INotificationHandler<EquipmentTransla
         _translator = translator;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async ValueTask Handle(EquipmentTranslationPersistentEvent notification, CancellationToken ct)
     {
         var equipments =
-            await _repository.GetMissingEnglishTranslationAsync(5,ct);
+            await _repository.GetMissingEnglishTranslationAsync(5, ct);
 
         foreach (var equipment in equipments)
         {

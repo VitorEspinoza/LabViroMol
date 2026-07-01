@@ -11,7 +11,7 @@ using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
-public class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser) : IProjectQueries
+internal sealed class ProjectQueries(ResearchDbContext context, ICurrentUser currentUser) : IProjectQueries
 {
     public async Task<PagedResponse<PublicProjectViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {

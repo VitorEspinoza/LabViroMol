@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Notify.Application.Emails.Handlers;
 
-public class CancelScheduleEmailHandler : INotificationHandler<CancelSchedulePersistentEvent>
+public sealed class CancelScheduleEmailHandler : INotificationHandler<CancelSchedulePersistentEvent>
 {
     private readonly ISendEmail _emailSender;
 
@@ -65,7 +65,7 @@ public class CancelScheduleEmailHandler : INotificationHandler<CancelSchedulePer
                         Laboratório de Virologia Molecular - Hospital de Curitiba UFPR
                     </p>
                     """;
-        
+
         return body;
     }
 }

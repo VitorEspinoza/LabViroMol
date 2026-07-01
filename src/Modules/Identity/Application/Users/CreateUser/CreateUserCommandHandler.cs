@@ -8,7 +8,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.CreateUser;
 
-public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Result>
+public sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Result>
 {
     private readonly IIdentityService _identityService;
     private readonly IUserRepository _userRepository;
@@ -63,9 +63,9 @@ public class CreateUserCommandHandler : ICommandHandler<CreateUserCommand, Resul
             data.LastName,
             command.RoleIds,
             data.ResearchData));
-        
+
         var (subject, body) = PasswordEmailTemplates.BuildWelcomeEmail(data.FirstName, resetLink);
-        
+
         _unitOfWork.AddPersistentEvent(new ResetPasswordPersistentEvent(
             command.Email,
             subject,

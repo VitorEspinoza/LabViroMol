@@ -7,7 +7,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.ReactivateUser;
 
-public class ReactivateUserCommandHandler : ICommandHandler<ReactivateUserCommand, Result>
+public sealed class ReactivateUserCommandHandler : ICommandHandler<ReactivateUserCommand, Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IIdentityService _identityService;

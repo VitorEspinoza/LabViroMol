@@ -3,7 +3,7 @@ using LabViroMol.Modules.Shared.Kernel.Messaging;
 namespace LabViroMol.Modules.Scheduling.Contracts;
 
 public record ReprovedSchedulePersistentEvent(
-    string SchedulerEmail, 
+    string SchedulerEmail,
     string SchedulerName,
     string ProjectTitle,
     string AdvisorProfessor,

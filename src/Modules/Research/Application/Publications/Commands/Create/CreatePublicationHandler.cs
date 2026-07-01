@@ -7,7 +7,7 @@ using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class CreatePublicationHandler(
+public sealed class CreatePublicationHandler(
     IPublicationRepository repository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<CreatePublicationCommand, Result<Guid>>
@@ -28,9 +28,9 @@ public class CreatePublicationHandler(
         var publication = result.Data!;
 
         await repository.AddAsync(publication, ct);
-        
+
         unitOfWork.AddPersistentEvent(new PublicationTranslationPersistentEvent());
-        
+
         await unitOfWork.CompleteAsync(ct);
 
         return Result<Guid>.Success(result.Data!.Id);

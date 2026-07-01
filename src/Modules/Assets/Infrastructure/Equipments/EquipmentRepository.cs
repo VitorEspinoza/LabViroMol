@@ -1,18 +1,18 @@
-﻿using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Assets.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Assets.Infrastructure.Equipments;
 
-public class EquipmentRepository : IEquipmentRepository
+internal sealed class EquipmentRepository : IEquipmentRepository
 {
     private readonly AssetsDbContext _context;
-    
+
     public EquipmentRepository(AssetsDbContext context)
     {
         _context = context;
     }
-    
+
     public async Task<Equipment?> GetByCodeAsync(string code, CancellationToken ct)
     {
         return await _context.Equipments

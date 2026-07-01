@@ -5,7 +5,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Orders.Commands.Cancel;
 
-public class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Result>
+public sealed class CancelOrderCommandHandler : ICommandHandler<CancelOrderCommand, Result>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IInventoryUnitOfWork _unitOfWork;

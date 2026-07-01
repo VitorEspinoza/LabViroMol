@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.Commands.UploadTerm;
 
-public class UploadTermHandler : ICommandHandler<UploadTermCommand, Result>
+public sealed class UploadTermHandler : ICommandHandler<UploadTermCommand, Result>
 {
     private readonly IScheduleRepository _scheduleRepository;
     private readonly ISchedulingUnitOfWork _unitOfWork;

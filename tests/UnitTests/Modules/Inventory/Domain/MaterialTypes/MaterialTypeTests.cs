@@ -44,7 +44,7 @@ public class MaterialTypeTests
         public void Deactivate_CalledTwice_ShouldBeIdempotent()
         {
             // Arrange
-            var firstUser  = Fakers.AnyUserId();
+            var firstUser = Fakers.AnyUserId();
             var secondUser = Fakers.AnyUserId();
             var type = Fakers.CreateMaterialType();
 

@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Roles.DeleteRole;
 
-public class DeleteRoleCommandHandler(IIdentityService identityService)
+public sealed class DeleteRoleCommandHandler(IIdentityService identityService)
     : ICommandHandler<DeleteRoleCommand, Result>
 {
     public async ValueTask<Result> Handle(DeleteRoleCommand command, CancellationToken ct)

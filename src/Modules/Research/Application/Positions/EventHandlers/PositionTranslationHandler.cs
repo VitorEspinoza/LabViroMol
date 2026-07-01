@@ -5,12 +5,12 @@ using Mediator;
 
 namespace LabViroMol.Modules.Research.Application.Positions.EventHandlers;
 
-public class PositionTranslationHandler : INotificationHandler<PositionTranslationPersistentEvent>
+public sealed class PositionTranslationHandler : INotificationHandler<PositionTranslationPersistentEvent>
 {
     private readonly IPositionRepository _repository;
     private readonly ITextTranslator _translator;
     private readonly IResearchUnitOfWork _unitOfWork;
-    
+
     public PositionTranslationHandler(
         IPositionRepository repository,
         ITextTranslator translator,
@@ -20,11 +20,11 @@ public class PositionTranslationHandler : INotificationHandler<PositionTranslati
         _translator = translator;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async ValueTask Handle(PositionTranslationPersistentEvent notification, CancellationToken ct)
     {
         var positions =
-            await _repository.GetMissingEnglishTranslationAsync(5,ct);
+            await _repository.GetMissingEnglishTranslationAsync(5, ct);
 
         foreach (var position in positions)
         {
@@ -45,7 +45,7 @@ public class PositionTranslationHandler : INotificationHandler<PositionTranslati
                 englishName,
                 englishDescription);
         }
-        
+
         await _unitOfWork.CompleteAsync(ct);
     }
 }

@@ -5,7 +5,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 
-public class UpdateEquipmentHandler(
+public sealed class UpdateEquipmentHandler(
     IEquipmentRepository equipmentRepository,
     IAssetsUnitOfWork unitOfWork) : ICommandHandler<UpdateEquipmentCommand, Result>
 {

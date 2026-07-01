@@ -2,9 +2,9 @@
 
 public enum TransactionType
 {
-    OrderReceipt = 1,       
-    ProjectConsumption = 2, 
+    OrderReceipt = 1,
+    ProjectConsumption = 2,
 
-    ExceptionIn = 3,      
-    ExceptionOut = 4      
+    ExceptionIn = 3,
+    ExceptionOut = 4
 }

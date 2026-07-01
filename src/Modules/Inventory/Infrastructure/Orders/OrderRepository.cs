@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.Orders;
 
-public class OrderRepository : IOrderRepository
+internal sealed class OrderRepository : IOrderRepository
 {
     private readonly InventoryDbContext _context;
 

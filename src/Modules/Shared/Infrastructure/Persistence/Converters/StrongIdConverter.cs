@@ -7,10 +7,10 @@ namespace LabViroMol.Modules.Shared.Infrastructure.Persistence.Converters;
 public class StrongIdConverter<TId> : ValueConverter<TId, Guid>
     where TId : struct, IStrongId<TId>
 {
-    public StrongIdConverter() 
+    public StrongIdConverter()
         : base(
-            id => id.Value,          
-            CreateFromGuidExpression() 
+            id => id.Value,
+            CreateFromGuidExpression()
         )
     {
     }

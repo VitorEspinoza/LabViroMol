@@ -8,7 +8,7 @@ using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class CreateProjectHandler(
+public sealed class CreateProjectHandler(
     IProjectRepository projectRepository,
     IResearcherRepository researcherRepository,
     IResearchUnitOfWork unitOfWork)
@@ -33,9 +33,9 @@ public class CreateProjectHandler(
         var project = result.Data!;
 
         await projectRepository.AddAsync(project, ct);
-        
+
         unitOfWork.AddPersistentEvent(new ProjectTranslationPersistentEvent());
-        
+
         await unitOfWork.CompleteAsync(ct);
 
         return Result<Guid>.Success(result.Data!.Id);

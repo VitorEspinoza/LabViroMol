@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Notify.Infrastructure.Notifications;
 
-public class NotificationQueries(NotifyDbContext context) : INotificationQueries
+internal sealed class NotificationQueries(NotifyDbContext context) : INotificationQueries
 {
     public async Task<List<NotificationViewModel>> GetUnreadByUserAsync(UserId userId, List<string> permissions, CancellationToken ct)
     {

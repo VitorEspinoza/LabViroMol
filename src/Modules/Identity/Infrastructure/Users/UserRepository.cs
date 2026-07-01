@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Identity.Infrastructure.Users;
 
-public class UserRepository(LabViroMolIdentityDbContext context) : IUserRepository
+internal sealed class UserRepository(LabViroMolIdentityDbContext context) : IUserRepository
 {
     public async Task<User?> GetByIdAsync(UserId id, CancellationToken ct)
         => await context.DomainUsers.FirstOrDefaultAsync(u => u.Id == id, ct);

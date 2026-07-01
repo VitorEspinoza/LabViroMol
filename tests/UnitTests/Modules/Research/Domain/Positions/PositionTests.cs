@@ -30,5 +30,47 @@ public class PositionTests
             // Act & Assert
             Assert.Throws<DomainException>(() => Position.Create("ab", "descricao valida"));
         }
+
+        [Fact]
+        public void AddTranslation_WithBlankLanguage_ShouldIgnoreTranslation()
+        {
+            var position = Position.Create("Pesquisador", "Descricao").Data!;
+
+            position.AddTranslation("   ", "Researcher", "Description");
+
+            Assert.Empty(position.Translations);
+        }
+
+        [Fact]
+        public void AddTranslation_WithEnglishLanguage_ShouldStoreLowerCaseKey()
+        {
+            var position = Position.Create("Pesquisador", "Descricao").Data!;
+
+            position.AddTranslation("EN", "Researcher", "Description");
+
+            Assert.True(position.Translations.ContainsKey("en"));
+        }
+
+        [Fact]
+        public void GetName_WhenEnglishTranslationExists_ReturnsTranslatedName()
+        {
+            var position = Position.Create("Pesquisador", "Descricao").Data!;
+            position.AddTranslation("en", "Researcher", "Description");
+
+            var result = position.GetName("en");
+
+            Assert.Equal("Researcher", result);
+        }
+
+        [Fact]
+        public void GetDescription_WhenEnglishTranslationIsMissing_FallsBackToDefaultDescription()
+        {
+            var position = Position.Create("Pesquisador", "Descricao original").Data!;
+            position.AddTranslation("en", "Researcher", "");
+
+            var result = position.GetDescription("en");
+
+            Assert.Equal("Descricao original", result);
+        }
     }
 }

@@ -15,10 +15,11 @@ public static class SharedModule
         services.AddProblemDetails();
         services.AddHttpContextAccessor();
         services.AddSingleton<LabViroMolMetrics>();
+        services.AddSingleton<EmailMetrics>();
 
         return services;
     }
-    
+
     public static IServiceCollection AddStorages(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -38,13 +39,18 @@ public static class SharedModule
     {
         services.Configure<TranslationOptions>(
             configuration.GetSection("Translation"));
-        
+
         services.AddHostedService<TranslationBackgroundWorker>();
-        services.AddHttpClient<ITextTranslator,
-            LibreTranslator>(client =>
+
+        if (configuration.GetValue("LoadTest:UseNoOpTranslator", false))
         {
-            client.BaseAddress =
-                new Uri("http://localhost:5000");
+            services.AddSingleton<ITextTranslator, NoOpTextTranslator>();
+            return services;
+        }
+
+        services.AddHttpClient<ITextTranslator, LibreTranslator>(client =>
+        {
+            client.BaseAddress = new Uri("http://localhost:5000");
         });
         return services;
     }

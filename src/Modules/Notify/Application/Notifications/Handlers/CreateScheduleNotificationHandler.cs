@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Notify.Application.Notifications.Handlers;
 
-public class CreateScheduleNotificationHandler : INotificationHandler<CreateScheduleNotificationPersistentEvent>
+public sealed class CreateScheduleNotificationHandler : INotificationHandler<CreateScheduleNotificationPersistentEvent>
 {
     private readonly ISendNotification _sendNotification;
 
@@ -15,10 +15,10 @@ public class CreateScheduleNotificationHandler : INotificationHandler<CreateSche
     {
         _sendNotification = sendNotification;
     }
-    
+
     public async ValueTask Handle(CreateScheduleNotificationPersistentEvent notification, CancellationToken ct)
     {
-        var equipments = string.Join(", ", 
+        var equipments = string.Join(", ",
             notification.Equipments?
                 .Select(e => new ScheduleEquipmentViewModel(e.EquipmentId, e.Name))
                 .ToList() ?? new List<ScheduleEquipmentViewModel>());

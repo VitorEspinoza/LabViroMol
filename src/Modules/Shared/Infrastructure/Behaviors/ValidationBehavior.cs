@@ -60,7 +60,7 @@ public sealed class ValidationBehavior<TMessage, TResponse> : IPipelineBehavior<
             .Where(r => r.Errors.Any())
             .SelectMany(r => r.Errors)
             .Select(f => f.ErrorMessage)
-            .Distinct() 
+            .Distinct()
             .ToList();
 
         if (errors.Any())

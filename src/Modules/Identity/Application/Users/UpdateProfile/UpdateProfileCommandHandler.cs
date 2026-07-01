@@ -7,7 +7,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.UpdateProfile;
 
-public class UpdateProfileCommandHandler : ICommandHandler<UpdateProfileCommand, Result>
+public sealed class UpdateProfileCommandHandler : ICommandHandler<UpdateProfileCommand, Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IIdentityService _identityService;

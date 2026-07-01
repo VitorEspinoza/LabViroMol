@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Create;
 
-public class CreateMaintenanceHandler(
+public sealed class CreateMaintenanceHandler(
     IMaintenanceRequestRepository maintenanceRequestRepository,
     IEquipmentRepository equipmentRepository,
     IAssetsUnitOfWork unitOfWork) : ICommandHandler<CreateMaintenanceCommand, Result>
@@ -14,7 +14,7 @@ public class CreateMaintenanceHandler(
     public async ValueTask<Result> Handle(CreateMaintenanceCommand command, CancellationToken ct)
     {
         var equipment = await equipmentRepository.GetByIdAsync(command.EquipmentId, ct);
-        if(equipment is null)
+        if (equipment is null)
             return Result.NotFound("Equipamento não encontrado.");
 
         var openMaintenanceRequestForEquipment = await maintenanceRequestRepository.GetAllActiveByEquipmentIdAsync(command.EquipmentId, ct);

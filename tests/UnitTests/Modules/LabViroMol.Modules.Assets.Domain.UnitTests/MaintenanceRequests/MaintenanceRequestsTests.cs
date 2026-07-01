@@ -11,18 +11,18 @@ public class MaintenanceRequestTests
         [Fact]
         public void Create_ShouldInitializeCorrectly()
         {
-            var equipmentId   = Fakers.AnyEquipmentId();
-            var description   = "Substituição de peça";
-            var problemDesc   = "Equipamento apresentando ruído anormal";
+            var equipmentId = Fakers.AnyEquipmentId();
+            var description = "Substituição de peça";
+            var problemDesc = "Equipamento apresentando ruído anormal";
 
-            var result  = MaintenanceRequest.Create(description, problemDesc, equipmentId);
+            var result = MaintenanceRequest.Create(description, problemDesc, equipmentId);
             var request = result.Data!;
 
             Assert.True(result.IsSuccess);
             Assert.Equal(MaintenanceRequestStatus.Requested, request.Status);
-            Assert.Equal(description,  request.Description);
-            Assert.Equal(problemDesc,  request.ProblemDescription);
-            Assert.Equal(equipmentId,  request.EquipmentId.Value);
+            Assert.Equal(description, request.Description);
+            Assert.Equal(problemDesc, request.ProblemDescription);
+            Assert.Equal(equipmentId, request.EquipmentId.Value);
         }
     }
 

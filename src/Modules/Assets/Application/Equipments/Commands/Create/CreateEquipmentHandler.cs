@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.Create;
 
-public class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Result>
+public sealed class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Result>
 {
     private readonly IEquipmentRepository _equipmentRepository;
     private readonly IAssetsUnitOfWork _unitOfWork;
@@ -23,7 +23,7 @@ public class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Re
         _unitOfWork = unitOfWork;
         _scopeFactory = scopeFactory;
     }
-    
+
     public async ValueTask<Result> Handle(CreateEquipmentCommand command, CancellationToken ct)
     {
         var existingCode = await _equipmentRepository.GetByCodeAsync(command.Code, ct);
@@ -45,11 +45,11 @@ public class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Re
         var equipment = result.Data!;
 
         await _equipmentRepository.AddAsync(equipment, ct);
-        
+
         _unitOfWork.AddPersistentEvent(new EquipmentTranslationPersistentEvent());
-        
+
         await _unitOfWork.CompleteAsync(ct);
-            
+
 
         return Result.Success();
     }

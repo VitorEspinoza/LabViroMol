@@ -1,15 +1,16 @@
-using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Messaging;
 
 namespace LabViroMol.Modules.Scheduling.Contracts;
 
+public record ScheduleEquipmentInfo(Guid EquipmentId, string Name);
+
 public record CreateScheduleNotificationPersistentEvent(
-    ScheduleId ScheduleId,
+    Guid ScheduleId,
     string SchedulerName,
     DateOnly Date,
     DateTimeOffset Start,
     DateTimeOffset End,
-    List<ScheduleEquipment> Equipments) : IPersistentEvent
+    List<ScheduleEquipmentInfo> Equipments) : IPersistentEvent
 {
     public Guid EventId { get; }
     public DateTimeOffset OccurredOn { get; }

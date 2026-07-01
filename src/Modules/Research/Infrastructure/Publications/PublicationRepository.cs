@@ -4,7 +4,7 @@ using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-public class PublicationRepository(ResearchDbContext context) : IPublicationRepository
+internal sealed class PublicationRepository(ResearchDbContext context) : IPublicationRepository
 {
     public async Task<Publication?> GetByIdAsync(PublicationId id, CancellationToken ct)
         => await context.Publications
@@ -16,7 +16,7 @@ public class PublicationRepository(ResearchDbContext context) : IPublicationRepo
 
     public void Delete(Publication publication)
         => context.Publications.Remove(publication);
-    
+
     public async Task<List<Publication>> GetMissingEnglishTranslationAsync(int limit,
         CancellationToken ct)
     {

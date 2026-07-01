@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.UploadImage;
 
-public class UploadImageHandler : ICommandHandler<UploadImageCommand, Result>
+public sealed class UploadImageHandler : ICommandHandler<UploadImageCommand, Result>
 {
     private readonly IEquipmentRepository _equipmentRepository;
     private readonly IAssetsUnitOfWork _unitOfWork;
@@ -25,7 +25,7 @@ public class UploadImageHandler : ICommandHandler<UploadImageCommand, Result>
         _storage = storage;
         _storageSettings = storageSettings.Value;
     }
-    
+
     public async ValueTask<Result> Handle(
         UploadImageCommand command,
         CancellationToken ct)

@@ -9,8 +9,8 @@ public class QuantityTests
     public void Constructor_WhenValueIsNonNegative_ShouldSetValue()
     {
         // Assert
-        Assert.Equal(42m,    new Quantity(42m).Value);
-        Assert.Equal(0m,     new Quantity(0m).Value);
+        Assert.Equal(42m, new Quantity(42m).Value);
+        Assert.Equal(0m, new Quantity(0m).Value);
         Assert.Equal(0.001m, new Quantity(0.001m).Value);
     }
 

@@ -8,8 +8,8 @@ namespace LabViroMol.Modules.Notify.Infrastructure.Persistence;
 
 public class NotifyDbContext : DbContext
 {
-    public NotifyDbContext(DbContextOptions<NotifyDbContext> options) : base(options) {}
-    
+    public NotifyDbContext(DbContextOptions<NotifyDbContext> options) : base(options) { }
+
     public DbSet<Notification> Notifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,7 +19,7 @@ public class NotifyDbContext : DbContext
         modelBuilder.ApplyPersistenceConfigs();
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(NotifyDbContext).Assembly);
     }
-    
+
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         var domainAssembly = typeof(NotificationId).Assembly;

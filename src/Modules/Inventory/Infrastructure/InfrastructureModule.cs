@@ -15,6 +15,7 @@ using LabViroMol.Modules.Inventory.Infrastructure.Orders;
 using LabViroMol.Modules.Inventory.Infrastructure.Persistence;
 using LabViroMol.Modules.Inventory.Infrastructure.Reports;
 using LabViroMol.Modules.Shared.Infrastructure.Observability;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -61,7 +62,7 @@ public static class InfrastructureModule
 
     private static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("LabViroMol");
+        var connectionString = configuration.ResolveLabViroMolConnectionString();
 
         services.AddSlowQueryLogging(configuration);
 

@@ -4,7 +4,7 @@ using LabViroMol.Modules.Shared.Kernel.Authorization;
 
 namespace LabViroMol.Modules.Identity.Infrastructure.Roles;
 
-public class PermissionQueries : IPermissionQueries
+internal sealed class PermissionQueries : IPermissionQueries
 {
     private static readonly Lazy<IReadOnlyCollection<string>> _permissions = new(() =>
         typeof(Permissions)

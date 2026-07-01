@@ -5,7 +5,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.Delete;
 
-public class DeleteEquipmentHandler(
+public sealed class DeleteEquipmentHandler(
     IEquipmentRepository equipmentRepository,
     IAssetsUnitOfWork unitOfWork) : ICommandHandler<DeleteEquipmentCommand, Result>
 {

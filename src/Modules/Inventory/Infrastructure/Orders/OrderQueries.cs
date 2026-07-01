@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.Orders;
 
-public class OrderQueries : IOrderQueries
+internal sealed class OrderQueries : IOrderQueries
 {
     private readonly InventoryDbContext _context;
     private readonly IProjectCatalog _projectCatalog;

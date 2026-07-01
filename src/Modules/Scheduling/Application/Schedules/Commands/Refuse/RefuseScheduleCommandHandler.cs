@@ -1,4 +1,4 @@
-﻿using LabViroMol.Modules.Scheduling.Application.Shared;
+using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Contracts;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
@@ -7,7 +7,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Refuse;
 
-public class RefuseScheduleCommandHandler : ICommandHandler<RefuseScheduleCommand, Result>
+public sealed class RefuseScheduleCommandHandler : ICommandHandler<RefuseScheduleCommand, Result>
 {
     private readonly IScheduleRepository _scheduleRepository;
     private readonly ISchedulingUnitOfWork _unitOfWork;
@@ -28,7 +28,7 @@ public class RefuseScheduleCommandHandler : ICommandHandler<RefuseScheduleComman
         var schedule = await _scheduleRepository.GetByIdAsync(command.ScheduleId.Value, ct);
 
         if (schedule is null)
-            return Result.NotFound("Agendamento não encontrado.");
+            return Result.NotFound("Agendamento n�o encontrado.");
 
         var result = schedule.Refuse(_currentUser.Id, command.Justification);
 

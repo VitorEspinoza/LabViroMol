@@ -56,10 +56,10 @@ public class PublicationConfiguration : IEntityTypeConfiguration<Publication>
             r.Property(r => r.Order)
                 .IsRequired();
         });
-        
+
         builder.Metadata.FindNavigation(nameof(Publication.Researchers))!
             .SetPropertyAccessMode(PropertyAccessMode.Field);
-        
+
         builder.ConfigureTranslations<
             Publication,
             PublicationTranslation>();

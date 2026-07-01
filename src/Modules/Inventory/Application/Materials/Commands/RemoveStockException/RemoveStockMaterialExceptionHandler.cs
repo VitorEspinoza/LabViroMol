@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Materials.Commands.RemoveStockException;
 
-public class RemoveStockMaterialExceptionHandler : ICommandHandler<RemoveStockMaterialExceptionCommand, Result>
+public sealed class RemoveStockMaterialExceptionHandler : ICommandHandler<RemoveStockMaterialExceptionCommand, Result>
 {
     private readonly IMaterialRepository _repository;
     private readonly ICurrentUser _currentUser;

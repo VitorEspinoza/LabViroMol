@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Notify.Application.Emails.Handlers;
 
-public class ForgotPasswordEmailHandler : INotificationHandler<ForgotPasswordPersistentEvent>
+public sealed class ForgotPasswordEmailHandler : INotificationHandler<ForgotPasswordPersistentEvent>
 {
     private readonly ISendEmail _emailSender;
 
@@ -13,7 +13,7 @@ public class ForgotPasswordEmailHandler : INotificationHandler<ForgotPasswordPer
     {
         _emailSender = emailSender;
     }
-    
+
     public async ValueTask Handle(ForgotPasswordPersistentEvent notification, CancellationToken ct)
     {
         await _emailSender.SendEmail(notification.Email, notification.Subject, notification.Body, ct);

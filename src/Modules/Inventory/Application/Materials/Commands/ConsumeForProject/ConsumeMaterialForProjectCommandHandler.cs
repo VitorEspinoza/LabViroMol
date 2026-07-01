@@ -8,7 +8,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Materials.Commands.ConsumeForProject;
 
-public class ConsumeMaterialForProjectCommandHandler : ICommandHandler<ConsumeMaterialForProjectCommand, Result>
+public sealed class ConsumeMaterialForProjectCommandHandler : ICommandHandler<ConsumeMaterialForProjectCommand, Result>
 {
     private readonly IMaterialRepository _repository;
     private readonly IProjectChecker _projectChecker;
@@ -36,7 +36,7 @@ public class ConsumeMaterialForProjectCommandHandler : ICommandHandler<ConsumeMa
         var isEligibleResult = await _projectChecker.IsEligibleForConsumptionAsync(ProjectId.From(command.ProjectId), _currentUser.Id, ct);
         if (isEligibleResult.IsFailure)
             return isEligibleResult;
-        
+
         var result = material.ConsumeForProject(command.ProjectId, command.Quantity, _currentUser.Id);
 
         if (result.IsFailure)

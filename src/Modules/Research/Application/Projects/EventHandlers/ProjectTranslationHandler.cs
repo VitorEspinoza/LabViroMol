@@ -5,12 +5,12 @@ using Mediator;
 
 namespace LabViroMol.Modules.Research.Application.Projects.EventHandlers;
 
-public class ProjectTranslationHandler : INotificationHandler<ProjectTranslationPersistentEvent>
+public sealed class ProjectTranslationHandler : INotificationHandler<ProjectTranslationPersistentEvent>
 {
     private readonly IProjectRepository _repository;
     private readonly ITextTranslator _translator;
     private readonly IResearchUnitOfWork _unitOfWork;
-    
+
     public ProjectTranslationHandler(
         IProjectRepository repository,
         ITextTranslator translator,
@@ -20,11 +20,11 @@ public class ProjectTranslationHandler : INotificationHandler<ProjectTranslation
         _translator = translator;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async ValueTask Handle(ProjectTranslationPersistentEvent notification, CancellationToken ct)
     {
         var projects =
-            await _repository.GetMissingEnglishTranslationAsync(5,ct);
+            await _repository.GetMissingEnglishTranslationAsync(5, ct);
 
         foreach (var project in projects)
         {
@@ -45,7 +45,7 @@ public class ProjectTranslationHandler : INotificationHandler<ProjectTranslation
                 englishTitle,
                 englishDescription);
         }
-        
+
         await _unitOfWork.CompleteAsync(ct);
     }
 }

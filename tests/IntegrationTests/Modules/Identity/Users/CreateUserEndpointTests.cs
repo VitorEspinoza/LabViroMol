@@ -1,9 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using LabViroMol.Modules.Identity.Application.Users.CreateUser;
 using LabViroMol.Modules.Identity.Contracts;
-using LabViroMol.Modules.Notify.Contracts;
-using NSubstitute;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
+using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Identity.IntegrationTests.Users;
 
@@ -29,7 +30,7 @@ public class CreateUserTests : UserEndpointsTestBase
     }
 
     [Fact]
-    public async Task ShouldSendWelcomeEmail_WhenUserIsCreated()
+    public async Task ShouldPersistWelcomeEmailEvent_WhenUserIsCreated()
     {
         // Arrange
         await SeedAuthenticatedAdmin();
@@ -43,8 +44,15 @@ public class CreateUserTests : UserEndpointsTestBase
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        await Factory.EmailSenderMock.Received(1).SendEmail(
-            "joao.welcome@labviromol.com", Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+
+        var message = await DbContext.Set<OutboxMessage>()
+            .AsNoTracking()
+            .SingleAsync(m => m.Type == typeof(ResetPasswordPersistentEvent).FullName);
+        var @event = JsonSerializer.Deserialize<ResetPasswordPersistentEvent>(message.Content, OutboxJson.Options);
+
+        Assert.NotNull(@event);
+        Assert.Equal("joao.welcome@labviromol.com", @event.Email);
+        Assert.Null(message.ProcessedOn);
     }
 
     [Fact]

@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Assets.Application.Equipments.EventHandlers;
 
-public class EquipmentDeletedDomainEventHandler(
+public sealed class EquipmentDeletedDomainEventHandler(
     IMaintenanceRequestRepository maintenanceRequestRepository)
     : INotificationHandler<EquipmentDeletedDomainEvent>
 {

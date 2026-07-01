@@ -18,9 +18,9 @@ public class KitTests
             var kit = Kit.Create("Kit Alpha", "descrição do kit", items);
 
             // Assert
-            Assert.Equal("Kit Alpha",        kit.Name);
+            Assert.Equal("Kit Alpha", kit.Name);
             Assert.Equal("descrição do kit", kit.Description);
-            Assert.Equal(3,                  kit.Materials.Count);
+            Assert.Equal(3, kit.Materials.Count);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ public class KitTests
             kit.UpdateMetadata("Novo Nome", "Nova Descrição");
 
             // Assert
-            Assert.Equal("Novo Nome",      kit.Name);
+            Assert.Equal("Novo Nome", kit.Name);
             Assert.Equal("Nova Descrição", kit.Description);
         }
     }
@@ -65,7 +65,7 @@ public class KitTests
             var kit = Fakers.CreateKit(items: existingItems);
 
             // Act
-            kit.DefineMaterials([..existingItems, Fakers.AnyKitItem()]);
+            kit.DefineMaterials([.. existingItems, Fakers.AnyKitItem()]);
 
             // Assert
             Assert.Equal(3, kit.Materials.Count);

@@ -7,7 +7,7 @@ using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
-public class PositionQueries(ResearchDbContext context) : IPositionQueries
+internal sealed class PositionQueries(ResearchDbContext context) : IPositionQueries
 {
     public async Task<PagedResponse<PositionViewModel>> GetAllAsync(PagedRequest request)
     {

@@ -4,6 +4,7 @@ using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Shared.Infrastructure.Persistence.Extensions;
+
 public static class ConventionExtensions
 {
     public static void AddLabViroMolConventions(this ModelConfigurationBuilder configurationBuilder, Assembly assembly)

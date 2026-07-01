@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.Materials;
 
-public class MaterialRepository : IMaterialRepository
+internal sealed class MaterialRepository : IMaterialRepository
 {
     private readonly InventoryDbContext _context;
 
@@ -17,7 +17,7 @@ public class MaterialRepository : IMaterialRepository
     {
         return await _context.Materials
             .FirstOrDefaultAsync(m => m.Id == id, ct);
-     
+
     }
 
     public async Task AddAsync(Material material, CancellationToken ct)
