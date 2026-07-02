@@ -23,6 +23,11 @@ env:
 jobs:
   container-scan-gate:
     name: Container scan (gate)
+    # O workflow reutilizável pede security-events: write internamente; numa chamada via
+    # workflow_call o chamador precisa conceder pelo menos isso, senão o run falha no startup.
+    permissions:
+      contents: read
+      security-events: write
     uses: ./.github/workflows/container-scan.yml
 
   build-push:
