@@ -31,7 +31,7 @@ env:
 
 jobs:
   dynamic-dast-perf:
-    name: Ephemeral stack -> NBomber smoke -> ZAP baseline
+    name: Ephemeral stack -> NBomber smoke -> ZAP API scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -46,6 +46,11 @@ jobs:
 
       - name: Restore + build LoadTests project
         run: dotnet build tests/LoadTests/LabViroMol.LoadTests.csproj -c Release
+
+      - name: Gerar contrato OpenAPI (build da API)
+        env:
+          ConnectionStrings__LabViroMol: "Host=localhost;Port=5432;Database=dummy;Username=dummy;Password=dummy"
+        run: dotnet build src/LabViroMol.Api/LabViroMol.Api.csproj -c Release
 
       - name: Subir stack efêmera (postgres + migrate + api)
         run: |
@@ -88,15 +93,37 @@ jobs:
           retention-days: 14
           if-no-files-found: warn
 
-      - name: ZAP baseline (DAST passivo)
-        uses: zaproxy/action-baseline@v0.14.0
+      - name: Login para o DAST (cookie de autenticação)
+        id: zap-auth
+        run: |
+          set -euo pipefail
+          TOKEN=$(curl -fsS -D - -o /dev/null \
+            -H "Content-Type: application/json" \
+            -d '{"email":"loadtest-user1@test.local","password":"Password123!"}' \
+            "${{ env.BASE_URL }}/api/identity/users/login" \
+            | grep -i '^set-cookie: X-Access-Token=' \
+            | sed 's/^[Ss]et-[Cc]ookie: X-Access-Token=//; s/;.*//' \
+            | tr -d '\r')
+          if [ -z "${TOKEN}" ]; then
+            echo "::error::Login não retornou o cookie X-Access-Token."
+            exit 1
+          fi
+          echo "::add-mask::${TOKEN}"
+          echo "cookie=X-Access-Token=${TOKEN}" >> "$GITHUB_OUTPUT"
+
+      - name: ZAP API scan (DAST via contrato OpenAPI, autenticado)
+        uses: zaproxy/action-api-scan@v0.10.0
+        env:
+          ZAP_AUTH_HEADER: "Cookie"
+          ZAP_AUTH_HEADER_VALUE: ${{ steps.zap-auth.outputs.cookie }}
         with:
-          target: ${{ env.BASE_URL }}
+          target: contracts/LabViroMol.Api.json
+          format: openapi
           rules_file_name: ".zap/rules.tsv"
-          cmd_options: "-a -I"
+          cmd_options: "-O http://localhost:8080 -a -I"
           fail_action: true
           allow_issue_writing: false
-          artifact_name: "zap-baseline-report"
+          artifact_name: "zap-api-scan-report"
 
       - name: Teardown stack efêmera
         if: always()
