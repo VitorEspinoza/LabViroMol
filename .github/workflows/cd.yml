@@ -172,7 +172,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Sync config files to droplet
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.DROPLET_HOST }}
           username: ${{ secrets.DROPLET_USER }}
@@ -202,7 +202,7 @@ jobs:
 
       - name: Decrypt secrets + migrate-first gate
         id: migrate
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.DROPLET_HOST }}
           username: ${{ secrets.DROPLET_USER }}
@@ -241,7 +241,7 @@ jobs:
 
       - name: Pull + deploy API (minimal-downtime)
         if: steps.migrate.outcome == 'success'
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.DROPLET_HOST }}
           username: ${{ secrets.DROPLET_USER }}
@@ -268,7 +268,7 @@ jobs:
       - name: Validate /health/ready post-deploy
         id: health
         if: steps.migrate.outcome == 'success'
-        uses: appleboy/ssh-action@v1.2.0
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.DROPLET_HOST }}
           username: ${{ secrets.DROPLET_USER }}
