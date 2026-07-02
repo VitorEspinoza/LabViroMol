@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
+    <OpenApiGenerateDocuments Condition="'$(DISABLE_OPENAPI_BUILD)' != 'true'">true</OpenApiGenerateDocuments>
     <OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)/../../contracts</OpenApiDocumentsDirectory>
-    <OpenApiGenerateDocumentsOnBuild Condition="'$(EFSuppressAdditionalBuildTargets)' != 'true'">true</OpenApiGenerateDocumentsOnBuild>
+    <OpenApiGenerateDocumentsOnBuild Condition="'$(DISABLE_OPENAPI_BUILD)' != 'true'">true</OpenApiGenerateDocumentsOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
