@@ -17,7 +17,9 @@ services:
       context: .
       dockerfile: Dockerfile.migrate
     environment:
+      DB_CONNECTION_STRING: ${DB_CONNECTION_STRING:-Host=postgres;Port=5432;Database=LabViroMol_CI;Username=labviromol_ci;Password=labviromol_ci}
       ConnectionStrings__LabViroMol: ${DB_CONNECTION_STRING:-Host=postgres;Port=5432;Database=LabViroMol_CI;Username=labviromol_ci;Password=labviromol_ci}
+      Storage__RootFolder: /tmp/labviromol-storage
     depends_on:
       postgres:
         condition: service_healthy

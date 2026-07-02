@@ -48,7 +48,15 @@ jobs:
 
       - name: Subir stack efêmera (postgres + migrate + api)
         run: |
-          docker compose ${{ env.COMPOSE_FILES }} up -d --wait --wait-timeout 180
+          docker compose ${{ env.COMPOSE_FILES }} up -d --wait --wait-timeout 180 || {
+            echo "::group::Logs migrate"
+            docker compose ${{ env.COMPOSE_FILES }} logs migrate
+            echo "::endgroup::"
+            echo "::group::Logs api"
+            docker compose ${{ env.COMPOSE_FILES }} logs api
+            echo "::endgroup::"
+            exit 1
+          }
 
       - name: Smoke check /health/ready
         run: |
