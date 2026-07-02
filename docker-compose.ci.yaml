@@ -5,6 +5,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-labviromol_ci}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-labviromol_ci}
       POSTGRES_DB: ${POSTGRES_DB:-LabViroMol_CI}
+    ports:
+      - "127.0.0.1:5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-labviromol_ci} -d ${POSTGRES_DB:-LabViroMol_CI}"]
       interval: 5s

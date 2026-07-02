@@ -27,6 +27,7 @@ env:
   POSTGRES_PASSWORD: "labviromol_ci"
   POSTGRES_DB: "LabViroMol_CI"
   DB_CONNECTION_STRING: "Host=postgres;Port=5432;Database=LabViroMol_CI;Username=labviromol_ci;Password=labviromol_ci"
+  DB_CONNECTION_STRING_RUNNER: "Host=localhost;Port=5432;Database=LabViroMol_CI;Username=labviromol_ci;Password=labviromol_ci"
 
 jobs:
   dynamic-dast-perf:
@@ -65,18 +66,18 @@ jobs:
       - name: Seed (perfil ci-smoke)
         working-directory: tests/LoadTests
         env:
-          ConnectionStrings__LabViroMol: ${{ env.DB_CONNECTION_STRING }}
+          ConnectionStrings__LabViroMol: ${{ env.DB_CONNECTION_STRING_RUNNER }}
         run: >
           dotnet run -c Release --no-build --project LabViroMol.LoadTests.csproj --
-          seed --profile ci-smoke --baseUrl ${{ env.BASE_URL }}
+          --command=seed --profile=ci-smoke --baseUrl=${{ env.BASE_URL }}
 
       - name: NBomber smoke (perfil ci-smoke, gate de thresholds via exit code)
         working-directory: tests/LoadTests
         env:
-          ConnectionStrings__LabViroMol: ${{ env.DB_CONNECTION_STRING }}
+          ConnectionStrings__LabViroMol: ${{ env.DB_CONNECTION_STRING_RUNNER }}
         run: >
           dotnet run -c Release --no-build --project LabViroMol.LoadTests.csproj --
-          --profile ci-smoke --campaign ci --scenario full --baseUrl ${{ env.BASE_URL }}
+          --profile=ci-smoke --campaign=ci --scenario=full --baseUrl=${{ env.BASE_URL }}
 
       - name: Publicar relatório NBomber (artefato)
         if: always()
