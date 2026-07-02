@@ -15,6 +15,7 @@ public sealed class EncapsulationTests
         var offenders = TestTypeCatalog.AllTypes()
             .Where(type => type.Assembly.GetName().Name is not null)
             .Where(type => type.Namespace is not null)
+            .Where(type => !type.Namespace!.StartsWith("Coverlet.", StringComparison.Ordinal))
             .Where(type => !type.Namespace!.StartsWith(type.Assembly.GetName().Name!, StringComparison.Ordinal))
             .Select(type => type.FullName!)
             .ToArray();
