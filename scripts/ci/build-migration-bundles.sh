@@ -32,6 +32,11 @@ MODULE_ORDER=(identity inventory assets research scheduling notify)
 
 mkdir -p "${OUTPUT_DIR}"
 
+# Microsoft.Extensions.ApiDescription.Server injects a **/*.resx EmbeddedResource glob during
+# dotnet publish (called internally by EF bundle). When no .resx files exist the build fails
+# with MSB3552. Disabling OpenAPI doc generation for this publish avoids the error entirely.
+export MSBUILDADDITIONALCOMMANDLINEARGS="/p:OpenApiGenerateDocuments=false"
+
 echo "== Gerando EF Core migration bundles =="
 echo "Output dir : ${OUTPUT_DIR}"
 echo "Runtime    : ${RUNTIME_ID}"
