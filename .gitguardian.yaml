@@ -1,0 +1,6 @@
+version: 2
+ignored-matches:
+  - name: "CI dummy Postgres password (not a real secret)"
+    match: "labviromol_ci"
+  - name: "Local dev Postgres placeholder (not a real secret)"
+    match: "labviromol_dev"
