@@ -14,6 +14,8 @@ RUN sed -i 's/\r$//' scripts/ci/build-migration-bundles.sh scripts/ci/run-migrat
 
 ENV ConnectionStrings__LabViroMol="Host=localhost;Port=5432;Database=designtime;Username=designtime;Password=designtime"
 
+ENV Storage__RootFolder=/tmp/labviromol-storage
+
 ENV MSBUILDDISABLENODEREUSE=1
 ENV DISABLE_OPENAPI_BUILD=true
 
