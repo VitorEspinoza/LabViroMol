@@ -3,6 +3,7 @@ using LabViroMol.Modules.Identity.Application.Roles.CreateRole;
 using LabViroMol.Modules.Identity.Application.Roles.DeleteRole;
 using LabViroMol.Modules.Identity.Application.Roles.Queries;
 using LabViroMol.Modules.Identity.Application.Roles.UpdateRolePermissions;
+using LabViroMol.Modules.Identity.Application.Users.ViewModels;
 using LabViroMol.Modules.Identity.Infrastructure;
 using LabViroMol.Modules.Identity.Presentation.Users;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
@@ -38,10 +39,12 @@ public static class IdentityModule
 
         group.MapGet("/permissions", (IPermissionQueries queries) =>
             Results.Ok(queries.GetAll()))
+            .Produces<IReadOnlyCollection<string>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Identity.RolesView);
 
         group.MapGet("/roles", async (IRoleQueries queries) =>
             Results.Ok(await queries.GetAllWithPermissions()))
+            .Produces<IReadOnlyCollection<RoleDetailViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Identity.RolesView);
 
         group.MapPost("/roles", async (CreateRoleCommand command, IMediator mediator, CancellationToken ct) =>

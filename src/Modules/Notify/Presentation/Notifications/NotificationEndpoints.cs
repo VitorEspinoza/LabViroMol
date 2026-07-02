@@ -1,6 +1,7 @@
 using LabViroMol.Modules.Notify.Application.Notifications.Commands.Dismiss;
 using LabViroMol.Modules.Notify.Application.Notifications.Commands.DismissAll;
 using LabViroMol.Modules.Notify.Application.Notifications.Queries;
+using LabViroMol.Modules.Notify.Application.Notifications.ViewModels;
 using LabViroMol.Modules.Notify.Domain.Notifications;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
@@ -35,6 +36,7 @@ internal static class NotificationEndpoints
         {
             var results = await queries.GetUnreadByUserAsync(currentUser.Id, currentUser.Permissions.ToList(), ct);
             return Results.Ok(results);
-        }).RequireAuthorization();
+        }).Produces<List<NotificationViewModel>>(StatusCodes.Status200OK)
+          .RequireAuthorization();
     }
 }

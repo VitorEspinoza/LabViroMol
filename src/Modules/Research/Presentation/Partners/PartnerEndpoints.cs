@@ -4,6 +4,7 @@ using LabViroMol.Modules.Research.Application.Partners.Commands.Create;
 using LabViroMol.Modules.Research.Application.Partners.Commands.Delete;
 using LabViroMol.Modules.Research.Application.Partners.Commands.Update;
 using LabViroMol.Modules.Research.Application.Partners.Queries;
+using LabViroMol.Modules.Research.Application.Partners.ViewModels;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -28,6 +29,7 @@ internal static class PartnerEndpoints
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IPartnerQueries queries) =>
             Results.Ok(await queries.GetAllAdminAsync(request)))
+            .Produces<PagedResponse<PartnerAdminSummaryViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Research.PartnersView);
 
         group.MapGet("/{id:guid}", async (Guid id, IPartnerQueries queries) =>
@@ -36,7 +38,9 @@ internal static class PartnerEndpoints
             return partner is null
                 ? Results.NotFound()
                 : Results.Ok(partner);
-        }).RequireAuthorization(Permissions.Research.PartnersView);
+        }).Produces<PartnerViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization(Permissions.Research.PartnersView);
 
         group.MapPut("/{id:guid}", async (Guid id, UpdatePartnerRequest request, IMediator mediator, CancellationToken ct) =>
         {
@@ -58,6 +62,7 @@ internal static class PartnerEndpoints
         var group = app.MapGroup("/partners").WithTags("Partners-Public");
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IPartnerQueries queries) =>
-            Results.Ok(await queries.GetAllInstitutionalAsync(request)));
+            Results.Ok(await queries.GetAllInstitutionalAsync(request)))
+            .Produces<PagedResponse<PartnerSummaryViewModel>>(StatusCodes.Status200OK);
     }
 }

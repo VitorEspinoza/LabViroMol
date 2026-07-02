@@ -28,7 +28,7 @@ public sealed class ApproveScheduleCommandHandler : ICommandHandler<ApproveSched
         var schedule = await _scheduleRepository.GetByIdAsync(command.ScheduleId.Value, ct);
 
         if (schedule is null)
-            return Result.NotFound("Agendamento não encontrado.");
+            return Result.NotFound("Agendamento nï¿½o encontrado.");
 
         var result = schedule.Approve(_currentUser.Id);
 
@@ -57,7 +57,7 @@ public sealed class ApproveScheduleCommandHandler : ICommandHandler<ApproveSched
             equipmentIds,
             ct);
 
-        const string justification = "Outro agendamento com horário conflitante foi aprovado.";
+        const string justification = "Outro agendamento com horÃ¡rio conflitante foi aprovado.";
 
         foreach (var conflict in conflicts.Where(s =>
                      s.Id != schedule.Id &&

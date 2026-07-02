@@ -3,6 +3,7 @@ using LabViroMol.Modules.Assets.Application.Equipments.Commands.Delete;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.Update;
 using LabViroMol.Modules.Assets.Application.Equipments.Commands.UploadImage;
 using LabViroMol.Modules.Assets.Application.Equipments.Queries;
+using LabViroMol.Modules.Assets.Application.Equipments.ViewModels;
 using LabViroMol.Modules.Assets.Domain.Equipments;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
@@ -46,6 +47,7 @@ internal static class EquipmentEndpoints
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IEquipmentQueries equipmentQueries) =>
             Results.Ok(await equipmentQueries.GetAllAdminAsync(request)))
+            .Produces<PagedResponse<EquipmentAdminSummaryViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Assets.EquipmentsView);
 
         group.MapGet("{id:guid}", async (Guid id, IEquipmentQueries equipmentQueries) =>
@@ -54,7 +56,9 @@ internal static class EquipmentEndpoints
             return equipment is null
                 ? Results.NotFound()
                 : Results.Ok(equipment);
-        }).RequireAuthorization(Permissions.Assets.EquipmentsView);
+        }).Produces<EquipmentAdminDetailViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization(Permissions.Assets.EquipmentsView);
 
         group.MapPost("{id:guid}/image", async (Guid id, IFormFile file, IMediator mediator) =>
         {
@@ -76,7 +80,8 @@ internal static class EquipmentEndpoints
         var group = app.MapGroup("/equipments").WithTags("Equipment-Public");
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, [FromQuery] string? language, IEquipmentQueries equipmentQueries) =>
-            Results.Ok(await equipmentQueries.GetAllInstitutionalAsync(request, language)));
+            Results.Ok(await equipmentQueries.GetAllInstitutionalAsync(request, language)))
+            .Produces<PagedResponse<EquipmentViewModel>>(StatusCodes.Status200OK);
 
         group.MapGet("{id:guid}", async (Guid id, [FromQuery] string? language, IEquipmentQueries equipmentQueries) =>
         {
@@ -84,9 +89,11 @@ internal static class EquipmentEndpoints
             return equipment is null
                 ? Results.NotFound()
                 : Results.Ok(equipment);
-        });
+        }).Produces<EquipmentViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound);
 
         group.MapGet("/schedulable", async ([FromQuery] string? language, IEquipmentQueries equipmentQueries) =>
-            Results.Ok(await equipmentQueries.GetSchedulableEquipments(language)));
+            Results.Ok(await equipmentQueries.GetSchedulableEquipments(language)))
+            .Produces<List<EquipmentSchedulableViewModel>>(StatusCodes.Status200OK);
     }
 }

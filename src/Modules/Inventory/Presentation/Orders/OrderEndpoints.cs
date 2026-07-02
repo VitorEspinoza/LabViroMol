@@ -4,6 +4,7 @@ using LabViroMol.Modules.Inventory.Application.Orders.Commands.Process;
 using LabViroMol.Modules.Inventory.Application.Orders.Commands.Cancel;
 using LabViroMol.Modules.Inventory.Application.Orders.Commands.Receive;
 using LabViroMol.Modules.Inventory.Application.Orders.Queries;
+using LabViroMol.Modules.Inventory.Application.Orders.ViewModels;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.Orders;
 using LabViroMol.Modules.Inventory.Domain.References;
@@ -44,6 +45,7 @@ internal static class OrderEndpoints
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IOrderQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))
+            .Produces<PagedResponse<OrderSummaryViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Inventory.OrdersView);
 
         group.MapGet("/{id:guid}", async (Guid id, IOrderQueries queries) =>
@@ -53,7 +55,9 @@ internal static class OrderEndpoints
             return order is null
                 ? Results.NotFound()
                 : Results.Ok(order);
-        }).RequireAuthorization(Permissions.Inventory.OrdersView);
+        }).Produces<OrderViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization(Permissions.Inventory.OrdersView);
 
         group.MapPut("/{id:guid}/fix-details", async (Guid id, FixOrderDetailsRequest request, IMediator mediator, CancellationToken ct) =>
         {

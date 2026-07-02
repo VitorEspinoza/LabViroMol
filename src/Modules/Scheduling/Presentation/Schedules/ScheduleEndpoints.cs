@@ -4,6 +4,7 @@ using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Create;
 using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.Refuse;
 using LabViroMol.Modules.Scheduling.Application.Schedules.Commands.UploadTerm;
 using LabViroMol.Modules.Scheduling.Application.Schedules.Queries;
+using LabViroMol.Modules.Scheduling.Application.Schedules.ViewModels;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
@@ -27,17 +28,21 @@ internal static class ScheduleEndpoints
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IScheduleQueries scheduleQueries) =>
             Results.Ok(await scheduleQueries.GetAllAsync(request)))
+            .Produces<PagedResponse<ScheduleViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Scheduling.SchedulesView);
 
         group.MapGet("/pending", async ([AsParameters] PagedRequest request, IScheduleQueries scheduleQueries) =>
             Results.Ok(await scheduleQueries.GetAllPendingAsync(request)))
+            .Produces<PagedResponse<ScheduleViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Scheduling.SchedulesView);
 
         group.MapGet("/{id:guid}", async (Guid id, IScheduleQueries scheduleQueries) =>
         {
             var schedule = await scheduleQueries.GetByIdAsync(id);
             return schedule is null ? Results.NotFound() : Results.Ok(schedule);
-        }).RequireAuthorization(Permissions.Scheduling.SchedulesView);
+        }).Produces<ScheduleViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization(Permissions.Scheduling.SchedulesView);
 
         group.MapPost("/{id:guid}/approve", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {
@@ -52,7 +57,7 @@ internal static class ScheduleEndpoints
             var result = await mediator.Send(command, ct);
             return result.ToHttpResult(Results.Accepted());
         }).RequireAuthorization(Permissions.Scheduling.SchedulesManage);
-        
+
         group.MapPost("/{id:guid}/cancel", async (Guid id, CancelScheduleRequest request, IMediator mediator, CancellationToken ct) =>
         {
             var command = new CancelScheduleCommand(ScheduleId.From(id), request.Justification);
@@ -72,8 +77,8 @@ internal static class ScheduleEndpoints
     public static void MapInstitutionalScheduleEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/schedules").WithTags("Schedules-Public");
-        
-        
+
+
         group.MapPost("/", async (CreateScheduleCommand command, IMediator mediator, CancellationToken ct) =>
         {
             var result = await mediator.Send(command, ct);

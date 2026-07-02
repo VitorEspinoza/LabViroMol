@@ -3,6 +3,7 @@ using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Create;
 using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Done;
 using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Start;
 using LabViroMol.Modules.Assets.Application.MaintenanceRequests.Queries;
+using LabViroMol.Modules.Assets.Application.MaintenanceRequests.ViewModels;
 using LabViroMol.Modules.Assets.Domain.MaintenanceRequests;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
@@ -28,6 +29,7 @@ internal static class MaintenanceRequestsEndpoints
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IMaintenanceRequestQueries maintenanceRequestQueries) =>
             Results.Ok(await maintenanceRequestQueries.GetAllAsync(request)))
+            .Produces<PagedResponse<MaintenanceRequestViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Assets.MaintenanceView);
 
         group.MapPost("/{id:guid}/start", async (Guid id, IMediator mediator, CancellationToken ct) =>

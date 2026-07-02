@@ -1,0 +1,69 @@
+name: CI - Migration Guard
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/Modules/*/Infrastructure/Persistence/Migrations/*.cs"
+
+concurrency:
+  group: migration-guard-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  migration-guard:
+    name: Check destructive migrations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch base ref
+        run: git fetch origin "${{ github.event.pull_request.base.ref }}" --depth=1
+
+      - name: Run destructive migration check
+        id: check
+        run: |
+          set +e
+          bash scripts/ci/check-destructive-migrations.sh \
+            "origin/${{ github.event.pull_request.base.ref }}" \
+            "${{ github.event.pull_request.head.sha }}"
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Check for migration-reviewed label
+        id: label
+        run: |
+          has_label=$(
+            echo '${{ toJSON(github.event.pull_request.labels) }}' \
+              | jq -r 'any(.[]; .name == "migration-reviewed")'
+          )
+          echo "has_label=$has_label" >> "$GITHUB_OUTPUT"
+
+      - name: Evaluate gate
+        run: |
+          exit_code="${{ steps.check.outputs.exit_code }}"
+          has_label="${{ steps.label.outputs.has_label }}"
+
+          if [ "$exit_code" = "0" ]; then
+            echo "Nenhuma migration destrutiva detectada. Gate liberado."
+            exit 0
+          fi
+
+          if [ "$has_label" = "true" ]; then
+            echo "Migration destrutiva detectada, mas o PR tem a label 'migration-reviewed'."
+            echo "Liberação controlada: aprovação de CODEOWNERS é exigida via branch protection"
+            echo "('require review from Code Owners' no path de Migrations)."
+            exit 0
+          fi
+
+          echo "::error::Migration destrutiva detectada sem a label 'migration-reviewed'."
+          echo "Adicione a label 'migration-reviewed' e obtenha aprovação de um CODEOWNER"
+          echo "do caminho src/Modules/**/Migrations/ antes de mergear este PR."
+          exit 1

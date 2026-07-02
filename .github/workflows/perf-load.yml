@@ -1,0 +1,127 @@
+name: Perf - Load Tests (NBomber)
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "Perfil de carga do NBomber a executar"
+        type: choice
+        default: load
+        options:
+          - load
+          - stress
+          - soak
+          - spike
+          - breakpoint
+  schedule:
+    - cron: "0 3 * * 0"
+
+concurrency:
+  group: perf-load
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  PERF_PROFILE: ${{ github.event.inputs.profile || 'load' }}
+
+jobs:
+  perf-load:
+    name: Perf load (${{ github.event.inputs.profile || 'load' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: "**/*.csproj"
+
+      - name: Create .env.ci from example
+        run: cp .env.ci.example .env.ci
+
+      - name: Load .env.ci into job env
+        run: cat .env.ci >> "$GITHUB_ENV"
+
+      - name: Gerar override local para publicar a porta do Postgres
+        run: |
+          cat > docker-compose.perf-load.override.yaml <<'EOF'
+          services:
+            postgres:
+              ports:
+                - "5432:5432"
+          EOF
+
+      - name: Subir a stack efêmera (Postgres + migrate + API)
+        run: |
+          docker compose -f docker-compose.ci.yaml -f docker-compose.perf-load.override.yaml --env-file .env.ci up -d --wait
+
+      - name: Diagnóstico da stack (sempre, mesmo em falha)
+        if: always()
+        run: |
+          docker compose -f docker-compose.ci.yaml -f docker-compose.perf-load.override.yaml ps
+          docker compose -f docker-compose.ci.yaml -f docker-compose.perf-load.override.yaml logs --no-color --tail=200
+
+      - name: Restore LoadTests
+        run: dotnet restore tests/LoadTests/LabViroMol.LoadTests.csproj
+
+      - name: Build LoadTests
+        run: dotnet build tests/LoadTests/LabViroMol.LoadTests.csproj -c Release --no-restore
+
+      - name: Seed completo (--profile=${{ env.PERF_PROFILE }})
+        working-directory: tests/LoadTests
+        env:
+          ConnectionStrings__LabViroMol: "Host=localhost;Port=5432;Database=${{ env.POSTGRES_DB }};Username=${{ env.POSTGRES_USER }};Password=${{ env.POSTGRES_PASSWORD }}"
+        run: |
+          dotnet run -c Release --no-build --project ../../tests/LoadTests -- \
+            --command=seed \
+            --profile="${PERF_PROFILE}" \
+            --baseUrl=http://localhost:8080
+
+      - name: Executar perfil ${{ env.PERF_PROFILE }} (cenário full)
+        working-directory: tests/LoadTests
+        run: |
+          dotnet run -c Release --no-build --project ../../tests/LoadTests -- \
+            --profile="${PERF_PROFILE}" \
+            --campaign=scheduled \
+            --scenario=full \
+            --baseUrl=http://localhost:8080
+
+      - name: Publicar métricas-chave no job summary
+        if: always()
+        working-directory: tests/LoadTests
+        run: |
+          REPORT_DIR="reports/scheduled/${PERF_PROFILE}/full"
+          SUMMARY_JSON="${REPORT_DIR}/summary.json"
+
+          {
+            echo "## Perf load — perfil \`${PERF_PROFILE}\` (campanha \`scheduled\`)"
+            echo
+            if [ -f "$SUMMARY_JSON" ]; then
+              echo '```json'
+              cat "$SUMMARY_JSON"
+              echo '```'
+            else
+              echo "⚠️ \`${SUMMARY_JSON}\` não foi gerado — a execução pode ter falhado antes do NBomberRunner concluir."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload do relatório HTML do NBomber
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nbomber-report-${{ env.PERF_PROFILE }}-${{ github.run_id }}
+          path: tests/LoadTests/reports/scheduled/${{ env.PERF_PROFILE }}/full
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Teardown da stack efêmera
+        if: always()
+        run: docker compose -f docker-compose.ci.yaml -f docker-compose.perf-load.override.yaml --env-file .env.ci down -v

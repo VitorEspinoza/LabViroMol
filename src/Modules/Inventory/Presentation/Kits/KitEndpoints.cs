@@ -2,6 +2,7 @@ using LabViroMol.Modules.Inventory.Application.Kits.Commands.Create;
 using LabViroMol.Modules.Inventory.Application.Kits.Commands.Shared;
 using LabViroMol.Modules.Inventory.Application.Kits.Commands.Update;
 using LabViroMol.Modules.Inventory.Application.Kits.Queries;
+using LabViroMol.Modules.Inventory.Application.Kits.ViewModels;
 using LabViroMol.Modules.Inventory.Domain.Kits;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
@@ -30,6 +31,7 @@ internal static class KitEndpoints
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IKitQueries kitQueries) =>
             Results.Ok(await kitQueries.GetAllAsync(request)))
+            .Produces<PagedResponse<KitViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Inventory.KitsView);
 
         group.MapGet("/{id:guid}", async (Guid id, IKitQueries kitQueries) =>
@@ -39,7 +41,9 @@ internal static class KitEndpoints
             return kit is null
                 ? Results.NotFound()
                 : Results.Ok(kit);
-        }).RequireAuthorization(Permissions.Inventory.KitsView);
+        }).Produces<KitViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization(Permissions.Inventory.KitsView);
 
         group.MapPut("/{id:guid}", async (Guid id, UpdateKitRequest request, IMediator mediator, CancellationToken ct) =>
         {

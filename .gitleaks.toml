@@ -1,0 +1,24 @@
+title = "LabViroMol gitleaks config"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "labviromol-known-test-secret"
+description = "Segredos de teste/dev intencionais do LabViroMol (allowlist, não detecta nada novo)"
+regex = '''dev-secret-key-replace-in-production-must-be-at-least-32-chars|IntegrationTestSecretKeyThatIsLongEnoughForHmacSha256!!'''
+[rules.allowlist]
+regexes = [
+  '''dev-secret-key-replace-in-production-must-be-at-least-32-chars''',
+  '''IntegrationTestSecretKeyThatIsLongEnoughForHmacSha256!!''',
+]
+
+[allowlist]
+description = "Allowlist global de paths e segredos de teste conhecidos"
+paths = [
+  '''\.gitleaks\.toml$''',
+]
+regexes = [
+  '''dev-secret-key-replace-in-production-must-be-at-least-32-chars''',
+  '''IntegrationTestSecretKeyThatIsLongEnoughForHmacSha256!!''',
+]

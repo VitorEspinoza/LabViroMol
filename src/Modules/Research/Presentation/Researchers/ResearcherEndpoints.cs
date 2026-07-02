@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LabViroMol.Modules.Research.Presentation.Researchers;
 
 using LabViroMol.Modules.Research.Application.Researchers.Queries;
+using LabViroMol.Modules.Research.Application.Researchers.ViewModels;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.AspNetCore.Builder;
@@ -16,6 +17,7 @@ internal static class ResearcherEndpoints
         var group = app.MapGroup("/researchers").WithTags("Researchers-Public");
 
         group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, IResearcherQueries queries) =>
-            Results.Ok(await queries.GetAllInstitutionalAsync(request, language)));
+            Results.Ok(await queries.GetAllInstitutionalAsync(request, language)))
+            .Produces<PagedResponse<ResearcherSummaryViewModel>>(StatusCodes.Status200OK);
     }
 }

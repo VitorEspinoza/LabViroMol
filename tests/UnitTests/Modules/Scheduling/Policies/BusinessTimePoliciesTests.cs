@@ -73,7 +73,11 @@ public class BusinessTimePoliciesTests
     {
         var date = NextBusinessDay();
         var start = new DateTimeOffset(date.ToDateTime(new TimeOnly(9, 0)));
-        var end = new DateTimeOffset(date.AddDays(1).ToDateTime(new TimeOnly(10, 0)));
+
+        var nextDay = date.AddDays(1);
+        while (nextDay.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+            nextDay = nextDay.AddDays(1);
+        var end = new DateTimeOffset(nextDay.ToDateTime(new TimeOnly(10, 0)));
 
         Assert.Throws<DomainException>(() => BusinessTimePolicies.Validate(date, start, end));
     }

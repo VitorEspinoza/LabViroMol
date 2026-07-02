@@ -5,6 +5,7 @@ using LabViroMol.Modules.Identity.Application.Users.ForgotPassword;
 using LabViroMol.Modules.Identity.Application.Users.Login;
 using LabViroMol.Modules.Identity.Application.Users.Logout;
 using LabViroMol.Modules.Identity.Application.Users.Queries;
+using LabViroMol.Modules.Identity.Application.Users.ViewModels;
 using LabViroMol.Modules.Identity.Application.Users.ReactivateUser;
 using LabViroMol.Modules.Identity.Application.Users.RefreshToken;
 using LabViroMol.Modules.Identity.Application.Users.ResetPassword;
@@ -34,19 +35,24 @@ internal static class UserEndpoints
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IUserQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))
+            .Produces<PagedResponse<UserSummaryViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Identity.UsersView);
 
         group.MapGet("/me", async (ICurrentUser currentUser, IUserQueries queries, CancellationToken ct) =>
         {
             var user = await queries.GetByIdAsync(currentUser.Id.Value, ct);
             return user is null ? Results.NotFound() : Results.Ok(user);
-        }).RequireAuthorization();
+        }).Produces<UserProfileViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization();
 
         group.MapGet("/{id:guid}", async (Guid id, IUserQueries queries, CancellationToken ct) =>
         {
             var user = await queries.GetByIdAsync(id, ct);
             return user is null ? Results.NotFound() : Results.Ok(user);
-        }).RequireAuthorization(Permissions.Identity.UsersView);
+        }).Produces<UserProfileViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization(Permissions.Identity.UsersView);
 
         group.MapPost("/", async (CreateUserCommand command, IMediator mediator, CancellationToken ct) =>
         {
