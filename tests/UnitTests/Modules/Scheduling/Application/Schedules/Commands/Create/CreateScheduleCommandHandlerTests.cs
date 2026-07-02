@@ -23,7 +23,9 @@ public class CreateScheduleCommandHandlerTests
     [Fact]
     public async Task Handle_WhenCreateSucceeds_ShouldPersistEmailAndNotificationEvents()
     {
-        var date = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
+        var date = DateOnly.FromDateTime(DateTime.Today).AddDays(1);
+        while (date.DayOfWeek is DayOfWeek.Saturday or DayOfWeek.Sunday)
+            date = date.AddDays(1);
         var start = new DateTimeOffset(date.ToDateTime(new TimeOnly(9, 0)));
         var end = new DateTimeOffset(date.ToDateTime(new TimeOnly(10, 0)));
         var equipmentId = Guid.NewGuid();
