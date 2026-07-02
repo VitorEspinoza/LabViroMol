@@ -120,7 +120,7 @@ jobs:
           target: contracts/LabViroMol.Api.json
           format: openapi
           rules_file_name: ".zap/rules.tsv"
-          cmd_options: "-O http://localhost:8080 -a -I"
+          cmd_options: "-O http://localhost:8080 -a -I -P 8090"
           fail_action: true
           allow_issue_writing: false
           artifact_name: "zap-api-scan-report"
