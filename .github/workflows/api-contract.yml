@@ -93,13 +93,13 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Download revision spec
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: openapi-revision
           path: contracts
 
       - name: Download base spec
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: openapi-base
           path: contracts
@@ -170,7 +170,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download revision spec
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: openapi-revision
           path: contracts
