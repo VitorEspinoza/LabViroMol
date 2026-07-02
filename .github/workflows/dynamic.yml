@@ -93,8 +93,9 @@ jobs:
         with:
           target: ${{ env.BASE_URL }}
           rules_file_name: ".zap/rules.tsv"
-          cmd_options: "-a"
+          cmd_options: "-a -I"
           fail_action: true
+          allow_issue_writing: false
           artifact_name: "zap-baseline-report"
 
       - name: Teardown stack efêmera

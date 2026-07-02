@@ -6,3 +6,5 @@
 10055	IGNORE	Cookie Without Secure Flag — mesmo racional acima: sem cookies de sessão/autenticação emitidos por esta API.
 10027	WARN	Information Disclosure - Suspicious Comments — pode haver falso-positivo em respostas de erro padrão do ASP.NET Core em ambiente LoadTest; mantido como WARN para revisão manual, não bloqueia o baseline passivo.
 10096	WARN	Timestamp Disclosure - Unix — datas/timestamps em payloads JSON (CreatedAt/UpdatedAt em entidades) são esperados e fazem parte do contrato da API; mantido como WARN apenas para visibilidade, não é uma vulnerabilidade real neste contexto.
+90005	IGNORE	Sec-Fetch-Dest Header is Missing — Sec-Fetch-* são headers de REQUEST enviados por browsers (fetch metadata); a regra reclama da ausência deles nas requisições do próprio scanner, puro ruído para uma API consumida por clientes HTTP.
+10049	WARN	Storable and Cacheable Content — sinalizado apenas em respostas 404 (/, /robots.txt, /sitemap.xml) que não carregam dado sensível; cache-control por endpoint sensível é tratado na aplicação; mantido como WARN para visibilidade.
