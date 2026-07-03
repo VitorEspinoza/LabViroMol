@@ -72,6 +72,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    ports:
+      - "127.0.0.1:8080:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       DOTNET_gcServer: "0"
@@ -131,6 +133,7 @@ services:
         condition: service_healthy
     environment:
       DB_CONNECTION_STRING: ${DB_CONNECTION_STRING}
+      ConnectionStrings__LabViroMol: ${DB_CONNECTION_STRING}
     logging:
       driver: json-file
       options:
