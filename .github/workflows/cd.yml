@@ -185,6 +185,7 @@ jobs:
           script: |
             mkdir -p "$HOME/${{ env.REMOTE_DIR }}/nginx"
             mkdir -p "$HOME/${{ env.REMOTE_DIR }}/certbot"
+            mkdir -p "$HOME/${{ env.REMOTE_DIR }}/secrets"
 
       - name: Upload docker-compose.prod.yaml
         uses: appleboy/scp-action@v0.1.7
