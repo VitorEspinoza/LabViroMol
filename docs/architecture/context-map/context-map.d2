@@ -1,0 +1,165 @@
+# ============================================================
+# Mapa de Contexto — LabViroMol (DDD Strategic Design)
+# D2 (https://d2lang.com), estilo Vaughn Vernon
+#
+# Bounded contexts == módulos do Clean Architecture (src/Modules/*).
+# SharedKernel é um caso especial: não é módulo de negócio, mas
+# fornece primitivas comuns (AggregateRoot<TId>, UserId, SmartEnum,
+# Permissions, IDomainEvent/IIntegrationEvent, BaseUnitOfWork) a
+# todos os demais contextos via relação SK<->SK.
+#
+# Marcadores de papel ficam junto a cada extremidade da linha de
+# relação (source-arrowhead.label / target-arrowhead.label), igual
+# ao Context Map clássico do livro Implementing Domain-Driven Design.
+# ============================================================
+
+# ----------------- Bounded Contexts -----------------
+
+Identity: "Identity\n(Autenticação, usuários, roles e permissões)" {
+  shape: rectangle
+}
+
+Research: "Research\n(Projetos, pesquisadores e publicações)" {
+  shape: rectangle
+}
+
+# Core domain module — destaque visual
+Inventory: "Inventory\n(Materiais, estoque, kits e pedidos)" {
+  shape: rectangle
+  style.stroke-width: 3
+  style.fill: "#E8F4FD"
+}
+
+# Core domain module — destaque visual
+Scheduling: "Scheduling\n(Agendamento de laboratório e equipamentos)" {
+  shape: rectangle
+  style.stroke-width: 3
+  style.fill: "#E8F4FD"
+}
+
+Assets: "Assets\n(Equipamentos e manutenção)" {
+  shape: rectangle
+}
+
+Notify: "Notify\n(Notificações in-app e e-mail)" {
+  shape: rectangle
+}
+
+# Não é módulo de negócio: fornece primitivas comuns a todos os demais
+SharedKernel: "SharedKernel\n(AggregateRoot<TId>, UserId, SmartEnum, Permissions,\nIDomainEvent/IIntegrationEvent, BaseUnitOfWork)" {
+  shape: rectangle
+  style.stroke-dash: 3
+  style.fill: "#F5F5F5"
+}
+
+# ===================== RELAÇÕES FUNCIONAIS =====================
+
+# Mecanismo técnico: Integration Events (ex.: UserRegisteredIntegrationEvent,
+# UserUpdatedIntegrationEvent, ...). Identity é upstream/supplier,
+# Research é downstream/customer. Customer/Supplier genérico.
+Identity -> Research: {
+  source-arrowhead.label: "U"
+  target-arrowhead.label: "D"
+}
+
+# Mecanismo técnico: Contract ISendEmail. Identity é upstream/supplier,
+# Notify é downstream/customer. Customer/Supplier genérico.
+Identity -> Notify: {
+  source-arrowhead.label: "U"
+  target-arrowhead.label: "D"
+}
+
+# Mecanismo técnico: Contracts IProjectChecker, IProjectCatalog,
+# IResearcherProfileProvider — linguagem publicada estável exposta
+# por Research para múltiplos consumidores. Open Host Service + Published Language.
+Research -> Inventory: {
+  source-arrowhead.label: "OHS, PL"
+  target-arrowhead.label: "CF"
+}
+
+# Mecanismo técnico: Contract IResearcherProfileProvider — Research
+# publica a mesma linguagem publicada também para Identity.
+# Open Host Service + Published Language.
+Research -> Identity: {
+  source-arrowhead.label: "OHS, PL"
+  target-arrowhead.label: "CF"
+}
+
+# Mecanismo técnico: LowStockDomainEvent -> ISendNotification.
+# Inventory é upstream/supplier, Notify é downstream/customer.
+# Customer/Supplier genérico.
+Inventory -> Notify: {
+  source-arrowhead.label: "U"
+  target-arrowhead.label: "D"
+}
+
+# Mecanismo técnico: referência fraca por Guid (ProjectId), sem
+# tradução nem contrato negociado — Inventory se conforma ao
+# modelo de Research. Conformist puro.
+Research -> Inventory: {
+  source-arrowhead.label: "U"
+  target-arrowhead.label: "CF"
+}
+
+# Mecanismo técnico: NewScheduleDomainEvent, ApprovedScheduleDomainEvent,
+# CanceledScheduleDomainEvent, ReprovedScheduleDomainEvent ->
+# ISendNotification / ISendEmail. Scheduling é upstream/supplier,
+# Notify é downstream/customer. Customer/Supplier genérico.
+Scheduling -> Notify: {
+  source-arrowhead.label: "U"
+  target-arrowhead.label: "D"
+}
+
+# Mecanismo técnico: referência fraca por Guid (EquipmentId), sem
+# tradução nem contrato negociado — Scheduling se conforma ao
+# modelo de Assets. Conformist puro.
+Assets -> Scheduling: {
+  source-arrowhead.label: "U"
+  target-arrowhead.label: "CF"
+}
+
+# ===================== SHARED KERNEL =====================
+
+# Shared Kernel: AggregateRoot<TId>, UserId, SmartEnum, Permissions,
+# IDomainEvent/IIntegrationEvent, BaseUnitOfWork compartilhados
+# deliberadamente entre SharedKernel e Identity.
+SharedKernel -> Identity: {
+  style.stroke-dash: 4
+  source-arrowhead.label: "SK"
+  target-arrowhead.label: "SK"
+}
+
+# Shared Kernel compartilhado entre SharedKernel e Research.
+SharedKernel -> Research: {
+  style.stroke-dash: 4
+  source-arrowhead.label: "SK"
+  target-arrowhead.label: "SK"
+}
+
+# Shared Kernel compartilhado entre SharedKernel e Inventory.
+SharedKernel -> Inventory: {
+  style.stroke-dash: 4
+  source-arrowhead.label: "SK"
+  target-arrowhead.label: "SK"
+}
+
+# Shared Kernel compartilhado entre SharedKernel e Scheduling.
+SharedKernel -> Scheduling: {
+  style.stroke-dash: 4
+  source-arrowhead.label: "SK"
+  target-arrowhead.label: "SK"
+}
+
+# Shared Kernel compartilhado entre SharedKernel e Assets.
+SharedKernel -> Assets: {
+  style.stroke-dash: 4
+  source-arrowhead.label: "SK"
+  target-arrowhead.label: "SK"
+}
+
+# Shared Kernel compartilhado entre SharedKernel e Notify.
+SharedKernel -> Notify: {
+  style.stroke-dash: 4
+  source-arrowhead.label: "SK"
+  target-arrowhead.label: "SK"
+}
