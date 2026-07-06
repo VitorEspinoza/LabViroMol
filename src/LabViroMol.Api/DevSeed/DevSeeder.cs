@@ -54,27 +54,34 @@ public static class DevSeeder
         using var scope = rootServices.CreateScope();
         var services = scope.ServiceProvider;
 
-        var identityDb = services.GetRequiredService<LabViroMolIdentityDbContext>();
-
-        if (await identityDb.Users.AnyAsync())
+        try
         {
-            logger.LogInformation("DevSeed: data already present, skipping");
-            return;
+            var identityDb = services.GetRequiredService<LabViroMolIdentityDbContext>();
+
+            if (await identityDb.Users.AnyAsync())
+            {
+                logger.LogInformation("DevSeed: data already present, skipping");
+                return;
+            }
+
+            logger.LogInformation("DevSeed: seeding development data...");
+
+            var users = await SeedIdentityAsync(services, identityDb);
+            var equipment = await SeedAssetsAsync(services);
+            var research = await SeedResearchAsync(services, users);
+            var inventory = await SeedInventoryAsync(services, research.Projects);
+            var schedules = await SeedSchedulingAsync(services, equipment, users);
+            await SeedNotifyAsync(services, schedules, inventory.Orders, equipment.MaintenanceRequestIds);
+
+            logger.LogInformation(
+                "DevSeed: done. Log in with {Email} / {Password}",
+                users[0].Email,
+                DevPassword);
         }
-
-        logger.LogInformation("DevSeed: seeding development data...");
-
-        var users = await SeedIdentityAsync(services, identityDb);
-        var equipment = await SeedAssetsAsync(services);
-        var research = await SeedResearchAsync(services, users);
-        var inventory = await SeedInventoryAsync(services, research.Projects);
-        var schedules = await SeedSchedulingAsync(services, equipment, users);
-        await SeedNotifyAsync(services, schedules, inventory.Orders, equipment.MaintenanceRequestIds);
-
-        logger.LogInformation(
-            "DevSeed: done. Log in with {Email} / {Password}",
-            users[0].Email,
-            DevPassword);
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "DevSeed: skipped due to an error (expected outside a real local run)");
+        }
     }
 
     private static void StampCreationAudit(DbContext context)
