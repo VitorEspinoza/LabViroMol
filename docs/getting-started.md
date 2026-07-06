@@ -83,7 +83,7 @@ some-folder/
 ```bash
 git clone https://github.com/VitorEspinoza/LabViroMol
 git clone https://github.com/VitorEspinoza/LabViroMol-Admin-Panel
-git clone https://github.com/VitorEspinoza/labviromol-institucional
+git clone https://github.com/rafaelleonardodev/labviromol-institucional
 ```
 
 ### 2. Configure `.env`
