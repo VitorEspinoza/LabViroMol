@@ -78,7 +78,7 @@ jobs:
           upload-artifact: false
 
       - name: Attest SBOM — API image
-        uses: actions/attest-sbom@v2
+        uses: actions/attest-sbom@v4
         with:
           subject-name: ${{ env.IMAGE_API }}
           subject-digest: ${{ steps.push-api.outputs.digest }}
@@ -114,7 +114,7 @@ jobs:
           upload-artifact: false
 
       - name: Attest SBOM — migrate image
-        uses: actions/attest-sbom@v2
+        uses: actions/attest-sbom@v4
         with:
           subject-name: ${{ env.IMAGE_MIGRATE }}
           subject-digest: ${{ steps.push-migrate.outputs.digest }}
