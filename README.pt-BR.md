@@ -59,6 +59,8 @@ dotnet run --project src/LabViroMol.Api
 
 Antes da primeira execução, você também precisa configurar os user secrets e aplicar as migrations de cada módulo. O passo a passo completo está em [`docs/getting-started.md`](./docs/getting-started.pt-BR.md).
 
+Para rodar a stack inteira do jeito que roda em produção — API + painel admin Angular + site institucional Next.js atrás de um gateway nginx, tudo buildado a partir do código-fonte local — clone o [`LabViroMol-Admin-Panel`](https://github.com/VitorEspinoza/LabViroMol-Admin-Panel) e o [`labviromol-institucional`](https://github.com/VitorEspinoza/labviromol-institucional) lado a lado deste repositório e rode `docker compose up -d --build`; o `docker-compose.override.yml` builda os fronts automaticamente. Veja [Rodando a stack completa localmente](./docs/getting-started.pt-BR.md#rodando-a-stack-completa-localmente-docker-compose) para o passo a passo completo, incluindo como o `.env` é preenchido sem existir um banco pra se conectar antes.
+
 ## Testes
 
 ```bash

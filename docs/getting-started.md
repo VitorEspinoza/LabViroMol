@@ -65,6 +65,81 @@ The API starts on `https://localhost:7xxx` (port shown in console). The interact
 
 The Angular frontend is a separate repository and is expected to run on `http://localhost:4200`. CORS is pre-configured for that origin.
 
+## Running the full stack locally (Docker Compose)
+
+The steps above run only the API, against a Docker-hosted Postgres/LibreTranslate. To run everything the way it runs in production — API + both frontends (Angular admin panel, Next.js institutional site) + an nginx gateway in front of all three — but entirely on your machine, from your own local source, use `docker-compose.override.yml`. It's already checked into this repo and Docker Compose merges it in automatically alongside `docker-compose.yaml`; there's nothing to enable.
+
+### 1. Clone all three repositories as siblings
+
+The override file builds both frontends from source, referencing them by relative path, so the three repositories need to sit next to each other with these exact folder names:
+
+```
+some-folder/
+├── LabViroMol/                   # this repo
+├── LabViroMol-Admin-Panel/       # Angular admin panel
+└── labviromol-institucional/     # Next.js institutional site
+```
+
+```bash
+git clone https://github.com/VitorEspinoza/LabViroMol
+git clone https://github.com/VitorEspinoza/LabViroMol-Admin-Panel
+git clone https://github.com/VitorEspinoza/labviromol-institucional
+```
+
+### 2. Configure `.env`
+
+```bash
+cd LabViroMol
+cp .env.example .env
+```
+
+Every value the containers need comes from this one file — there's no external database to provision beforehand and no connection string to go fetch from anywhere. `docker-compose.yaml` creates the `postgres` container itself, using whatever `POSTGRES_USER`/`POSTGRES_PASSWORD`/`POSTGRES_DB` you put in `.env`; the API's `DB_CONNECTION_STRING`, in that same file, just needs to reference those same three values, plus `Host=postgres` (the container's name on the Docker network — not `localhost`, since containers reach each other by service name, not by the host machine's loopback address). `.env.example` already keeps these consistent by default:
+
+```
+POSTGRES_USER=labviromol
+POSTGRES_PASSWORD=labviromol_dev
+POSTGRES_DB=LabViroMol
+DB_CONNECTION_STRING=Host=postgres;Port=5432;Database=LabViroMol;Username=labviromol;Password=labviromol_dev
+```
+
+You can leave these three exactly as they are for local use — whatever values you pick, Postgres initializes itself with them the first time its volume is created, so as long as `POSTGRES_*` and `DB_CONNECTION_STRING` agree with each other, there's no "existing" database to match against. The one value you do need to change is `JWT_KEY` (any random string ≥32 characters) — the API refuses to start without a real one. `EMAIL_*` and `NR_LICENSE_KEY` can stay as the placeholder values; the API starts fine without a working SMTP server or New Relic account, those integrations just won't do anything.
+
+### 3. Build and start everything
+
+```bash
+docker compose up -d --build
+```
+
+This builds the API from this repo's `Dockerfile`, the admin panel from `../LabViroMol-Admin-Panel`, and the institutional site from `../labviromol-institucional` (all declared in `docker-compose.override.yml`), then starts Postgres, LibreTranslate, the three application containers, and an nginx gateway (`nginx/gateway.local.conf`) in front of everything on port 80.
+
+### 4. Apply migrations
+
+The `migrate` service also comes up with `docker compose up -d` (it runs once and exits on its own), but you can run it explicitly at any point:
+
+```bash
+docker compose run --rm migrate
+```
+
+### 5. Access the stack
+
+| URL | What |
+|---|---|
+| `http://localhost/` | Institutional site (Next.js) |
+| `http://localhost/gestao-lab-ufpr/` | Admin panel (Angular) |
+| `http://localhost/api/...` | API |
+
+Because everything is served from the same origin (`http://localhost`) through the gateway, `CORS_ORIGIN_ADMIN`/`CORS_ORIGIN_INSTITUCIONAL` in `.env` don't come into play here — those only matter when a frontend is run directly (`ng serve`/`next dev`), hitting the API on a different port.
+
+### Dev seed data
+
+The first time the API starts in `Development` against an empty database, it automatically seeds about 20 valid records per module (users, materials, equipment, projects, schedules, etc.) so there's something to click through right away — see `src/LabViroMol.Api/DevSeed/DevSeeder.cs`. It runs once (skips if the database already has data) and logs the admin credentials on success:
+
+```
+DevSeed: done. Log in with admin@labviromol.local / Labviromol@123
+```
+
+Disable it by setting `DevSeed:Enabled` to `false` in `appsettings.Development.json`, or via the `DevSeed__Enabled=false` environment variable.
+
 ## Configuration Reference
 
 Key values in `appsettings.json`:

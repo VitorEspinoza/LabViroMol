@@ -114,10 +114,3 @@ docker compose -f docker-compose.prod.yaml logs -f api
   produção (até aqui só validado: `docker compose -f
   docker-compose.prod.yaml config`, sintaxe do script, e o caminho de erro
   de uso incorreto — nenhuma transferência SSH real foi feita).
-- **Bug conhecido e bloqueante**: a imagem
-  `labviromol-migrate` não builda hoje (`MSB3552` em `dotnet ef migrations
-  bundle`). O serviço `migrate` deste compose
-  está pronto para uso, mas a imagem que ele referencia não existe
-  publicada no GHCR até esse bug ser corrigido — **não tentar deploy real
-  do backend em produção antes disso**, ou a etapa migrate-first
-  vai falhar já no `pull`.

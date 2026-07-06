@@ -65,6 +65,81 @@ A API sobe em `https://localhost:7xxx` (porta exibida no console). O explorador 
 
 O frontend Angular é um repositório separado e é esperado que rode em `http://localhost:4200`. O CORS já está pré-configurado para essa origem.
 
+## Rodando a stack completa localmente (Docker Compose)
+
+Os passos acima sobem só a API, contra um Postgres/LibreTranslate no Docker. Para rodar tudo do jeito que roda em produção — API + os dois frontends (painel admin Angular, site institucional Next.js) + um gateway nginx na frente dos três — mas inteiramente na sua máquina, a partir do seu próprio código-fonte local, use o `docker-compose.override.yml`. Ele já está versionado neste repositório, e o Docker Compose o mescla automaticamente junto com o `docker-compose.yaml`; não tem nada para habilitar.
+
+### 1. Clone os três repositórios lado a lado
+
+O arquivo de override builda os dois frontends a partir do código-fonte, referenciando-os por caminho relativo — então os três repositórios precisam ficar lado a lado, com exatamente estes nomes de pasta:
+
+```
+alguma-pasta/
+├── LabViroMol/                   # este repositório
+├── LabViroMol-Admin-Panel/       # painel admin Angular
+└── labviromol-institucional/     # site institucional Next.js
+```
+
+```bash
+git clone https://github.com/VitorEspinoza/LabViroMol
+git clone https://github.com/VitorEspinoza/LabViroMol-Admin-Panel
+git clone https://github.com/VitorEspinoza/labviromol-institucional
+```
+
+### 2. Configure o `.env`
+
+```bash
+cd LabViroMol
+cp .env.example .env
+```
+
+Todo valor que os containers precisam vem deste único arquivo — não existe um banco de dados externo para provisionar antes, nem uma connection string para ir buscar em algum lugar. É o próprio `docker-compose.yaml` que cria o container `postgres`, usando o que você colocar em `POSTGRES_USER`/`POSTGRES_PASSWORD`/`POSTGRES_DB` no `.env`; o `DB_CONNECTION_STRING` da API, nesse mesmo arquivo, só precisa referenciar esses três mesmos valores, mais `Host=postgres` (o nome do container na rede do Docker — não `localhost`, já que containers se alcançam pelo nome do serviço, não pelo endereço de loopback da máquina hospedeira). O `.env.example` já mantém isso consistente por padrão:
+
+```
+POSTGRES_USER=labviromol
+POSTGRES_PASSWORD=labviromol_dev
+POSTGRES_DB=LabViroMol
+DB_CONNECTION_STRING=Host=postgres;Port=5432;Database=LabViroMol;Username=labviromol;Password=labviromol_dev
+```
+
+Você pode deixar esses três exatamente como estão para uso local — seja qual for o valor escolhido, o Postgres se inicializa com eles na primeira vez que seu volume é criado, então, contanto que `POSTGRES_*` e `DB_CONNECTION_STRING` concordem entre si, não existe um banco "já existente" para bater com nada. O único valor que você precisa mesmo trocar é o `JWT_KEY` (qualquer string aleatória com 32+ caracteres) — a API se recusa a iniciar sem um valor real. `EMAIL_*` e `NR_LICENSE_KEY` podem ficar com os valores de exemplo; a API sobe normalmente sem um SMTP funcional ou uma conta New Relic, essas integrações simplesmente não fazem nada.
+
+### 3. Builde e suba tudo
+
+```bash
+docker compose up -d --build
+```
+
+Isso builda a API a partir do `Dockerfile` deste repositório, o painel admin a partir de `../LabViroMol-Admin-Panel`, e o site institucional a partir de `../labviromol-institucional` (tudo declarado no `docker-compose.override.yml`), e então sobe o Postgres, o LibreTranslate, os três containers de aplicação e um gateway nginx (`nginx/gateway.local.conf`) na frente de tudo, na porta 80.
+
+### 4. Aplique as migrations
+
+O serviço `migrate` também sobe junto com o `docker compose up -d` (ele roda uma vez e sai sozinho), mas você pode rodá-lo explicitamente a qualquer momento:
+
+```bash
+docker compose run --rm migrate
+```
+
+### 5. Acesse a stack
+
+| URL | O quê |
+|---|---|
+| `http://localhost/` | Site institucional (Next.js) |
+| `http://localhost/gestao-lab-ufpr/` | Painel admin (Angular) |
+| `http://localhost/api/...` | API |
+
+Como tudo é servido a partir da mesma origem (`http://localhost`) através do gateway, `CORS_ORIGIN_ADMIN`/`CORS_ORIGIN_INSTITUCIONAL` no `.env` não entram em jogo aqui — eles só importam quando um frontend roda diretamente (`ng serve`/`next dev`), acessando a API numa porta diferente.
+
+### Dados de seed para desenvolvimento
+
+Na primeira vez que a API sobe em `Development` contra um banco vazio, ela automaticamente popula cerca de 20 registros válidos por módulo (usuários, materiais, equipamentos, projetos, agendamentos etc.) para já ter o que testar na tela — ver `src/LabViroMol.Api/DevSeed/DevSeeder.cs`. Roda uma única vez (pula se o banco já tiver dados) e registra as credenciais do admin no log ao concluir:
+
+```
+DevSeed: done. Log in with admin@labviromol.local / Labviromol@123
+```
+
+Desative definindo `DevSeed:Enabled` como `false` em `appsettings.Development.json`, ou via a variável de ambiente `DevSeed__Enabled=false`.
+
 ## Referência de configuração
 
 Valores-chave em `appsettings.json`:
