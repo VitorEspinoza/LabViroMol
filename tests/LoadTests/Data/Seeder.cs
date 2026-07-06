@@ -194,10 +194,10 @@ public static class Seeder
             for (var i = 0; i < batchSize; i++)
             {
                 var type = materialTypes[(batchStart + i) % materialTypes.Count];
-                var minStock = faker.Random.Decimal(10, 250);
+                var minStock = faker.Random.Int(10, 250);
                 var stock = (batchStart + i) % 10 == 0
-                    ? faker.Random.Decimal(0, minStock)
-                    : faker.Random.Decimal(minStock, minStock * 5);
+                    ? faker.Random.Int(0, minStock)
+                    : faker.Random.Int(minStock, minStock * 5);
 
                 var material = Material.Create(
                     $"{faker.Commerce.ProductName()}-{batchStart + i + 1:00000}",
