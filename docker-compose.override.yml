@@ -6,6 +6,11 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
 
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrate
+
   admin:
     build:
       context: ../LabViroMol-Admin-Panel
