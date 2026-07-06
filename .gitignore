@@ -380,6 +380,4 @@ secrets/*.env
 .env.ci
 certbot
 
-docker-compose.override.yml
 docker-compose.yml
-
