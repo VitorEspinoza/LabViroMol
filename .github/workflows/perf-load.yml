@@ -115,7 +115,7 @@ jobs:
 
       - name: Upload do relatório HTML do NBomber
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nbomber-report-${{ env.PERF_PROFILE }}-${{ github.run_id }}
           path: tests/LoadTests/reports/scheduled/${{ env.PERF_PROFILE }}/full
