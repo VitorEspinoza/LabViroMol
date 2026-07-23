@@ -273,7 +273,7 @@ internal sealed class ProjectQueries(ResearchDbContext context, ICurrentUser cur
     {
         var onGoing = await context.Projects.AsNoTracking()
             .Where(p => p.Status.Equals(ProjectStatus.InProgress)).ToListAsync();
-        
+
         var concluded = await context.Projects.AsNoTracking()
             .Where(p => p.Status.Equals(ProjectStatus.Completed)).ToListAsync();
 
