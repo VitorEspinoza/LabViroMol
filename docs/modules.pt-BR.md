@@ -94,7 +94,7 @@ Trata notificações internas e e-mails de saída.
 
 **Features**:
 - Criar, dispensar e dispensar em lote notificações
-- Envio de e-mail via MailKit
+- Envio de e-mail via API HTTP da Brevo
 
 **Endpoints**: `/api/notify/*`
 

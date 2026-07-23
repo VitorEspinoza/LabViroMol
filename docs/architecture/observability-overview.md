@@ -13,7 +13,7 @@ Sources used for this diagram: `ObservabilityExtensions.cs`,
 `src/Modules/Shared/Infrastructure/Observability/{LabViroMolDiagnostics,SlowQueryInterceptor}.cs`,
 `src/Modules/Shared/Infrastructure/Persistence/Outbox/OutboxProcessor.cs`,
 `src/Modules/Shared/Infrastructure/Translation/{TranslationBackgroundWorker,LibreTranslator}.cs`,
-`src/Modules/Notify/Infrastructure/Emails/SendEmail.cs` (the `SmtpEmailSender` class).
+`src/Modules/Notify/Infrastructure/Emails/BrevoEmailSender.cs`.
 
 ## Diagram
 
@@ -36,20 +36,20 @@ flowchart TB
     end
 
     subgraph External["Integrações externas instrumentadas manualmente"]
-        Smtp["SmtpEmailSender.SendEmail\nActivity 'email.send' + Counters email.sent/email.failed + Histogram email.latency"]
+        Brevo["BrevoEmailSender.SendEmail\nCounter email.failures + Histogram email.latency"]
     end
 
     Logging -- "ILogger.LogWarning/LogInformation\n+ LabViroMolMetrics.RecordSuccess/RecordFailure/RecordDuration\n(cqrs.requests, cqrs.duration)" --> MelLogging["Microsoft.Extensions.Logging (ILogger&lt;T&gt;)\n→ OpenTelemetry Logging Provider"]
     SlowQuery -- "ILogger.LogWarning" --> MelLogging
     Outbox -- "ILogger.LogError/LogInformation\n+ OutboxMetrics (outbox.messages.processed/failed, outbox.batch.duration, outbox.pending)" --> MelLogging
     Translation -- "ILogger.LogInformation/LogWarning\n+ TranslationMetrics (translation.records, translation.failures, translation.duration)" --> MelLogging
-    Smtp -- "ILogger.LogWarning" --> MelLogging
+    Brevo -- "ILogger.LogWarning" --> MelLogging
 
     Logging -. "Activity.Current (AspNetCore instrumentation)" .-> OtelSdk
     Outbox -. "LabViroMolDiagnostics.ActivitySource.StartActivity" .-> OtelSdk
     Translation -. "LabViroMolDiagnostics.ActivitySource.StartActivity" .-> OtelSdk
     LibreHttp -. "Activity.Current?.SetTag(translate.*)\n(HttpClient instrumentation)" .-> OtelSdk
-    Smtp -. "LabViroMolDiagnostics.ActivitySource.StartActivity" .-> OtelSdk
+    Brevo -. "AddHttpClientInstrumentation\n(span automático via HttpClient tipado, sem código manual)" .-> OtelSdk
 
     MelLogging -->|"AddOpenTelemetry(logging => ...)\n(PiiRedactionLogProcessor, TraceId/SpanId via Activity.Current)"| OtlpExporterLogs["OTLP Exporter (logs)"]
 
@@ -74,7 +74,7 @@ flowchart TB
 
     class Req,Endpoint,Mediator,Validation,Logging,Handler,EfCore,SlowQuery pipeline;
     class Outbox,Translation,LibreHttp background;
-    class Smtp external;
+    class Brevo external;
     class OtelSdk,Tracing,Metrics otel;
     class MelLogging,OtlpExporterLogs,OtlpExporterTraces,OtlpExporterMetrics sink;
     class NewRelic backend;
@@ -100,11 +100,13 @@ flowchart TB
   - Small fidelity note: `LibreTranslator` uses `Activity.Current` (the `Activity` opened by
     the worker), not `LabViroMolDiagnostics.ActivitySource` directly — that's why the dotted
     arrow from `LibreHttp` to the SDK represents the continuation of the same span, not a new one.
-- **Manually instrumented external integration** (red): `SmtpEmailSender.SendEmail` opens
-  `Activity("email.send", ActivityKind.Producer)` and uses its own `Counter<long>`/`Histogram<double>`
-  (`email.sent`, `email.failed`, `email.latency`) created directly on
-  `LabViroMolDiagnostics.Meter`, outside the `LabViroMolMetrics`/`OutboxMetrics`/`TranslationMetrics`
-  pattern used by the other components.
+- **Manually instrumented external integration** (red): `BrevoEmailSender.SendEmail` calls
+  `EmailMetrics` (`src/Modules/Shared/Infrastructure/Observability/EmailMetrics.cs`) directly around
+  the HTTP call to the Brevo API, recording its own `Histogram<double> email.latency` (every attempt)
+  and `Counter<long> email.failures` (only on exception), created on `LabViroMolDiagnostics.Meter`,
+  outside the `LabViroMolMetrics`/`OutboxMetrics`/`TranslationMetrics` pattern used by the other
+  components. There is no manual `Activity`/span for this call — tracing comes only from the
+  automatic `AddHttpClientInstrumentation` applied to the typed `HttpClient<ISendEmail, BrevoEmailSender>`.
 - **Microsoft.Extensions.Logging → OpenTelemetry Logging Provider** (purple) is the only logging
   path used by the application (`builder.Logging.AddOpenTelemetry(...)`); it always writes to
   the console (MEL's default provider) and, when an OTLP endpoint is configured

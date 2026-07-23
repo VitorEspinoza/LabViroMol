@@ -13,7 +13,7 @@ model {
     admin = person "Administrador do Laboratório" "Usuário autenticado via JWT"
     visitante = person "Estudante Externo / Visitante" "Usuário anônimo"
 
-    smtp = softwareSystem "Gmail SMTP" "Envio de e-mails transacionais" "External"
+    brevo = softwareSystem "Brevo" "Envio de e-mails transacionais via API HTTP" "External"
 
     labviromol = softwareSystem "LabViroMol" "..." {
         gateway       = container "Gateway" "nginx (Alpine)" "Reverse proxy / roteador único de entrada na porta 80"
@@ -36,7 +36,7 @@ model {
 
     api -> postgres "Lê/escreve dados" "EF Core/TCP"
     api -> libretranslate "Traduz conteúdo" "HTTP"
-    api -> smtp "Envia e-mail" "SMTP/TLS"
+    api -> brevo "Envia e-mail" "HTTPS/REST"
 }
 ```
 
@@ -47,7 +47,7 @@ views {
     container labviromol "C4-Nivel-2-Containers" {
         include *
         autoLayout
-        description "Blocos de execução independentes do LabViroMol (Gateway, Painel Administrativo, Site Institucional, API, Banco de Dados, Tradução) e como se comunicam entre si e com o Gmail SMTP."
+        description "Blocos de execução independentes do LabViroMol (Gateway, Painel Administrativo, Site Institucional, API, Banco de Dados, Tradução) e como se comunicam entre si e com a Brevo."
     }
 }
 ```
@@ -55,8 +55,8 @@ views {
 ## Elements and relationships in this level
 
 - **6 Container**: Gateway (nginx), Admin Panel (Angular 21 SPA), Institutional Site (Next.js 16), API (ASP.NET Core 10 Minimal API), Database (PostgreSQL 17), Translation (LibreTranslate)
-- **1 System_Ext**: Gmail SMTP
-- **10 Rel**: 2 Person→Gateway, 3 Gateway routing relations, 2 Frontend→API, 3 API→infra (Postgres/LibreTranslate/SMTP)
+- **1 System_Ext**: Brevo
+- **10 Rel**: 2 Person→Gateway, 3 Gateway routing relations, 2 Frontend→API, 3 API→infra (Postgres/LibreTranslate/Brevo)
 
 ## How to render
 

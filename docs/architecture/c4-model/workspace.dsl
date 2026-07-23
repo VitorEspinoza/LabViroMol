@@ -5,11 +5,11 @@ workspace "LabViroMol" "Sistema de gestão de laboratório de virologia: control
         admin = person "Administrador do Laboratório" "Usuário autenticado via JWT, acessa o painel Angular, gerencia estoque/agendamentos/equipamentos/pesquisa/usuários conforme permissões."
         visitante = person "Estudante Externo / Visitante" "Usuário anônimo, acessa o site institucional Next.js, pode solicitar agendamento de uso do laboratório (rate-limited)."
 
-        // Sistema externo (Nível 1 / Nível 2) — só o Gmail SMTP é de fato externo
+        // Sistema externo (Nível 1 / Nível 2) — só a Brevo é de fato externa
         // (third-party, fora do nosso deploy). LibreTranslate é self-hosted via Docker
         // no mesmo docker-compose, por isso é modelado como Container (ver dentro de
         // labviromol abaixo), nunca como softwareSystem externo.
-        smtp = softwareSystem "Gmail SMTP" "Envio de e-mails transacionais (recuperação de senha, confirmações de agendamento)." "External"
+        brevo = softwareSystem "Brevo" "Envio de e-mails transacionais (recuperação de senha, confirmações de agendamento) via API HTTP." "External"
 
         // Sistema principal
         labviromol = softwareSystem "LabViroMol" "Sistema de gestão de laboratório de virologia: controle de estoque, agendamento de uso, gestão de pesquisa e equipamentos." {
@@ -37,7 +37,7 @@ workspace "LabViroMol" "Sistema de gestão de laboratório de virologia: control
         // Relações — Nível 1 (Pessoa -> Sistema, Sistema -> Sistema Externo)
         admin -> labviromol "Gerencia estoque, agendamentos, equipamentos, pesquisa e usuários" "HTTPS/JSON"
         visitante -> labviromol "Consulta informações públicas e solicita agendamento" "HTTPS/JSON"
-        labviromol -> smtp "Envia e-mails transacionais" "SMTP/TLS"
+        labviromol -> brevo "Envia e-mails transacionais" "HTTPS/REST"
 
         // Relações — Nível 2 (Pessoa -> Container, roteamento do Gateway, Container -> Container/Sistema Externo)
         admin -> gateway "Acessa painel administrativo" "HTTPS"
@@ -52,7 +52,7 @@ workspace "LabViroMol" "Sistema de gestão de laboratório de virologia: control
 
         api -> postgres "Lê/escreve dados" "EF Core/TCP"
         api -> libretranslate "Traduz conteúdo" "HTTP"
-        api -> smtp "Envia e-mail" "SMTP/TLS"
+        api -> brevo "Envia e-mail" "HTTPS/REST"
 
         // Relações — Nível 3 (intra-API entre componentes)
         authComponent -> identityModule "Autentica/autoriza (antes do despacho)"
@@ -85,13 +85,13 @@ workspace "LabViroMol" "Sistema de gestão de laboratório de virologia: control
         systemContext labviromol "C4-Nivel-1-Contexto" {
             include *
             autoLayout
-            description "Visão de mais alto nível: LabViroMol como caixa única, seus usuários humanos (Administrador, Visitante) e o único sistema verdadeiramente externo (Gmail SMTP — LibreTranslate é self-hosted, por isso só aparece no Nível 2 como Container)."
+            description "Visão de mais alto nível: LabViroMol como caixa única, seus usuários humanos (Administrador, Visitante) e o único sistema verdadeiramente externo (Brevo — LibreTranslate é self-hosted, por isso só aparece no Nível 2 como Container)."
         }
 
         container labviromol "C4-Nivel-2-Containers" {
             include *
             autoLayout
-            description "Blocos de execução independentes do LabViroMol (Gateway, Painel Administrativo, Site Institucional, API, Banco de Dados, Tradução) e como se comunicam entre si e com o Gmail SMTP."
+            description "Blocos de execução independentes do LabViroMol (Gateway, Painel Administrativo, Site Institucional, API, Banco de Dados, Tradução) e como se comunicam entre si e com a Brevo."
         }
 
         component api "C4-Nivel-3-Componentes" {

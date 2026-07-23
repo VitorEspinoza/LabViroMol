@@ -177,10 +177,7 @@ gh secret set DB_CONNECTION_STRING --env production --repo ${REPO}
 gh secret set JWT_KEY              --env production --repo ${REPO}
 gh secret set JWT_ISSUER           --env production --repo ${REPO}
 gh secret set JWT_AUDIENCE         --env production --repo ${REPO}
-gh secret set EMAIL_HOST           --env production --repo ${REPO}
-gh secret set EMAIL_PORT           --env production --repo ${REPO}
-gh secret set EMAIL_USERNAME       --env production --repo ${REPO}
-gh secret set EMAIL_PASSWORD       --env production --repo ${REPO}
+gh secret set EMAIL_API_KEY        --env production --repo ${REPO}  # API key da Brevo
 gh secret set FRONTEND_BASE_URL    --env production --repo ${REPO}
 gh secret set CORS_ORIGIN_ADMIN    --env production --repo ${REPO}
 gh secret set CORS_ORIGIN_INST     --env production --repo ${REPO}

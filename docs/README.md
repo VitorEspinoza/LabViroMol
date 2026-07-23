@@ -31,7 +31,7 @@ Follows the [C4 Model](https://c4model.com/) for the structural view and the str
 Suggested reading order, broadest to most detailed:
 
 1. **Strategic view (DDD)** — [`architecture/context-map/context-map.md`](./architecture/context-map/context-map.md): how the 7 bounded contexts relate, in D2 ([`context-map.d2`](./architecture/context-map/context-map.d2)).
-2. **C4 Level 1 — Context** — [`architecture/c4-model/c4-context.md`](./architecture/c4-model/c4-context.md): the system, its users and the real external integrations (only Gmail SMTP — LibreTranslate is self-hosted and only shows up from Level 2 on). Source: [`workspace.dsl`](./architecture/c4-model/workspace.dsl).
+2. **C4 Level 1 — Context** — [`architecture/c4-model/c4-context.md`](./architecture/c4-model/c4-context.md): the system, its users and the real external integrations (only Brevo — LibreTranslate is self-hosted and only shows up from Level 2 on). Source: [`workspace.dsl`](./architecture/c4-model/workspace.dsl).
 3. **C4 Level 2 — Containers** — [`architecture/c4-model/c4-container.md`](./architecture/c4-model/c4-container.md): the deployable units (API, frontends, database, gateway, LibreTranslate).
 4. **C4 Level 3 — Components** — [`architecture/c4-model/c4-component.md`](./architecture/c4-model/c4-component.md): the modules and internal pieces of the API.
 5. **Cross-module view** — [`architecture/cross-module-overview.md`](./architecture/cross-module-overview.md): the 4 actors, the 14 Aggregate Roots with their cross-module relationships, and the data references without database FKs. Per-module detail (use cases, classes, ER) lives in `src/Modules/<Module>/docs/`.

@@ -69,7 +69,7 @@ Before acting, check:
 
 - **Real regression or infra problem?** Check whether the error is an
   HTTP 5xx from the API (code regression) or a dependency failure
-  (database, LibreTranslate, SMTP). The trace ID in the Actions logs and
+  (database, LibreTranslate, Brevo). The trace ID in the Actions logs and
   in New Relic lets you pivot.
 
 - **Threshold appropriate?** If production traffic has grown and 2%

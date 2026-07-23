@@ -9,7 +9,7 @@ Optou-se pela notação `flowchart TB` estilizada (em vez de `C4Deployment` nati
 ```mermaid
 flowchart TB
     internet(["Internet / Cliente HTTP"])
-    smtp[["Gmail SMTP — porta 587"]]
+    brevo[["Brevo API — HTTPS/443"]]
 
     subgraph droplet["Droplet DigitalOcean — 142.93.14.97 (Ubuntu + Docker Engine/Compose)"]
         direction TB
@@ -37,7 +37,7 @@ flowchart TB
     end
 
     internet -- "porta pública 80" --> gateway
-    api -- "envio de e-mail" --> smtp
+    api -- "envio de e-mail" --> brevo
 
     classDef container fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
     classDef volume fill:#fef3c7,stroke:#b45309,color:#78350f;
@@ -45,7 +45,7 @@ flowchart TB
 
     class gateway,api,admin,institucional,postgres,libretranslate container;
     class vol_postgres,vol_uploads,vol_lt volume;
-    class internet,smtp external;
+    class internet,brevo external;
 ```
 
 **Notas sobre a estratégia de deploy:**

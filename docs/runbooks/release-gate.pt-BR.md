@@ -66,7 +66,7 @@ Antes de agir, verifique:
 
 - **Regressão real ou problema de infra?** Verifique se o erro é HTTP 5xx
   na API (regressão de código) ou falha de dependência (banco, LibreTranslate,
-  SMTP). O trace ID nos logs do Actions e no New Relic permite pivotar.
+  Brevo). O trace ID nos logs do Actions e no New Relic permite pivotar.
 
 - **Threshold adequado?** Se o tráfego de produção tiver crescido e 2% de
   erros representar um volume aceitável de falhas temporárias (ex.: timeouts

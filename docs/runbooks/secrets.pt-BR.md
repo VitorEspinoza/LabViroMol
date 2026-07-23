@@ -102,8 +102,8 @@ chave age **fictícia**, gerada só para validar o mecanismo (ver aviso em
    recrie do zero com `sops --encrypt` a partir de um rascunho preenchido
    com os valores reais (ver `secrets/README.md`).
 4. Preencher os valores reais (`sops secrets/prod.enc.env`, ver §4):
-   senha real do Postgres, `JWT_KEY` real (≥32 chars aleatórios), SMTP
-   real, `NR_LICENSE_KEY` real.
+   senha real do Postgres, `JWT_KEY` real (≥32 chars aleatórios), API key
+   real da Brevo, `NR_LICENSE_KEY` real.
 5. Guardar a chave privada real no GitHub secret `SOPS_AGE_KEY` e na
    droplet (§3).
 
@@ -136,7 +136,7 @@ referencia diretamente.
 - [ ] Guardar a chave privada real em `SOPS_AGE_KEY` (GitHub) e na droplet.
 - [ ] Atualizar `.sops.yaml` com a chave pública real.
 - [ ] Preencher `secrets/prod.enc.env` com os valores reais de produção
-      (senha do Postgres, `JWT_KEY`, credenciais SMTP, `NR_LICENSE_KEY`).
+      (senha do Postgres, `JWT_KEY`, API key da Brevo, `NR_LICENSE_KEY`).
 - [ ] Confirmar que nenhum `.env` plaintext legado continua na droplet
       fora do fluxo `sops --decrypt > .env` (remover qualquer cópia
       manual antiga).

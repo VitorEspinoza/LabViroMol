@@ -73,10 +73,7 @@ services:
       Jwt__Key: ${JWT_KEY}
       Jwt__Issuer: ${JWT_ISSUER:-LabViroMol}
       Jwt__Audience: ${JWT_AUDIENCE:-LabViroMol}
-      Email__Host: ${EMAIL_HOST}
-      Email__Port: ${EMAIL_PORT:-587}
-      Email__Username: ${EMAIL_USERNAME}
-      Email__Password: ${EMAIL_PASSWORD}
+      Email__ApiKey: ${EMAIL_API_KEY}
       Email__SenderName: ${EMAIL_SENDER_NAME}
       Email__SenderEmail: ${EMAIL_SENDER_EMAIL}
       Frontend__BaseUrl: ${FRONTEND_BASE_URL}
