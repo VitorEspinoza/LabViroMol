@@ -10,4 +10,6 @@ public interface IProjectQueries
     Task<PagedResponse<ProjectAdminSummaryViewModel>> GetAllAdminAsync(PagedRequest request);
 
     Task<ProjectViewModel?> GetById(Guid id);
+    
+    Task<ProjectsCountersViewModel> GetInstitutionalProjectsCounters();
 }

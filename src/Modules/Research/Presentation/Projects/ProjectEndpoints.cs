@@ -118,5 +118,9 @@ internal static class ProjectEndpoints
         group.MapGet("/", async ([FromQuery] string? language, [AsParameters] PagedRequest request, IProjectQueries queries) =>
             Results.Ok(await queries.GetAllInstitutionalAsync(request, language)))
             .Produces<PagedResponse<PublicProjectViewModel>>(StatusCodes.Status200OK);
+        
+        group.MapGet("/counters", async (IProjectQueries queries) =>
+                Results.Ok(await queries.GetInstitutionalProjectsCounters()))
+            .Produces<ProjectsCountersViewModel>(StatusCodes.Status200OK);
     }
 }

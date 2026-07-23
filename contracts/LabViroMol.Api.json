@@ -2927,6 +2927,25 @@
         }
       }
     },
+    "/api/research/public/projects/counters": {
+      "get": {
+        "tags": [
+          "Projects-Public"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectsCountersViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/research/public/researchers": {
       "get": {
         "tags": [
@@ -6331,6 +6350,31 @@
           "Manager",
           "Collaborator"
         ]
+      },
+      "ProjectsCountersViewModel": {
+        "required": [
+          "onGoing",
+          "concluded"
+        ],
+        "type": "object",
+        "properties": {
+          "onGoing": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "concluded": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
       },
       "ProjectStatus": {
         "enum": [
