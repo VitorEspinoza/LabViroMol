@@ -104,8 +104,8 @@ flow:
    from scratch with `sops --encrypt` from a draft filled with the real
    values (see `secrets/README.md`).
 4. Fill in the real values (`sops secrets/prod.enc.env`, see §4): real
-   Postgres password, real `JWT_KEY` (≥32 random chars), real SMTP,
-   real `NR_LICENSE_KEY`.
+   Postgres password, real `JWT_KEY` (≥32 random chars), real Brevo
+   API key, real `NR_LICENSE_KEY`.
 5. Store the real private key in the GitHub secret `SOPS_AGE_KEY` and on
    the droplet (§3).
 
@@ -140,7 +140,7 @@ directly references.
       droplet.
 - [ ] Update `.sops.yaml` with the real public key.
 - [ ] Fill in `secrets/prod.enc.env` with the real production values
-      (Postgres password, `JWT_KEY`, SMTP credentials, `NR_LICENSE_KEY`).
+      (Postgres password, `JWT_KEY`, Brevo API key, `NR_LICENSE_KEY`).
 - [ ] Confirm that no legacy plaintext `.env` remains on the droplet
       outside the `sops --decrypt > .env` flow (remove any old manual
       copy).

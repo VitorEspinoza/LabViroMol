@@ -34,10 +34,7 @@ dotnet user-secrets set "ConnectionStrings:LabViroMol" "Host=localhost;Port=5432
 dotnet user-secrets set "Jwt:Key" "<your-secret>"
 dotnet user-secrets set "Jwt:Issuer" "<issuer>"
 dotnet user-secrets set "Jwt:Audience" "<audience>"
-dotnet user-secrets set "Email:Host" "<smtp-host>"
-dotnet user-secrets set "Email:Port" "587"
-dotnet user-secrets set "Email:Username" "<email>"
-dotnet user-secrets set "Email:Password" "<password>"
+dotnet user-secrets set "Email:ApiKey" "<brevo-api-key>"
 ```
 
 ### 4. Apply migrations
@@ -102,7 +99,7 @@ POSTGRES_DB=LabViroMol
 DB_CONNECTION_STRING=Host=postgres;Port=5432;Database=LabViroMol;Username=labviromol;Password=labviromol_dev
 ```
 
-You can leave these three exactly as they are for local use — whatever values you pick, Postgres initializes itself with them the first time its volume is created, so as long as `POSTGRES_*` and `DB_CONNECTION_STRING` agree with each other, there's no "existing" database to match against. The one value you do need to change is `JWT_KEY` (any random string ≥32 characters) — the API refuses to start without a real one. `EMAIL_*` and `NR_LICENSE_KEY` can stay as the placeholder values; the API starts fine without a working SMTP server or New Relic account, those integrations just won't do anything.
+You can leave these three exactly as they are for local use — whatever values you pick, Postgres initializes itself with them the first time its volume is created, so as long as `POSTGRES_*` and `DB_CONNECTION_STRING` agree with each other, there's no "existing" database to match against. The one value you do need to change is `JWT_KEY` (any random string ≥32 characters) — the API refuses to start without a real one. `EMAIL_*` and `NR_LICENSE_KEY` can stay as the placeholder values; the API starts fine without a valid Brevo API key or New Relic account, those integrations just won't do anything.
 
 ### 3. Build and start everything
 

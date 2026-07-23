@@ -13,13 +13,13 @@ model {
     admin = person "Administrador do Laboratório" "Usuário autenticado via JWT, acessa o painel Angular, gerencia estoque/agendamentos/equipamentos/pesquisa/usuários conforme permissões."
     visitante = person "Estudante Externo / Visitante" "Usuário anônimo, acessa o site institucional Next.js, pode solicitar agendamento de uso do laboratório (rate-limited)."
 
-    smtp = softwareSystem "Gmail SMTP" "Envio de e-mails transacionais (recuperação de senha, confirmações de agendamento)." "External"
+    brevo = softwareSystem "Brevo" "Envio de e-mails transacionais (recuperação de senha, confirmações de agendamento) via API HTTP." "External"
 
     labviromol = softwareSystem "LabViroMol" "Sistema de gestão de laboratório de virologia: controle de estoque, agendamento de uso, gestão de pesquisa e equipamentos."
 
     admin -> labviromol "Gerencia estoque, agendamentos, equipamentos, pesquisa e usuários" "HTTPS/JSON"
     visitante -> labviromol "Consulta informações públicas e solicita agendamento" "HTTPS/JSON"
-    labviromol -> smtp "Envia e-mails transacionais" "SMTP/TLS"
+    labviromol -> brevo "Envia e-mails transacionais" "HTTPS/REST"
 }
 ```
 
@@ -30,7 +30,7 @@ views {
     systemContext labviromol "C4-Nivel-1-Contexto" {
         include *
         autoLayout
-        description "Visão de mais alto nível: LabViroMol como caixa única, seus usuários humanos (Administrador, Visitante) e o único sistema verdadeiramente externo (Gmail SMTP — LibreTranslate é self-hosted, por isso só aparece no Nível 2 como Container)."
+        description "Visão de mais alto nível: LabViroMol como caixa única, seus usuários humanos (Administrador, Visitante) e o único sistema verdadeiramente externo (Brevo — LibreTranslate é self-hosted, por isso só aparece no Nível 2 como Container)."
     }
 }
 ```
@@ -38,10 +38,10 @@ views {
 ## Elements and relationships in this level
 
 - **2 Person**: Lab Administrator, External Student / Visitor
-- **1 System** (LabViroMol) + **1 System_Ext** (Gmail SMTP)
-- **3 Rel**: Admin→System, Visitor→System, System→SMTP
+- **1 System** (LabViroMol) + **1 System_Ext** (Brevo)
+- **3 Rel**: Admin→System, Visitor→System, System→Brevo
 
-**Modeling note**: LibreTranslate does **not** appear at this level because it is self-hosted (a Docker container in the same `docker-compose.yaml` as LabViroMol, with no dependency on a third-party provider) — only Gmail SMTP is genuinely external to our deployment. LibreTranslate correctly appears as a **Container** at [Level 2](./c4-container.md), within the boundary of the system itself.
+**Modeling note**: LibreTranslate does **not** appear at this level because it is self-hosted (a Docker container in the same `docker-compose.yaml` as LabViroMol, with no dependency on a third-party provider) — only Brevo is genuinely external to our deployment. LibreTranslate correctly appears as a **Container** at [Level 2](./c4-container.md), within the boundary of the system itself.
 
 ## How to render
 

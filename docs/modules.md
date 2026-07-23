@@ -94,7 +94,7 @@ Handles in-app notifications and outbound emails.
 
 **Features**:
 - Create, dismiss, and batch-dismiss notifications
-- Email delivery via MailKit
+- Email delivery via Brevo HTTP API
 
 **Endpoints**: `/api/notify/*`
 
