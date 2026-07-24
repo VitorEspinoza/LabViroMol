@@ -10,6 +10,7 @@ using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Net.Http.Headers;
 
 namespace LabViroMol.Modules.Notify.Infrastructure;
 
@@ -59,9 +60,17 @@ public static class InfrastructureModule
             configuration.GetSection("Email"));
 
         if (configuration.GetValue("LoadTest:UseNoOpEmail", false))
+        {
             services.AddScoped<ISendEmail, NoOpEmailSender>();
-        else
-            services.AddScoped<ISendEmail, SmtpEmailSender>();
+            return services;
+        }
+
+        services.AddHttpClient<ISendEmail, BrevoEmailSender>(client =>
+        {
+            client.BaseAddress = new Uri("https://api.brevo.com/v3/");
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Add("api-key", configuration["Email:ApiKey"]);
+        });
 
         return services;
     }

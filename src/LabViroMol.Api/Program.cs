@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using LabViroMol.Api.DevSeed;
 using LabViroMol.Modules.AdminBff.Presentation;
 using LabViroMol.Modules.Assets.Presentation;
 using LabViroMol.Modules.Inventory.Presentation;
@@ -117,6 +118,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi().AllowAnonymous();
     app.MapScalarApiReference().AllowAnonymous();
+
+    await DevSeeder.SeedAsync(app.Services, app.Configuration, app.Logger);
 }
 
 app.UseExceptionHandler();

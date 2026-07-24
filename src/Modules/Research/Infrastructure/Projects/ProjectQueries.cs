@@ -268,4 +268,17 @@ internal sealed class ProjectQueries(ResearchDbContext context, ICurrentUser cur
             .Where(pt => ids.Contains(pt.Id))
             .ToDictionaryAsync(pt => pt.Id, pt => pt.Name);
     }
+
+    public async Task<ProjectsCountersViewModel> GetInstitutionalProjectsCounters()
+    {
+        var onGoing = await context.Projects.AsNoTracking()
+            .Where(p => p.Status.Equals(ProjectStatus.InProgress)).ToListAsync();
+
+        var concluded = await context.Projects.AsNoTracking()
+            .Where(p => p.Status.Equals(ProjectStatus.Completed)).ToListAsync();
+
+        return new ProjectsCountersViewModel(
+            onGoing.Count,
+            concluded.Count);
+    }
 }
