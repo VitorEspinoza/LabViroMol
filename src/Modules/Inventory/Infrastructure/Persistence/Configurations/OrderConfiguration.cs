@@ -24,6 +24,8 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasForeignKey(o => o.MaterialId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasIndex("CreatedAt");
+
         builder.OwnsOne(o => o.Processing, p =>
         {
             p.Property(x => x.Notes)

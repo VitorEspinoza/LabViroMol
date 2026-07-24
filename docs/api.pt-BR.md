@@ -61,6 +61,10 @@ Obtenha um token via `POST /api/identity/users/login`.
 | GET | `/reports/critical-stock-balance.pdf` | Relatório PDF: estoque atual vs. estoque mínimo | Obrigatório |
 | GET | `/reports/material-audit-movements.pdf` | Relatório PDF: movimentações auditáveis de material | Obrigatório |
 | GET | `/reports/manual-stock-adjustments.pdf` | Relatório PDF: ajustes manuais de estoque | Obrigatório |
+| GET | `/reports/stock-movements/by-user.pdf` | Relatório PDF: movimentações de estoque agrupadas por usuário responsável | Obrigatório |
+| GET | `/reports/materials/idle-stock.pdf` | Relatório PDF: materiais em estoque sem movimentação recente | Obrigatório |
+| GET | `/reports/orders/status-cycle.pdf` | Relatório PDF: pedidos por status, tempo de ciclo e pedidos parados | Obrigatório |
+| GET | `/reports/stock/by-material-type.pdf` | Relatório PDF: resumo de entrada/saída/saldo de estoque por tipo de material | Obrigatório |
 
 Os endpoints de relatório do Inventory retornam respostas binárias `application/pdf` geradas com QuestPDF.
 Exigem um usuário autenticado com `Inventory.Stock.View` ou `Inventory.Stock.Manage`.
@@ -73,13 +77,18 @@ Filtros de query comuns:
 - `materialTypeId`: id de tipo de material opcional.
 - `projectId`: id de projeto opcional para `/reports/stock-outflows/by-project.pdf`.
 
-Relatórios de transação exigem `from` e `to`, e o intervalo aceito é limitado a 366 dias. O relatório de estoque crítico é baseado no estado atual dos materiais e não exige intervalo de datas.
+Relatórios de transação exigem `from` e `to`, e o intervalo aceito é limitado a 366 dias. O relatório de estoque crítico é baseado no estado atual dos materiais e não exige intervalo de datas. Os quatro relatórios mais novos abaixo (`by-user`, `idle-stock`, `status-cycle`, `by-material-type`) tratam `from`/`to` como opcionais, ainda limitados a 366 dias quando ambos são informados.
 
 Filtros específicos:
 
 - `onlyCritical`: booleano opcional para `/reports/critical-stock-balance.pdf`; default é `true`.
-- `transactionType`: tipo de transação opcional para `/reports/material-audit-movements.pdf`.
+- `transactionType`: tipo de transação opcional para `/reports/material-audit-movements.pdf` e `/reports/stock-movements/by-user.pdf`.
 - `limit`: limite opcional de linhas para `/reports/material-audit-movements.pdf`; limitado pelo backend.
+- `materialTypeId`, `since`: opcionais para `/reports/materials/idle-stock.pdf`; `since` tem default de 180 dias antes de agora (materiais sem movimentação desde essa data são listados).
+- `staleDays`: opcional para `/reports/orders/status-cycle.pdf`; default é 15 (pedidos parados em `Pending`/`Processing` há mais tempo que isso são sinalizados como parados). Este relatório não aceita `materialId`/`materialTypeId` — ele agrega sobre `Orders`, não `StockTransactions`.
+- `/reports/stock/by-material-type.pdf` só aceita `from`/`to` — sem filtro de material/tipo/projeto, já que agrega por todos os tipos de material por definição.
+
+Nomes de usuário e projeto exibidos em `/reports/material-audit-movements.pdf`, `/reports/manual-stock-adjustments.pdf` e `/reports/stock-movements/by-user.pdf` são resolvidos via catálogos cross-module (`Identity.Contracts.IUserCatalog`, `Research.Contracts.IProjectCatalog`) e usam o texto `"Usuario removido"` / `"Projeto removido"` como fallback quando o usuário ou projeto referenciado não existe mais.
 
 Repasse ao frontend: chame esses endpoints como downloads de arquivo/requisições blob. Não faça parse de JSON em respostas de sucesso. Falhas de validação e autorização continuam usando o comportamento/status codes de erro padrão da API.
 

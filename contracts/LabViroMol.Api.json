@@ -1683,6 +1683,181 @@
         }
       }
     },
+    "/api/inventory/reports/stock-movements/by-user.pdf": {
+      "get": {
+        "tags": [
+          "Inventory-Reports"
+        ],
+        "parameters": [
+          {
+            "name": "From",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "MaterialId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "TransactionType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileContentHttpResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/reports/materials/idle-stock.pdf": {
+      "get": {
+        "tags": [
+          "Inventory-Reports"
+        ],
+        "parameters": [
+          {
+            "name": "MaterialTypeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Since",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileContentHttpResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/reports/orders/status-cycle.pdf": {
+      "get": {
+        "tags": [
+          "Inventory-Reports"
+        ],
+        "parameters": [
+          {
+            "name": "From",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "StaleDays",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileContentHttpResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/reports/stock/by-material-type.pdf": {
+      "get": {
+        "tags": [
+          "Inventory-Reports"
+        ],
+        "parameters": [
+          {
+            "name": "From",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileContentHttpResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/research/partners": {
       "post": {
         "tags": [
@@ -5159,10 +5334,12 @@
           "status",
           "description",
           "requestedQuantity",
-          "processedBy",
+          "requestedByName",
+          "requestedOn",
+          "processedByName",
           "processedOn",
           "processingNotes",
-          "receivedBy",
+          "receivedByName",
           "receivedOn",
           "receivedQuantity",
           "receiptNotes"
@@ -5201,7 +5378,14 @@
             ],
             "format": "double"
           },
-          "processedBy": {
+          "requestedByName": {
+            "type": "string"
+          },
+          "requestedOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "processedByName": {
             "type": [
               "null",
               "string"
@@ -5220,7 +5404,7 @@
               "string"
             ]
           },
-          "receivedBy": {
+          "receivedByName": {
             "type": [
               "null",
               "string"

@@ -55,8 +55,6 @@ public static class InfrastructureModule
         services.AddScoped<IOrderQueries, OrderQueries>();
         services.AddScoped<IStockReportQueries, StockReportQueries>();
         services.AddScoped<IStockReportPdfGenerator, StockReportPdfGenerator>();
-        services.AddScoped<IStockOutflowsReportQueries, StockOutflowsReportQueries>();
-        services.AddScoped<IStockEntryBalanceAuditReportQueries, StockEntryBalanceAuditReportQueries>();
         return services;
     }
 

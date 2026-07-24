@@ -61,6 +61,10 @@ Obtain a token via `POST /api/identity/users/login`.
 | GET | `/reports/critical-stock-balance.pdf` | PDF report: current stock vs minimum stock | Required |
 | GET | `/reports/material-audit-movements.pdf` | PDF report: auditable material movements | Required |
 | GET | `/reports/manual-stock-adjustments.pdf` | PDF report: manual stock adjustments | Required |
+| GET | `/reports/stock-movements/by-user.pdf` | PDF report: stock movements grouped by responsible user | Required |
+| GET | `/reports/materials/idle-stock.pdf` | PDF report: materials in stock with no recent movement | Required |
+| GET | `/reports/orders/status-cycle.pdf` | PDF report: orders by status, cycle time and stale orders | Required |
+| GET | `/reports/stock/by-material-type.pdf` | PDF report: stock inflow/outflow/balance summary by material type | Required |
 
 Inventory report endpoints return `application/pdf` binary responses generated with QuestPDF.
 They require an authenticated user with `Inventory.Stock.View` or `Inventory.Stock.Manage`.
@@ -73,13 +77,18 @@ Common query filters:
 - `materialTypeId`: optional material type id.
 - `projectId`: optional project id for `/reports/stock-outflows/by-project.pdf`.
 
-Transaction reports require `from` and `to`, and the accepted range is capped at 366 days. The critical stock balance report is based on current material state and does not require a date range.
+Transaction reports require `from` and `to`, and the accepted range is capped at 366 days. The critical stock balance report is based on current material state and does not require a date range. The four newer reports below (`by-user`, `idle-stock`, `status-cycle`, `by-material-type`) treat `from`/`to` as optional, still capped at 366 days when both are given.
 
 Specific filters:
 
 - `onlyCritical`: optional boolean for `/reports/critical-stock-balance.pdf`; default is `true`.
-- `transactionType`: optional transaction type for `/reports/material-audit-movements.pdf`.
+- `transactionType`: optional transaction type for `/reports/material-audit-movements.pdf` and `/reports/stock-movements/by-user.pdf`.
 - `limit`: optional row limit for `/reports/material-audit-movements.pdf`; capped by the backend.
+- `materialTypeId`, `since`: optional for `/reports/materials/idle-stock.pdf`; `since` defaults to 180 days before now (materials with no movement since that date are listed).
+- `staleDays`: optional for `/reports/orders/status-cycle.pdf`; defaults to 15 (orders stuck in `Pending`/`Processing` longer than this are flagged as stale). Note this report does not accept `materialId`/`materialTypeId` — it aggregates over `Orders`, not `StockTransactions`.
+- `/reports/stock/by-material-type.pdf` only accepts `from`/`to` — no material/type/project filters, since it aggregates across all material types by design.
+
+User and project names shown in `/reports/material-audit-movements.pdf`, `/reports/manual-stock-adjustments.pdf` and `/reports/stock-movements/by-user.pdf` are resolved via cross-module catalogs (`Identity.Contracts.IUserCatalog`, `Research.Contracts.IProjectCatalog`) and fall back to `"Usuario removido"` / `"Projeto removido"` text when the referenced user or project no longer exists.
 
 Frontend handoff: call these endpoints as file downloads/blob requests. Do not parse JSON from successful responses. Validation and authorization failures still use the API's standard error behavior/status codes.
 

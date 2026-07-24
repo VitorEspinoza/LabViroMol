@@ -4,6 +4,7 @@ using LabViroMol.Modules.Identity.Application.Roles.Queries;
 using LabViroMol.Modules.Identity.Application.Users;
 using LabViroMol.Modules.Identity.Application.Users.Abstractions;
 using LabViroMol.Modules.Identity.Application.Users.Queries;
+using LabViroMol.Modules.Identity.Contracts;
 using LabViroMol.Modules.Identity.Domain.Users;
 using LabViroMol.Modules.Identity.Infrastructure.Identity;
 using LabViroMol.Modules.Identity.Infrastructure.Persistence;
@@ -152,6 +153,7 @@ public static class InfrastructureModule
         services.AddScoped<IUserQueries, UserQueries>();
         services.AddScoped<IRoleQueries, RoleQueries>();
         services.AddSingleton<IPermissionQueries, PermissionQueries>();
+        services.AddScoped<IUserCatalog, UserCatalog>();
         return services;
     }
 }

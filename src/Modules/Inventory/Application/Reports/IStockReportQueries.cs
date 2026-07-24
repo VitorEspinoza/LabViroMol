@@ -9,4 +9,8 @@ public interface IStockReportQueries
     Task<CriticalStockBalanceReport> GetCriticalStockBalanceAsync(CriticalStockBalanceFilter filter, CancellationToken ct);
     Task<MaterialAuditMovementsReport> GetMaterialAuditMovementsAsync(MaterialAuditMovementsFilter filter, CancellationToken ct);
     Task<ManualStockAdjustmentsReport> GetManualStockAdjustmentsAsync(StockReportFilter filter, CancellationToken ct);
+    Task<StockMovementsByUserReport> GetStockMovementsByUserAsync(StockMovementsByUserFilter filter, CancellationToken ct);
+    Task<IdleStockReport> GetIdleStockAsync(IdleStockFilter filter, CancellationToken ct);
+    Task<OrderStatusCycleReport> GetOrderStatusCycleAsync(OrderStatusCycleFilter filter, CancellationToken ct);
+    Task<StockByMaterialTypeReport> GetStockByMaterialTypeAsync(StockByMaterialTypeFilter filter, CancellationToken ct);
 }

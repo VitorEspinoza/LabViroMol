@@ -80,6 +80,100 @@ internal sealed class MaterialAuditMovementsRequest
         };
 }
 
+internal sealed class StockMovementsByUserRequest
+{
+    public DateTime? From { get; init; }
+    public DateTime? To { get; init; }
+    public Guid? MaterialId { get; init; }
+    public string? TransactionType { get; init; }
+
+    public StockMovementsByUserFilter ToFilter()
+    {
+        return new StockMovementsByUserFilter(
+            NormalizeDateTime(From),
+            NormalizeDateTime(To),
+            MaterialId,
+            TransactionType);
+    }
+
+    private static DateTime? NormalizeDateTime(DateTime? value) =>
+        value switch
+        {
+            null => null,
+            { Kind: DateTimeKind.Utc } dt => dt,
+            { Kind: DateTimeKind.Local } dt => dt.ToUniversalTime(),
+            { Kind: DateTimeKind.Unspecified } dt => DateTime.SpecifyKind(dt, DateTimeKind.Utc),
+            _ => value
+        };
+}
+
+internal sealed class IdleStockRequest
+{
+    public Guid? MaterialTypeId { get; init; }
+    public DateTime? Since { get; init; }
+
+    public IdleStockFilter ToFilter()
+    {
+        return new IdleStockFilter(MaterialTypeId, NormalizeDateTime(Since));
+    }
+
+    private static DateTime? NormalizeDateTime(DateTime? value) =>
+        value switch
+        {
+            null => null,
+            { Kind: DateTimeKind.Utc } dt => dt,
+            { Kind: DateTimeKind.Local } dt => dt.ToUniversalTime(),
+            { Kind: DateTimeKind.Unspecified } dt => DateTime.SpecifyKind(dt, DateTimeKind.Utc),
+            _ => value
+        };
+}
+
+internal sealed class OrderStatusCycleRequest
+{
+    public DateTime? From { get; init; }
+    public DateTime? To { get; init; }
+    public int? StaleDays { get; init; }
+
+    public OrderStatusCycleFilter ToFilter()
+    {
+        return new OrderStatusCycleFilter(
+            NormalizeDateTime(From),
+            NormalizeDateTime(To),
+            StaleDays);
+    }
+
+    private static DateTime? NormalizeDateTime(DateTime? value) =>
+        value switch
+        {
+            null => null,
+            { Kind: DateTimeKind.Utc } dt => dt,
+            { Kind: DateTimeKind.Local } dt => dt.ToUniversalTime(),
+            { Kind: DateTimeKind.Unspecified } dt => DateTime.SpecifyKind(dt, DateTimeKind.Utc),
+            _ => value
+        };
+}
+
+internal sealed class StockByMaterialTypeRequest
+{
+    public DateTime? From { get; init; }
+    public DateTime? To { get; init; }
+
+    public StockByMaterialTypeFilter ToFilter()
+    {
+        return new StockByMaterialTypeFilter(NormalizeDateTime(From), NormalizeDateTime(To));
+    }
+
+    private static DateTime? NormalizeDateTime(DateTime? value) =>
+        value switch
+        {
+            null => null,
+            { Kind: DateTimeKind.Utc } dt => dt,
+            { Kind: DateTimeKind.Local } dt => dt.ToUniversalTime(),
+            { Kind: DateTimeKind.Unspecified } dt => DateTime.SpecifyKind(dt, DateTimeKind.Utc),
+            _ => value
+        };
+}
+
 internal static class InventoryReportEndpoints
 {
     public static void MapInventoryReportEndpoints(this IEndpointRouteBuilder app)
@@ -204,6 +298,90 @@ internal static class InventoryReportEndpoints
                 "manual-stock-adjustments.pdf",
                 ct))
             .Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
+
+        group.MapGet("/stock-movements/by-user.pdf", async (
+            [AsParameters] StockMovementsByUserRequest request,
+            IStockReportQueries queries,
+            IStockReportPdfGenerator pdfGenerator,
+            ICurrentUser currentUser,
+            CancellationToken ct) =>
+        {
+            if (!CanViewStockReports(currentUser))
+                return Results.Forbid();
+
+            var filter = request.ToFilter();
+            var validationError = filter.Validate();
+            if (validationError is not null)
+                return Results.BadRequest(validationError);
+
+            var report = await queries.GetStockMovementsByUserAsync(filter, ct);
+            var pdf = pdfGenerator.GenerateStockMovementsByUser(report);
+
+            return Results.File(pdf, "application/pdf", "stock-movements-by-user.pdf");
+        }).Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
+
+        group.MapGet("/materials/idle-stock.pdf", async (
+            [AsParameters] IdleStockRequest request,
+            IStockReportQueries queries,
+            IStockReportPdfGenerator pdfGenerator,
+            ICurrentUser currentUser,
+            CancellationToken ct) =>
+        {
+            if (!CanViewStockReports(currentUser))
+                return Results.Forbid();
+
+            var filter = request.ToFilter();
+            var validationError = filter.Validate();
+            if (validationError is not null)
+                return Results.BadRequest(validationError);
+
+            var report = await queries.GetIdleStockAsync(filter, ct);
+            var pdf = pdfGenerator.GenerateIdleStock(report);
+
+            return Results.File(pdf, "application/pdf", "idle-stock.pdf");
+        }).Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
+
+        group.MapGet("/orders/status-cycle.pdf", async (
+            [AsParameters] OrderStatusCycleRequest request,
+            IStockReportQueries queries,
+            IStockReportPdfGenerator pdfGenerator,
+            ICurrentUser currentUser,
+            CancellationToken ct) =>
+        {
+            if (!CanViewStockReports(currentUser))
+                return Results.Forbid();
+
+            var filter = request.ToFilter();
+            var validationError = filter.Validate();
+            if (validationError is not null)
+                return Results.BadRequest(validationError);
+
+            var report = await queries.GetOrderStatusCycleAsync(filter, ct);
+            var pdf = pdfGenerator.GenerateOrderStatusCycle(report);
+
+            return Results.File(pdf, "application/pdf", "orders-status-cycle.pdf");
+        }).Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
+
+        group.MapGet("/stock/by-material-type.pdf", async (
+            [AsParameters] StockByMaterialTypeRequest request,
+            IStockReportQueries queries,
+            IStockReportPdfGenerator pdfGenerator,
+            ICurrentUser currentUser,
+            CancellationToken ct) =>
+        {
+            if (!CanViewStockReports(currentUser))
+                return Results.Forbid();
+
+            var filter = request.ToFilter();
+            var validationError = filter.Validate();
+            if (validationError is not null)
+                return Results.BadRequest(validationError);
+
+            var report = await queries.GetStockByMaterialTypeAsync(filter, ct);
+            var pdf = pdfGenerator.GenerateStockByMaterialType(report);
+
+            return Results.File(pdf, "application/pdf", "stock-by-material-type.pdf");
+        }).Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
     }
 
     private static async Task<IResult> GeneratePdfAsync<TReport>(

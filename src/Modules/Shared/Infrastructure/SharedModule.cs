@@ -50,7 +50,7 @@ public static class SharedModule
 
         services.AddHttpClient<ITextTranslator, LibreTranslator>(client =>
         {
-            client.BaseAddress = new Uri("http://localhost:5000");
+            client.BaseAddress = new Uri(configuration["Translation:BaseUrl"] ?? "http://libretranslate:5000");
         });
         return services;
     }
