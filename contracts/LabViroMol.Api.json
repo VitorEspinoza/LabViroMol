@@ -5334,10 +5334,12 @@
           "status",
           "description",
           "requestedQuantity",
-          "processedBy",
+          "requestedByName",
+          "requestedOn",
+          "processedByName",
           "processedOn",
           "processingNotes",
-          "receivedBy",
+          "receivedByName",
           "receivedOn",
           "receivedQuantity",
           "receiptNotes"
@@ -5376,7 +5378,14 @@
             ],
             "format": "double"
           },
-          "processedBy": {
+          "requestedByName": {
+            "type": "string"
+          },
+          "requestedOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "processedByName": {
             "type": [
               "null",
               "string"
@@ -5395,7 +5404,7 @@
               "string"
             ]
           },
-          "receivedBy": {
+          "receivedByName": {
             "type": [
               "null",
               "string"

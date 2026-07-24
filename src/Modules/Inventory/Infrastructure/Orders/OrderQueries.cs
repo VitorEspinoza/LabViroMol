@@ -33,7 +33,13 @@ internal sealed class OrderQueries : IOrderQueries
             .Join(_context.Materials,
                 o => o.MaterialId,
                 m => m.Id,
-                (o, m) => new { Order = o, MaterialName = m.Name })
+                (o, m) => new
+                {
+                    Order = o,
+                    MaterialName = m.Name,
+                    CreatedBy = EF.Property<UserId>(o, "CreatedBy"),
+                    CreatedAt = EF.Property<DateTimeOffset>(o, "CreatedAt")
+                })
             .FirstOrDefaultAsync(ct);
 
         if (row is null)
@@ -41,6 +47,7 @@ internal sealed class OrderQueries : IOrderQueries
 
         var order = row.Order;
         var projectTitles = await _projectCatalog.GetProjectTitlesAsync([order.ProjectId.Value], ct);
+        var requesterNames = await _researcherProfileProvider.GetNamesAsync([row.CreatedBy.Value], ct);
 
         return new OrderViewModel(
             order.Id,
@@ -51,6 +58,8 @@ internal sealed class OrderQueries : IOrderQueries
             order.Status.ToString(),
             order.Description,
             order.RequestedQuantity,
+            requesterNames.GetValueOrDefault(row.CreatedBy.Value, string.Empty),
+            row.CreatedAt,
             order.Processing != null ? order.Processing.ProcessedByName : null,
             order.Processing != null ? order.Processing.ProcessedAt : null,
             order.Processing != null ? order.Processing.Notes : null,
