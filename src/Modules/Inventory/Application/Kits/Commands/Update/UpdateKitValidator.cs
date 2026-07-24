@@ -15,7 +15,7 @@ public class UpdateKitValidator : AbstractValidator<UpdateKitCommand>
 
         RuleFor(x => x.Materials)
             .NotEmpty().WithMessage("Um kit precisa ter pelo menos um material.")
-            
+
             .Must(items => items.Select(i => i.Id).Distinct().Count() == items.Count)
                 .When(x => x.Materials is { Count: > 0 })
                 .WithMessage("O kit não pode ter materiais duplicados.");

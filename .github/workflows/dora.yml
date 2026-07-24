@@ -1,0 +1,70 @@
+name: DORA Metrics
+
+on:
+  schedule:
+    - cron: "0 8 * * 1"
+
+  workflow_dispatch:
+    inputs:
+      window_days:
+        description: "Janela de análise em dias"
+        required: false
+        default: "30"
+        type: string
+
+concurrency:
+  group: dora
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  deployments: read
+  pull-requests: read
+
+jobs:
+  compute-dora:
+    name: Compute DORA metrics
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Make script executable
+        run: chmod +x scripts/dora/compute-dora.sh
+
+      - name: Compute DORA metrics
+        id: dora
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ENV: ${{ env.GITHUB_ENV }}
+        run: |
+          WINDOW="${{ inputs.window_days || '30' }}"
+          OUTPUT=$(bash scripts/dora/compute-dora.sh \
+            "${{ github.repository_owner }}" \
+            "${{ github.event.repository.name }}" \
+            "${WINDOW}")
+
+          echo "${OUTPUT}" >> "$GITHUB_STEP_SUMMARY"
+
+          echo "${OUTPUT}"
+
+      - name: Update docs/dora.md badge section
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          WINDOW="${{ inputs.window_days || '30' }}"
+          REPORT_DATE=$(date -u '+%Y-%m-%d %H:%M UTC')
+          {
+            echo ""
+            echo "### Última execução automática"
+            echo ""
+            echo "Gerado em **${REPORT_DATE}** — janela de **${WINDOW} dias**."
+            echo ""
+            echo "| Métrica | Valor |"
+            echo "|---------|-------|"
+            echo "| Deployment Frequency | ${DORA_DEPLOY_FREQ:-N/A} deploys/dia |"
+            echo "| Lead Time for Changes | ${DORA_LEAD_TIME_MEDIAN:-N/A} h |"
+            echo "| Change Failure Rate | ${DORA_CFR:-N/A}% |"
+            echo "| MTTR | ${DORA_MTTR:-N/A} h |"
+          } >> "$GITHUB_STEP_SUMMARY"

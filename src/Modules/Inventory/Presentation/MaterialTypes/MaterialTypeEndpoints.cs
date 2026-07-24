@@ -3,6 +3,7 @@ using LabViroMol.Modules.Inventory.Application.MaterialTypes.Commands.Create;
 using LabViroMol.Modules.Inventory.Application.MaterialTypes.Commands.Deactivate;
 using LabViroMol.Modules.Inventory.Application.MaterialTypes.Create;
 using LabViroMol.Modules.Inventory.Application.MaterialTypes.Queries;
+using LabViroMol.Modules.Inventory.Application.MaterialTypes.ViewModels;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 using Mediator;
 using Microsoft.AspNetCore.Builder;
@@ -25,10 +26,11 @@ internal static class MaterialTypeEndpoints
             var result = await mediator.Send(command, ct);
 
             return result.ToHttpResult(Results.Created());
-        });
+        }).RequireAuthorization(Permissions.Inventory.MaterialsManage);
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IMaterialTypeQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))
+            .Produces<PagedResponse<MaterialTypeViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Inventory.MaterialsView);
 
         group.MapGet("/{id:guid}", async (Guid id, IMaterialTypeQueries queries) =>
@@ -38,7 +40,9 @@ internal static class MaterialTypeEndpoints
             return type is null
                 ? Results.NotFound()
                 : Results.Ok(type);
-        }).RequireAuthorization(Permissions.Inventory.MaterialsView);
+        }).Produces<MaterialTypeViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization(Permissions.Inventory.MaterialsView);
 
         group.MapPost("/{id:guid}/activate", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {

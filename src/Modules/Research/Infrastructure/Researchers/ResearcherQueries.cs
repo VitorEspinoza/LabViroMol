@@ -7,7 +7,7 @@ using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
 using Microsoft.EntityFrameworkCore;
 
-public class ResearcherQueries(ResearchDbContext context) : IResearcherQueries
+internal sealed class ResearcherQueries(ResearchDbContext context) : IResearcherQueries
 {
     public async Task<PagedResponse<ResearcherSummaryViewModel>> GetAllInstitutionalAsync(PagedRequest request, string? language)
     {

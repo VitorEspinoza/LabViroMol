@@ -22,14 +22,14 @@ public class Position : AggregateRoot<PositionId>, ICreationAuditable, IDeletion
         var position = new Position(IdFactory.New<PositionId>(), name, description);
         return Result<Position>.Success(position);
     }
-    
+
     public void AddTranslation(string languageCode, string name, string description)
     {
         if (string.IsNullOrWhiteSpace(languageCode)) return;
-        
+
         Translations[languageCode.ToLower()] = new PositionTranslation(name, description);
     }
-    
+
     public string GetName(string? language)
     {
         if (language == "en"

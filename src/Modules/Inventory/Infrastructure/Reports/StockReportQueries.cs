@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.Reports;
 
-public sealed class StockReportQueries(
+internal sealed class StockReportQueries(
     InventoryDbContext context,
     IProjectCatalog projectCatalog) : IStockReportQueries
 {
@@ -61,7 +61,7 @@ public sealed class StockReportQueries(
         var projectTitles = await projectCatalog.GetProjectTitlesAsync(rows.Select(r => r.ProjectId), ct);
 
         return new StockOutflowsByProjectReport(
-            DateTime.UtcNow,
+            DateTimeOffset.UtcNow.UtcDateTime,
             filter.From,
             filter.To,
             filter.MaterialId,
@@ -124,7 +124,7 @@ public sealed class StockReportQueries(
             .ToList();
 
         return new StockOutflowsByMonthReport(
-            DateTime.UtcNow,
+            DateTimeOffset.UtcNow.UtcDateTime,
             filter.From,
             filter.To,
             filter.MaterialId,
@@ -183,7 +183,7 @@ public sealed class StockReportQueries(
         var totalQuantity = totals.Sum(x => x.ProjectConsumptionQuantity + x.ExceptionOutQuantity);
 
         return new StockOutflowTotalsReport(
-            DateTime.UtcNow,
+            DateTimeOffset.UtcNow.UtcDateTime,
             filter.From,
             filter.To,
             filter.MaterialId,
@@ -251,7 +251,7 @@ public sealed class StockReportQueries(
             .ToList();
 
         return new StockInflowsByOrderMaterialMonthReport(
-            DateTime.UtcNow,
+            DateTimeOffset.UtcNow.UtcDateTime,
             filter.From,
             filter.To,
             filter.MaterialId,
@@ -303,7 +303,7 @@ public sealed class StockReportQueries(
             rows = rows.Where(row => row.StockQuantity <= row.MinStock).ToList();
 
         return new CriticalStockBalanceReport(
-            DateTime.UtcNow,
+            DateTimeOffset.UtcNow.UtcDateTime,
             filter.MaterialId,
             filter.MaterialTypeId,
             filter.OnlyCritical,
@@ -374,7 +374,7 @@ public sealed class StockReportQueries(
             .ToListAsync(ct);
 
         return new MaterialAuditMovementsReport(
-            DateTime.UtcNow,
+            DateTimeOffset.UtcNow.UtcDateTime,
             filter.From,
             filter.To,
             filter.MaterialId,
@@ -421,7 +421,7 @@ public sealed class StockReportQueries(
             .ToListAsync(ct);
 
         return new ManualStockAdjustmentsReport(
-            DateTime.UtcNow,
+            DateTimeOffset.UtcNow.UtcDateTime,
             filter.From,
             filter.To,
             filter.MaterialId,

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.Reports;
 
-public class StockOutflowsReportQueries : IStockOutflowsReportQueries
+internal sealed class StockOutflowsReportQueries : IStockOutflowsReportQueries
 {
     private readonly InventoryDbContext _context;
     private readonly IProjectCatalog _projectCatalog;

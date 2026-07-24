@@ -1,0 +1,191 @@
+name: API Contract
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "infra/**"
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "infra/**"
+
+concurrency:
+  group: api-contract-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  ConnectionStrings__LabViroMol: "Host=localhost;Port=5432;Database=dummy;Username=dummy;Password=dummy"
+
+jobs:
+  generate-spec:
+    name: Generate OpenAPI spec (build-time)
+    runs-on: ubuntu-latest
+    outputs:
+      has-base: ${{ steps.base-spec.outputs.found }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: "**/*.csproj"
+
+      - name: Restore
+        run: dotnet restore LabViroMol.sln
+
+      - name: Build API (emits contracts/LabViroMol.Api.json)
+        run: dotnet build src/LabViroMol.Api/LabViroMol.Api.csproj -c Release --no-restore
+
+      - name: Rename to openapi.json (PR/revision spec)
+        run: mv contracts/LabViroMol.Api.json contracts/revision.openapi.json
+
+      - name: Validate generated spec is valid JSON
+        run: node -e "const d=require('./contracts/revision.openapi.json'); if (!d.openapi) throw new Error('missing openapi field'); console.log('OpenAPI', d.openapi, '-', Object.keys(d.paths).length, 'paths');"
+
+      - name: Get published spec from main (base, for diff)
+        id: base-spec
+        run: |
+          if git show origin/main:contracts/openapi.json > contracts/base.openapi.json 2>/dev/null; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::contracts/openapi.json ainda não existe em origin/main (primeira publicação) — gate de breaking change pulado."
+          fi
+
+      - name: Upload revision spec artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-revision
+          path: contracts/revision.openapi.json
+          retention-days: 30
+
+      - name: Upload base spec artifact
+        if: steps.base-spec.outputs.found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-base
+          path: contracts/base.openapi.json
+          retention-days: 30
+
+  breaking-change-gate:
+    name: oasdiff breaking-change gate
+    runs-on: ubuntu-latest
+    needs: generate-spec
+    if: github.event_name == 'pull_request' && needs.generate-spec.outputs.has-base == 'true'
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download revision spec
+        uses: actions/download-artifact@v8
+        with:
+          name: openapi-revision
+          path: contracts
+
+      - name: Download base spec
+        uses: actions/download-artifact@v8
+        with:
+          name: openapi-base
+          path: contracts
+
+      - name: Run oasdiff breaking
+        id: oasdiff
+        run: |
+          set +e
+          docker run --rm \
+            -v "${{ github.workspace }}/contracts:/specs" \
+            tufin/oasdiff:latest breaking \
+            /specs/base.openapi.json /specs/revision.openapi.json \
+            --fail-on ERR \
+            | tee oasdiff-output.txt
+          echo "exit_code=${PIPESTATUS[0]:-$?}" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload oasdiff report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oasdiff-report
+          path: oasdiff-output.txt
+          retention-days: 30
+
+      - name: Check for api-breaking-approved label
+        id: label
+        run: |
+          has_label=$(
+            echo '${{ toJSON(github.event.pull_request.labels) }}' \
+              | jq -r 'any(.[]; .name == "api-breaking-approved")'
+          )
+          echo "has_label=$has_label" >> "$GITHUB_OUTPUT"
+
+      - name: Evaluate gate
+        run: |
+          exit_code="${{ steps.oasdiff.outputs.exit_code }}"
+          has_label="${{ steps.label.outputs.has_label }}"
+
+          if [ "$exit_code" = "0" ]; then
+            echo "Nenhum breaking change detectado no contrato OpenAPI. Gate liberado."
+            exit 0
+          fi
+
+          if [ "$has_label" = "true" ]; then
+            echo "Breaking change detectado no contrato, mas o PR tem a label 'api-breaking-approved'."
+            echo "Liberação controlada: garanta que os times de frontend foram avisados (ver docs/api-contract.md)."
+            exit 0
+          fi
+
+          echo "::error::Breaking change detectado no contrato OpenAPI sem a label 'api-breaking-approved'."
+          echo "Veja o artefato 'oasdiff-report' para o detalhe. Se a mudança é consciente e os"
+          echo "consumidores (Admin Panel, Institucional) já foram avisados, adicione a label"
+          echo "'api-breaking-approved' ao PR para liberar o merge."
+          exit 1
+
+  publish-spec:
+    name: Publish contracts/openapi.json (main)
+    runs-on: ubuntu-latest
+    needs: generate-spec
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Download revision spec
+        uses: actions/download-artifact@v8
+        with:
+          name: openapi-revision
+          path: contracts
+
+      - name: Publish spec
+        run: |
+          mv contracts/revision.openapi.json contracts/openapi.json
+
+          if git diff --quiet -- contracts/openapi.json; then
+            echo "Nenhuma mudança no contrato. Nada a publicar."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add contracts/openapi.json
+          git commit -m "chore(api-contract): atualizar contracts/openapi.json [skip ci]"
+          git push origin HEAD:main

@@ -2,71 +2,50 @@ using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Shared.Infrastructure.Translation;
 using Mediator;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace LabViroMol.Modules.Research.Application.Publications.EventHandlers;
 
-public class PublicationTranslationHandler : INotificationHandler<PublicationTranslationEvent>
+public sealed class PublicationTranslationHandler : INotificationHandler<PublicationTranslationPersistentEvent>
 {
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<PublicationTranslationHandler> _logger;
+    private readonly IPublicationRepository _repository;
+    private readonly ITextTranslator _translator;
+    private readonly IResearchUnitOfWork _unitOfWork;
 
     public PublicationTranslationHandler(
-        IServiceScopeFactory scopeFactory,
-        ILogger<PublicationTranslationHandler> logger)
+        IPublicationRepository repository,
+        ITextTranslator translator,
+        IResearchUnitOfWork unitOfWork)
     {
-        _scopeFactory = scopeFactory;
-        _logger = logger;
+        _repository = repository;
+        _translator = translator;
+        _unitOfWork = unitOfWork;
     }
 
-    public async ValueTask Handle(PublicationTranslationEvent notification, CancellationToken cancellationToken)
+    public async ValueTask Handle(PublicationTranslationPersistentEvent notification, CancellationToken ct)
     {
-        try
+        var publications =
+            await _repository.GetMissingEnglishTranslationAsync(5, ct);
+
+        foreach (var publication in publications)
         {
-            using var scope = _scopeFactory.CreateScope();
-
-            var repository =
-                scope.ServiceProvider
-                    .GetRequiredService<IPublicationRepository>();
-
-            var translator =
-                scope.ServiceProvider
-                    .GetRequiredService<ITextTranslator>();
-
-            var unitOfWork =
-                scope.ServiceProvider
-                    .GetRequiredService<IResearchUnitOfWork>();
-
-            var position =
-                await repository.GetByIdAsync(notification.PublicationId, CancellationToken.None);
-
-            if (position is null)
-                return;
-
             var englishTitle =
-                await translator.TranslateAsync(
+                await _translator.TranslateAsync(
                     "pt",
                     "en",
-                    position.Title);
+                    publication.Title);
 
             var englishDescription =
-                await translator.TranslateAsync(
+                await _translator.TranslateAsync(
                     "pt",
                     "en",
-                    position.Description);
+                    publication.Description);
 
-            position.AddTranslation(
+            publication.AddTranslation(
                 "en",
                 englishTitle,
                 englishDescription);
+        }
 
-            await unitOfWork.CompleteAsync(
-                CancellationToken.None);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError("Erro na tradução: {erro}", ex.Message);
-        }
+        await _unitOfWork.CompleteAsync(ct);
     }
 }

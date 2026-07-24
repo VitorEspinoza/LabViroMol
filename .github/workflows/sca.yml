@@ -1,0 +1,109 @@
+name: SCA
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "infra/**"
+  schedule:
+    - cron: "0 6 * * 1"
+
+concurrency:
+  group: sca-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  GATE_SEVERITIES: "Critical,High"
+  TRIVY_GATE_SEVERITIES: "CRITICAL,HIGH"
+
+jobs:
+  dotnet-vulnerable-packages:
+    name: dotnet list package --vulnerable
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: "**/*.csproj"
+
+      - name: Restore
+        run: dotnet restore LabViroMol.sln
+
+      - name: List vulnerable packages (direct + transitive)
+        shell: bash
+        run: |
+          set -o pipefail
+          dotnet list LabViroMol.sln package --vulnerable --include-transitive 2>&1 | tee vulnerable-packages.log
+
+      - name: Gate on High/Critical severity
+        shell: bash
+        run: |
+          set +e
+          PATTERN=$(echo "$GATE_SEVERITIES" | sed 's/,/\\|/g')
+          if grep -E "(^|[[:space:]])($PATTERN)([[:space:]]|$)" vulnerable-packages.log > matches.log; then
+            echo "Vulnerabilidades de severidade $GATE_SEVERITIES encontradas:"
+            cat matches.log
+            echo ""
+            echo "Detalhe completo em vulnerable-packages.log (artifact)."
+            exit 1
+          fi
+          echo "Nenhuma vulnerabilidade $GATE_SEVERITIES encontrada."
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-vulnerable-packages
+          path: vulnerable-packages.log
+          retention-days: 30
+
+  trivy-fs:
+    name: Trivy filesystem (vuln + license)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Trivy filesystem scan (SARIF for Security tab)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          scanners: "vuln,license"
+          format: "sarif"
+          output: "trivy-results.sarif"
+          severity: "${{ env.TRIVY_GATE_SEVERITIES }},MEDIUM,LOW,UNKNOWN"
+          exit-code: "0"
+
+      - name: Upload SARIF to Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+          category: trivy-fs
+
+      - name: Trivy filesystem scan (gate, table output)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          scanners: "vuln,license"
+          format: "table"
+          severity: "${{ env.TRIVY_GATE_SEVERITIES }}"
+          exit-code: "1"
+          ignore-unfixed: false

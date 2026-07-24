@@ -1,0 +1,13 @@
+name: "LabViroMol CodeQL config"
+
+queries:
+  - uses: security-extended
+
+paths-ignore:
+  - "tests/**"
+  - "**/Migrations/**"
+  - "**/*.Designer.cs"
+  - "**/obj/**"
+  - "**/bin/**"
+  - "infra/**"
+  - "docs/**"

@@ -7,7 +7,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Research.Application.Researchers.Handlers;
 
-public class UserRegisteredPersistentEventHandler(
+public sealed class UserRegisteredPersistentEventHandler(
     IResearcherRepository researcherRepository,
     IPositionRepository positionRepository,
     IResearchUnitOfWork unitOfWork)

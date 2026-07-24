@@ -3,6 +3,7 @@ namespace LabViroMol.Modules.Research.Presentation.Positions;
 using LabViroMol.Modules.Research.Application.Positions.Commands.Create;
 using LabViroMol.Modules.Research.Application.Positions.Commands.Delete;
 using LabViroMol.Modules.Research.Application.Positions.Queries;
+using LabViroMol.Modules.Research.Application.Positions.ViewModels;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Pagination;
@@ -25,6 +26,7 @@ internal static class PositionEndpoints
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IPositionQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))
+            .Produces<PagedResponse<PositionViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Research.PositionsView);
 
         group.MapGet("/{id:guid}", async (Guid id, IPositionQueries queries) =>
@@ -33,7 +35,9 @@ internal static class PositionEndpoints
             return position is null
                 ? Results.NotFound()
                 : Results.Ok(position);
-        }).RequireAuthorization(Permissions.Research.PositionsView);
+        }).Produces<PositionViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization(Permissions.Research.PositionsView);
 
         group.MapDelete("/{id:guid}", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {

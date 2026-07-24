@@ -5,7 +5,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Materials.Commands.Update;
 
-public class UpdateMaterialHandler : ICommandHandler<UpdateMaterialCommand, Result>
+public sealed class UpdateMaterialHandler : ICommandHandler<UpdateMaterialCommand, Result>
 {
     private readonly IMaterialRepository _repository;
     private readonly IInventoryUnitOfWork _unitOfWork;

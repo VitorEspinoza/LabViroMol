@@ -5,7 +5,7 @@ using LabViroMol.Modules.Research.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Kernel.Identity;
 using Microsoft.EntityFrameworkCore;
 
-public class ResearcherRepository(ResearchDbContext context) : IResearcherRepository
+internal sealed class ResearcherRepository(ResearchDbContext context) : IResearcherRepository
 {
     public async Task<Researcher?> GetByIdAsync(ResearcherId id, CancellationToken ct)
         => await context.Researchers.FirstOrDefaultAsync(r => r.Id == id, ct);

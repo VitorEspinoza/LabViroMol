@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Roles.CreateRole;
 
-public class CreateRoleCommandHandler(IIdentityService identityService)
+public sealed class CreateRoleCommandHandler(IIdentityService identityService)
     : ICommandHandler<CreateRoleCommand, Result>
 {
     public async ValueTask<Result> Handle(CreateRoleCommand command, CancellationToken ct)

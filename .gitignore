@@ -16,6 +16,9 @@
 # Mono auto generated files
 mono_crash.*
 
+# Test results
+TestResults/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -367,3 +370,16 @@ FodyWeavers.xsd
 
 src/LabViroMol.Api/Upload
 Upload/Images/
+
+.env
+
+age.key
+*.dec.env
+secrets/*.env
+!secrets/*.enc.env
+.env.ci
+certbot
+
+docker-compose.override.yml
+docker-compose.yml
+

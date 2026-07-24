@@ -1,0 +1,78 @@
+name: SBOM
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "infra/**"
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "infra/**"
+
+concurrency:
+  group: sbom-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  sbom:
+    name: Generate SBOM + scan (Grype)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Build image
+        run: docker build -t labviromol-api:sbom -f Dockerfile .
+
+      - name: Generate SBOM (CycloneDX) with Syft
+        uses: anchore/sbom-action@v0
+        with:
+          image: labviromol-api:sbom
+          format: cyclonedx-json
+          output-file: sbom.cdx.json
+          upload-artifact: false
+
+      - name: Generate SBOM (SPDX) with Syft
+        uses: anchore/sbom-action@v0
+        with:
+          image: labviromol-api:sbom
+          format: spdx-json
+          output-file: sbom.spdx.json
+          upload-artifact: false
+
+      - name: Upload SBOM artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: |
+            sbom.cdx.json
+            sbom.spdx.json
+          retention-days: 30
+
+      - name: Scan SBOM with Grype (SARIF)
+        uses: anchore/scan-action@v6
+        id: grype-scan
+        with:
+          sbom: sbom.cdx.json
+          fail-build: false
+          output-format: sarif
+          severity-cutoff: high
+
+      - name: Upload Grype SARIF to Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.grype-scan.outputs.sarif }}
+          category: grype-sbom

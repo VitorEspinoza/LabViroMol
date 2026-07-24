@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.Logout;
 
-public class LogoutCommandHandler : ICommandHandler<LogoutCommand, Result>
+public sealed class LogoutCommandHandler : ICommandHandler<LogoutCommand, Result>
 {
     private readonly IIdentityService _identityService;
 

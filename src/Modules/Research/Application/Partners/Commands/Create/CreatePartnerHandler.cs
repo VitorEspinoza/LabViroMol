@@ -5,7 +5,7 @@ using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class CreatePartnerHandler(
+public sealed class CreatePartnerHandler(
     IPartnerRepository partnerRepository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<CreatePartnerCommand, Result>

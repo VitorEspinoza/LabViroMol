@@ -7,7 +7,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Materials.Commands.AddStock;
 
-public class AddStockMaterialExceptionHandler : ICommandHandler<AddStockMaterialExceptionCommand, Result>
+public sealed class AddStockMaterialExceptionHandler : ICommandHandler<AddStockMaterialExceptionCommand, Result>
 {
     private readonly IMaterialRepository _repository;
     private readonly ICurrentUser _currentUser;
@@ -31,8 +31,8 @@ public class AddStockMaterialExceptionHandler : ICommandHandler<AddStockMaterial
             return Result.NotFound("Material não encontrado.");
 
         material.AddStockException(exceptionCommand.Quantity, exceptionCommand.Reason, _currentUser.Id);
-        
-        
+
+
         await _unitOfWork.CompleteAsync(ct);
         return Result.Success();
     }

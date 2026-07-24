@@ -1,8 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using LabViroMol.Modules.Identity.Application.Users.ForgotPassword;
-using LabViroMol.Modules.Notify.Contracts;
-using NSubstitute;
+using LabViroMol.Modules.Identity.Contracts;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
+using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Identity.IntegrationTests.Users;
 
@@ -11,7 +13,7 @@ public class ForgotPasswordTests : UserEndpointsTestBase
     public ForgotPasswordTests(IdentityIntegrationTestWebAppFactory factory) : base(factory) { }
 
     [Fact]
-    public async Task ShouldReturn200AndSendEmail_WhenEmailExists()
+    public async Task ShouldReturn200AndPersistEmailEvent_WhenEmailExists()
     {
         // Arrange
         var (_, email) = await SeedBasicUser("forgot.exists@labviromol.com");
@@ -22,12 +24,19 @@ public class ForgotPasswordTests : UserEndpointsTestBase
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        await Factory.EmailSenderMock.Received(1).SendEmail(
-            email, Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+
+        var message = await DbContext.Set<OutboxMessage>()
+            .AsNoTracking()
+            .SingleAsync(m => m.Type == typeof(ForgotPasswordPersistentEvent).FullName);
+        var @event = JsonSerializer.Deserialize<ForgotPasswordPersistentEvent>(message.Content, OutboxJson.Options);
+
+        Assert.NotNull(@event);
+        Assert.Equal(email, @event.Email);
+        Assert.Null(message.ProcessedOn);
     }
 
     [Fact]
-    public async Task ShouldReturn200AndNotSendEmail_WhenEmailDoesNotExist()
+    public async Task ShouldReturn200AndNotPersistEmailEvent_WhenEmailDoesNotExist()
     {
         // Arrange
         const string email = "forgot.does-not-exist@labviromol.com";
@@ -38,8 +47,12 @@ public class ForgotPasswordTests : UserEndpointsTestBase
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        await Factory.EmailSenderMock.DidNotReceive().SendEmail(
-            email, Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
+
+        var messageExists = await DbContext.Set<OutboxMessage>()
+            .AsNoTracking()
+            .AnyAsync(m => m.Type == typeof(ForgotPasswordPersistentEvent).FullName);
+
+        Assert.False(messageExists);
     }
 
     [Fact]

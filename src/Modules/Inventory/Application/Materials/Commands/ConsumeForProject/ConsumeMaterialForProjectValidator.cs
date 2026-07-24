@@ -11,7 +11,7 @@ public class ConsumeMaterialForProjectValidator : AbstractValidator<ConsumeMater
 
         RuleFor(x => x.MaterialId)
             .NotEmpty().WithMessage("O ID do projeto é obrigatório.");
-        
+
         RuleFor(x => x.Quantity.Value)
             .GreaterThan(0).WithMessage("A quantidade deve ser maior que zero.");
     }

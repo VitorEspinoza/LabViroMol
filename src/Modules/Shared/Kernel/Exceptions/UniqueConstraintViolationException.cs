@@ -6,4 +6,12 @@ public class UniqueConstraintViolationException : Exception
         : base(message, innerException)
     {
     }
+
+    public UniqueConstraintViolationException() : base()
+    {
+    }
+
+    public UniqueConstraintViolationException(string? message) : base(message)
+    {
+    }
 }

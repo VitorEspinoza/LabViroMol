@@ -10,7 +10,7 @@ namespace LabViroMol.Modules.Assets.Infrastructure.Persistence;
 
 public class AssetsDbContext : DbContext
 {
-    public AssetsDbContext(DbContextOptions<AssetsDbContext> options) : base(options) {}
+    public AssetsDbContext(DbContextOptions<AssetsDbContext> options) : base(options) { }
 
     public DbSet<Equipment> Equipments { get; set; }
     public DbSet<MaintenanceRequest> MaintenanceRequests { get; set; }

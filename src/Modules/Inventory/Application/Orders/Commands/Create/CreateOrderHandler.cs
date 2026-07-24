@@ -7,7 +7,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Orders.Commands.Create;
 
-public class CreateOrderHandler : ICommandHandler<CreateOrderCommand, Result>
+public sealed class CreateOrderHandler : ICommandHandler<CreateOrderCommand, Result>
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProjectChecker _projectChecker;

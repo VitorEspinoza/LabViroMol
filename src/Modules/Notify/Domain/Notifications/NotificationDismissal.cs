@@ -19,7 +19,7 @@ public class NotificationDismissal
 
     public static NotificationDismissal Create(UserId userId)
     {
-        return new NotificationDismissal(userId, DateTimeOffset.Now);
+        return new NotificationDismissal(userId, DateTimeOffset.UtcNow);
     }
 
 }

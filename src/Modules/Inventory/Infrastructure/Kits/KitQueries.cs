@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Inventory.Infrastructure.Kits;
 
-public class KitQueries : IKitQueries
+internal sealed class KitQueries : IKitQueries
 {
     private readonly InventoryDbContext _context;
 

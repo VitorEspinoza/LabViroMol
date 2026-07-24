@@ -6,7 +6,7 @@ using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class AddPublicationResearcherHandler(
+public sealed class AddPublicationResearcherHandler(
     IPublicationRepository publicationRepository,
     IResearcherRepository researcherRepository,
     IResearchUnitOfWork unitOfWork)

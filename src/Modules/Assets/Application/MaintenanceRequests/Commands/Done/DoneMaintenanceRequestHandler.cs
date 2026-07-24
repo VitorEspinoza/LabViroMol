@@ -5,7 +5,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Done;
 
-public class DoneMaintenanceRequestHandler(
+public sealed class DoneMaintenanceRequestHandler(
     IMaintenanceRequestRepository maintenanceRequestRepository,
     IAssetsUnitOfWork unitOfWork) : ICommandHandler<DoneMaintenanceRequestCommand, Result>
 {

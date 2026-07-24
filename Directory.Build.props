@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <EnableArchitectureAnalyzers>false</EnableArchitectureAnalyzers>
+    <EnableArchitectureAnalyzers Condition="$([System.String]::Copy('$(MSBuildProjectDirectory)').Contains('\src\'))">true</EnableArchitectureAnalyzers>
+    <EnableArchitectureAnalyzers Condition="$([System.String]::Copy('$(MSBuildProjectDirectory)').Contains('/src/'))">true</EnableArchitectureAnalyzers>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(EnableArchitectureAnalyzers)' == 'True'">
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" Version="4.15.0" PrivateAssets="all" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="10.27.0.140913" PrivateAssets="all" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)BannedSymbols.txt" />
+  </ItemGroup>
+</Project>

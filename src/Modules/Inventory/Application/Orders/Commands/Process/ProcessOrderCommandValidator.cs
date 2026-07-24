@@ -8,6 +8,6 @@ public class ProcessOrderCommandValidator : AbstractValidator<ProcessOrderComman
     {
         RuleFor(x => x.OrderId.Value)
             .NotEmpty().WithMessage("O id do pedido é obrigatório.");
-        
+
     }
 }

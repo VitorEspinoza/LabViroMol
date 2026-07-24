@@ -22,7 +22,7 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
 
         builder.Property(p => p.Description)
             .HasMaxLength(2000);
-        
+
         builder.ConfigureTranslations<
             Position,
             PositionTranslation>();

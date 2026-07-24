@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Notify.Application.Notifications.Commands.Dismiss;
 
-public class DismissHandler : ICommandHandler<DismissCommand, Result>
+public sealed class DismissHandler : ICommandHandler<DismissCommand, Result>
 {
     private readonly INotificationRepository _notificationRepository;
     private readonly INotifyUnitOfWork _unitOfWork;
@@ -21,14 +21,14 @@ public class DismissHandler : ICommandHandler<DismissCommand, Result>
         _unitOfWork = unitOfWork;
         _currentUser = currentUser;
     }
-    
+
     public async ValueTask<Result> Handle(DismissCommand command, CancellationToken ct)
     {
         var notification = await _notificationRepository.GetByNotificationId(command.NotificationId, ct);
 
         if (notification == null)
             return Result.BusinessRule("Notificação não encontrada.");
-        
+
         notification.Dismiss(_currentUser.Id);
         await _unitOfWork.CompleteAsync(ct);
         return Result.Success();

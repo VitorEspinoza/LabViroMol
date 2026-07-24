@@ -1,4 +1,5 @@
 ﻿using LabViroMol.Modules.Shared.Infrastructure.Exceptions;
+using LabViroMol.Modules.Shared.Infrastructure.Observability;
 using LabViroMol.Modules.Shared.Infrastructure.Storage;
 using LabViroMol.Modules.Shared.Infrastructure.Translation;
 using Microsoft.Extensions.Configuration;
@@ -12,10 +13,13 @@ public static class SharedModule
     {
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
-                
+        services.AddHttpContextAccessor();
+        services.AddSingleton<LabViroMolMetrics>();
+        services.AddSingleton<EmailMetrics>();
+
         return services;
     }
-    
+
     public static IServiceCollection AddStorages(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -35,13 +39,18 @@ public static class SharedModule
     {
         services.Configure<TranslationOptions>(
             configuration.GetSection("Translation"));
-        
+
         services.AddHostedService<TranslationBackgroundWorker>();
-        services.AddHttpClient<ITextTranslator,
-            LibreTranslator>(client =>
+
+        if (configuration.GetValue("LoadTest:UseNoOpTranslator", false))
         {
-            client.BaseAddress =
-                new Uri("http://localhost:5000");
+            services.AddSingleton<ITextTranslator, NoOpTextTranslator>();
+            return services;
+        }
+
+        services.AddHttpClient<ITextTranslator, LibreTranslator>(client =>
+        {
+            client.BaseAddress = new Uri("http://localhost:5000");
         });
         return services;
     }

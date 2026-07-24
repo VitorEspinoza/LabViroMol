@@ -8,6 +8,7 @@ using LabViroMol.Modules.Research.Application.Publications.Queries;
 using LabViroMol.Modules.Research.Application.Researchers.Queries;
 using LabViroMol.Modules.Research.Application.Shared;
 using LabViroMol.Modules.Research.Contracts;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using LabViroMol.Modules.Research.Domain.Partners;
 using LabViroMol.Modules.Research.Domain.Positions;
@@ -62,7 +63,7 @@ public static class InfrastructureModule
 
     private static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("LabViroMol");
+        var connectionString = configuration.ResolveLabViroMolConnectionString();
 
         services.AddDbContext<ResearchDbContext>(options =>
             options.UseNpgsql(connectionString, npgsqlOptions =>

@@ -6,6 +6,6 @@ public interface IHasEvents
 {
     IReadOnlyCollection<IEvent> Events { get; }
     void ClearDomainEvents();
-    
+
     void ClearEvents();
 }

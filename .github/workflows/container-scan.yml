@@ -1,0 +1,75 @@
+name: Container Scan
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "infra/**"
+  workflow_call:
+
+concurrency:
+  group: container-scan-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  IMAGE_REF: labviromol-api:scan
+
+jobs:
+  trivy-image:
+    name: Build + Trivy image scan (API)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API image (local load, no push)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          load: true
+          tags: ${{ env.IMAGE_REF }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Trivy image scan (SARIF for Security tab)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE_REF }}
+          scan-type: "image"
+          scanners: "vuln,misconfig,secret"
+          format: "sarif"
+          output: "trivy-image-results.sarif"
+          severity: "HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN"
+          ignore-unfixed: true
+          exit-code: "0"
+
+      - name: Upload SARIF to Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-image-results.sarif
+          category: trivy-image
+
+      - name: Trivy image scan (gate, table output)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ env.IMAGE_REF }}
+          scan-type: "image"
+          scanners: "vuln,misconfig,secret"
+          format: "table"
+          severity: "HIGH,CRITICAL"
+          ignore-unfixed: true
+          exit-code: "1"

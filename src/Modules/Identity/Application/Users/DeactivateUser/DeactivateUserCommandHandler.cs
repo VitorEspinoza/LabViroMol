@@ -7,7 +7,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.DeactivateUser;
 
-public class DeactivateUserCommandHandler : ICommandHandler<DeactivateUserCommand, Result>
+public sealed class DeactivateUserCommandHandler : ICommandHandler<DeactivateUserCommand, Result>
 {
     private readonly IUserRepository _userRepository;
     private readonly IIdentityService _identityService;

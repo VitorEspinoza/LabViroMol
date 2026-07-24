@@ -10,14 +10,16 @@ using LabViroMol.Modules.Shared.Infrastructure;
 using LabViroMol.Modules.Shared.Infrastructure.Behaviors;
 using LabViroMol.Modules.Shared.Infrastructure.Converters;
 using LabViroMol.Modules.Shared.Infrastructure.Observability;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.FileProviders;
 using QuestPDF.Infrastructure;
 using Scalar.AspNetCore;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +30,7 @@ builder.AddObservability();
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
 {
     options.SerializerOptions.Converters.Add(new StrongIdJsonConverterFactory());
-    
+
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 builder.Services.AddEndpointsApiExplorer();
@@ -51,16 +53,23 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddRateLimiter(options =>
 {
+    var permitLimit = builder.Configuration.GetValue("RateLimiting:SchedulingPolicy:PermitLimit", 5);
+    var windowSeconds = builder.Configuration.GetValue<int?>("RateLimiting:SchedulingPolicy:WindowSeconds");
+    var windowHours = builder.Configuration.GetValue("RateLimiting:SchedulingPolicy:WindowHours", 1);
+    var window = windowSeconds.HasValue
+        ? TimeSpan.FromSeconds(windowSeconds.Value)
+        : TimeSpan.FromHours(windowHours);
+
     options.AddFixedWindowLimiter("SchedulingPolicy", opt =>
     {
-        opt.PermitLimit = 5;
-        opt.Window = TimeSpan.FromHours(1);
+        opt.PermitLimit = permitLimit;
+        opt.Window = window;
     });
 });
 
-builder.Services.AddMediator(options => 
+builder.Services.AddMediator(options =>
 {
-    options.ServiceLifetime = ServiceLifetime.Scoped; 
+    options.ServiceLifetime = ServiceLifetime.Scoped;
 });
 builder.Services.AddScoped(
     typeof(IPipelineBehavior<,>),
@@ -81,8 +90,14 @@ builder.Services
     .AddStorages(builder.Configuration)
     .AddTranslator(builder.Configuration)
     .AddOutboxDispatcher(builder.Configuration);
-    
+
 builder.Services.AddAuthorization();
+
+builder.Services.AddHealthChecks()
+    .AddNpgSql(
+        connectionStringFactory: _ => builder.Configuration.ResolveLabViroMolConnectionString(),
+        name: "postgres",
+        tags: ["ready"]);
 
 var configPath = builder.Configuration["Storage:RootFolder"];
 if (string.IsNullOrWhiteSpace(configPath))
@@ -90,8 +105,8 @@ if (string.IsNullOrWhiteSpace(configPath))
     throw new InvalidOperationException("A configuração 'Storage:RootFolder' não foi encontrada ou está vazia.");
 }
 
-var imagesPath = Path.IsPathRooted(configPath) 
-    ? configPath 
+var imagesPath = Path.IsPathRooted(configPath)
+    ? configPath
     : Path.Combine(builder.Environment.ContentRootPath, configPath);
 
 Directory.CreateDirectory(imagesPath);
@@ -100,20 +115,12 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapOpenApi().AllowAnonymous();
+    app.MapScalarApiReference().AllowAnonymous();
 }
 
 app.UseExceptionHandler();
 
-// O TLS é terminado no gateway nginx (container "labviromol-gateway"); a API
-// só recebe tráfego HTTP puro dentro da rede interna do compose. Sem confiar
-// nos headers X-Forwarded-Proto/X-Forwarded-For que o nginx envia,
-// HttpContext.Request.IsHttps fica sempre false aqui dentro - quebrando tanto
-// o cookie Secure quanto o UseHttpsRedirection abaixo. KnownNetworks/KnownProxies
-// ficam vazios de propósito: a porta 8080 da API nunca é publicada para fora
-// do host (só o gateway nginx alcança via rede interna do Docker), então não
-// há risco de um cliente externo falsificar esses headers diretamente.
 var forwardedHeadersOptions = new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
@@ -121,8 +128,6 @@ var forwardedHeadersOptions = new ForwardedHeadersOptions
 forwardedHeadersOptions.KnownNetworks.Clear();
 forwardedHeadersOptions.KnownProxies.Clear();
 app.UseForwardedHeaders(forwardedHeadersOptions);
-
-app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
@@ -136,6 +141,11 @@ app.UseCors("AngularApp");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
+
+app.MapHealthChecks("/health", new HealthCheckOptions { Predicate = _ => false })
+    .AllowAnonymous();
+app.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") })
+    .AllowAnonymous();
 
 app.MapIdentityEndpoints();
 app.MapInventoryEndpoints();

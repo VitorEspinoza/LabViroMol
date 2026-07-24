@@ -5,7 +5,7 @@ using LabViroMol.Modules.Research.Domain.Positions;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class DeletePositionHandler(
+public sealed class DeletePositionHandler(
     IPositionRepository repository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<DeletePositionCommand, Result>

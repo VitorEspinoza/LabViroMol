@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura</Format>
+          <DeterministicReport>true</DeterministicReport>
+          <UseSourceLink>false</UseSourceLink>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+          <Exclude>[*.UnitTests]*,[*.IntegrationTests]*,[LabViroMol.ArchitectureTests]*</Exclude>
+          <ExcludeByAttribute>CompilerGeneratedAttribute,GeneratedCodeAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+          <ExcludeByFile>**/Migrations/*.cs,**/*.g.cs,**/*.g.i.cs,**/*Designer.cs,**/obj/**/*.cs,**/bin/**/*.cs</ExcludeByFile>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

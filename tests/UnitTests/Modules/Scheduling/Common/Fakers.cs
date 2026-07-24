@@ -8,15 +8,15 @@ namespace LabViroMol.Modules.Scheduling.Domain.UnitTests.Common;
 internal static class Fakers
 {
     private static readonly Faker f = new("pt_BR");
-    
+
     #region Primitives
-    
-    public static UserId AnyUserId() => IdFactory.New<UserId>(); 
-    
+
+    public static UserId AnyUserId() => IdFactory.New<UserId>();
+
     #endregion
-    
+
     #region Scheduler
-    
+
     public static Scheduler CreateScheduler(
         string? name = null,
         string? course = null,
@@ -26,11 +26,11 @@ internal static class Fakers
             course ?? f.Commerce.Categories(1)[0],
             email ?? f.Internet.Email()
         );
-    
+
     #endregion
-    
+
     #region Scheduling
-    
+
     public static DateOnly NextWorkday()
     {
         var date = DateOnly.FromDateTime(DateTime.Now.AddDays(2));
@@ -38,12 +38,12 @@ internal static class Fakers
             date = date.AddDays(1);
         return date;
     }
-    
+
     public static Domain.Schedules.Scheduling CreateScheduling()
     {
         var date = NextWorkday();
         var start = date.ToDateTime(TimeOnly.FromTimeSpan(TimeSpan.FromHours(9)));
-        var end   = date.ToDateTime(TimeOnly.FromTimeSpan(TimeSpan.FromHours(10)));
+        var end = date.ToDateTime(TimeOnly.FromTimeSpan(TimeSpan.FromHours(10)));
 
         return Domain.Schedules.Scheduling.Create(
             date,
@@ -51,11 +51,11 @@ internal static class Fakers
             new DateTimeOffset(end)
         ).Data!;
     }
-    
+
     #endregion
-    
+
     #region Schedule
-    
+
     #region ScheduleEquipment
 
     public static ScheduleEquipment CreateScheduleEquipment(
@@ -72,7 +72,7 @@ internal static class Fakers
             .ToList();
 
     #endregion
-    
+
     public static Schedule CreateSchedule(
         Scheduler? scheduler = null,
         Domain.Schedules.Scheduling? scheduling = null,
@@ -90,6 +90,6 @@ internal static class Fakers
             description ?? f.Lorem.Sentence(),
             equipments ?? CreateScheduleEquipments()
         ).Data!;
-    
+
     #endregion
 }

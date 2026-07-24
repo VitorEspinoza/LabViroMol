@@ -1,6 +1,7 @@
 using LabViroMol.Modules.Inventory.Application.Materials.Commands.Create;
 using LabViroMol.Modules.Inventory.Application.Materials.Commands.Update;
 using LabViroMol.Modules.Inventory.Application.Materials.Queries;
+using LabViroMol.Modules.Inventory.Application.Materials.ViewModels;
 using LabViroMol.Modules.Inventory.Domain.Materials;
 using LabViroMol.Modules.Inventory.Domain.MaterialTypes;
 using LabViroMol.Modules.Shared.Infrastructure.Extensions;
@@ -41,6 +42,7 @@ internal static class MaterialCrudEndpoints
 
         group.MapGet("/", async ([AsParameters] PagedRequest request, IMaterialQueries queries) =>
             Results.Ok(await queries.GetAllAsync(request)))
+            .Produces<PagedResponse<MaterialViewModel>>(StatusCodes.Status200OK)
             .RequireAuthorization(Permissions.Inventory.MaterialsView);
 
         group.MapGet("/{id:guid}", async (Guid id, IMaterialQueries queries) =>
@@ -50,7 +52,9 @@ internal static class MaterialCrudEndpoints
             return material is null
                 ? Results.NotFound()
                 : Results.Ok(material);
-        }).RequireAuthorization(Permissions.Inventory.MaterialsView);
+        }).Produces<MaterialViewModel>(StatusCodes.Status200OK)
+          .Produces(StatusCodes.Status404NotFound)
+          .RequireAuthorization(Permissions.Inventory.MaterialsView);
 
         group.MapPut("/{id:guid}", async (Guid id, UpdateMaterialRequest request, IMediator mediator, CancellationToken ct) =>
         {

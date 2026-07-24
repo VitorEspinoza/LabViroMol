@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.MaterialTypes.Commands.Deactivate;
 
-public class DeactivateMaterialTypeHandler : ICommandHandler<DeactivateMaterialTypeCommand, Result>
+public sealed class DeactivateMaterialTypeHandler : ICommandHandler<DeactivateMaterialTypeCommand, Result>
 {
     private readonly IMaterialTypeRepository _repository;
     private readonly ICurrentUser _currentUser;

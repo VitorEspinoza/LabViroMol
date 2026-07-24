@@ -4,7 +4,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.RefreshToken;
 
-public class RefreshTokenCommandHandler
+public sealed class RefreshTokenCommandHandler
     : ICommandHandler<RefreshTokenCommand, Result<(string AccessToken, string RefreshToken)>>
 {
     private readonly IIdentityService _identityService;

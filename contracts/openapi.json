@@ -1,0 +1,7394 @@
+{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "LabViroMol.Api | v1",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/identity/users": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfUserSummaryViewModel"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/users/me": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/users/{id}": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserProfileViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Identity"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/users/{id}/deactivate": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/users/{id}/reactivate": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/users/change-password": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/users/login": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/users/refresh": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/users/logout": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/users/forgot-password": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/users/reset-password": {
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/permissions": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/identity/roles": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleDetailViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/roles/{id}/permissions": {
+      "put": {
+        "tags": [
+          "Identity"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRolePermissionsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/identity/roles/{id}": {
+      "delete": {
+        "tags": [
+          "Identity"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/inventory/kits": {
+      "post": {
+        "tags": [
+          "Kits"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateKitCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Kits"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfKitViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/kits/{id}": {
+      "get": {
+        "tags": [
+          "Kits"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KitViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Kits"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateKitRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/inventory/materials": {
+      "post": {
+        "tags": [
+          "Materials"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMaterialRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Materials"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfMaterialViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/materials/{id}": {
+      "get": {
+        "tags": [
+          "Materials"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaterialViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Materials"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMaterialRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/inventory/materials/{id}/add-stock": {
+      "post": {
+        "tags": [
+          "Materials"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddStockMaterialRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/inventory/materials/{id}/write-off": {
+      "post": {
+        "tags": [
+          "Materials"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WriteOffRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/inventory/types": {
+      "post": {
+        "tags": [
+          "MaterialTypes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMaterialTypeCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "MaterialTypes"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfMaterialTypeViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/types/{id}": {
+      "get": {
+        "tags": [
+          "MaterialTypes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaterialTypeViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/inventory/types/{id}/activate": {
+      "post": {
+        "tags": [
+          "MaterialTypes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/inventory/types/{id}/deactivate": {
+      "post": {
+        "tags": [
+          "MaterialTypes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/inventory/orders": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfOrderSummaryViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/orders/{id}": {
+      "get": {
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/inventory/orders/{id}/fix-details": {
+      "put": {
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FixOrderDetailsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/inventory/orders/{id}/process": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/inventory/orders/{id}/receive": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReceiveOrderRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/inventory/orders/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Orders"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/inventory/reports/stock-outflows/by-project.pdf": {
+      "get": {
+        "tags": [
+          "Inventory-Reports"
+        ],
+        "parameters": [
+          {
+            "name": "From",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "MaterialId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MaterialTypeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "ProjectId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileContentHttpResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/reports/stock-outflows/by-month.pdf": {
+      "get": {
+        "tags": [
+          "Inventory-Reports"
+        ],
+        "parameters": [
+          {
+            "name": "From",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "MaterialId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MaterialTypeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "ProjectId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileContentHttpResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/reports/stock-outflows/totals.pdf": {
+      "get": {
+        "tags": [
+          "Inventory-Reports"
+        ],
+        "parameters": [
+          {
+            "name": "From",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "MaterialId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MaterialTypeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "ProjectId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileContentHttpResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/reports/stock-inflows/by-order-material-month.pdf": {
+      "get": {
+        "tags": [
+          "Inventory-Reports"
+        ],
+        "parameters": [
+          {
+            "name": "From",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "MaterialId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MaterialTypeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "ProjectId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileContentHttpResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/reports/critical-stock-balance.pdf": {
+      "get": {
+        "tags": [
+          "Inventory-Reports"
+        ],
+        "parameters": [
+          {
+            "name": "MaterialId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MaterialTypeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "OnlyCritical",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileContentHttpResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/reports/material-audit-movements.pdf": {
+      "get": {
+        "tags": [
+          "Inventory-Reports"
+        ],
+        "parameters": [
+          {
+            "name": "From",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "MaterialId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MaterialTypeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "TransactionType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Limit",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileContentHttpResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/inventory/reports/manual-stock-adjustments.pdf": {
+      "get": {
+        "tags": [
+          "Inventory-Reports"
+        ],
+        "parameters": [
+          {
+            "name": "From",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "To",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "MaterialId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "MaterialTypeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "ProjectId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileContentHttpResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/partners": {
+      "post": {
+        "tags": [
+          "Partners"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePartnerCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Partners"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfPartnerAdminSummaryViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/partners/{id}": {
+      "get": {
+        "tags": [
+          "Partners"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartnerViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Partners"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePartnerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Partners"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/projects": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfProjectAdminSummaryViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/projects/{id}": {
+      "get": {
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProjectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/projects/{id}/start": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResearcherIdRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/projects/{id}/complete": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResearcherIdRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/projects/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResearcherIdRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/projects/{id}/members": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddProjectMemberRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/projects/{id}/transfer-leadership": {
+      "post": {
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferLeadershipRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/projects/{id}/members/{researcherId}/role": {
+      "put": {
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "researcherId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeMemberRoleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/projects/{id}/members/{researcherId}": {
+      "delete": {
+        "tags": [
+          "Projects"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "researcherId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "requestedById",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/positions": {
+      "post": {
+        "tags": [
+          "Positions"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePositionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Positions"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfPositionViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/positions/{id}": {
+      "get": {
+        "tags": [
+          "Positions"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PositionViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Positions"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/publications": {
+      "post": {
+        "tags": [
+          "Publications"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePublicationCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Publications"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfPublicationAdminSummaryViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/publications/{id}": {
+      "get": {
+        "tags": [
+          "Publications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicationViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Publications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePublicationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Publications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/publications/{id}/doi": {
+      "put": {
+        "tags": [
+          "Publications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignDoiRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/publications/{id}/researchers": {
+      "post": {
+        "tags": [
+          "Publications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPublicationResearcherRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/publications/{id}/researchers/{researcherId}": {
+      "delete": {
+        "tags": [
+          "Publications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "researcherId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/publications/{id}/researchers/order": {
+      "put": {
+        "tags": [
+          "Publications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReorderPublicationResearchersRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/research/public/publications": {
+      "get": {
+        "tags": [
+          "Publications-Public"
+        ],
+        "parameters": [
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfPublicationSummaryViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/public/partners": {
+      "get": {
+        "tags": [
+          "Partners-Public"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfPartnerSummaryViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/public/projects": {
+      "get": {
+        "tags": [
+          "Projects-Public"
+        ],
+        "parameters": [
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfPublicProjectViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/research/public/researchers": {
+      "get": {
+        "tags": [
+          "Researchers-Public"
+        ],
+        "parameters": [
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfResearcherSummaryViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scheduling/schedules": {
+      "get": {
+        "tags": [
+          "Schedules"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfScheduleViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scheduling/schedules/pending": {
+      "get": {
+        "tags": [
+          "Schedules"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfScheduleViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/scheduling/schedules/{id}": {
+      "get": {
+        "tags": [
+          "Schedules"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/scheduling/schedules/{id}/approve": {
+      "post": {
+        "tags": [
+          "Schedules"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/scheduling/schedules/{id}/refuse": {
+      "post": {
+        "tags": [
+          "Schedules"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReproveScheduleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/scheduling/schedules/{id}/cancel": {
+      "post": {
+        "tags": [
+          "Schedules"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelScheduleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/scheduling/schedules/{id}/term": {
+      "post": {
+        "tags": [
+          "Schedules"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/scheduling/public/schedules": {
+      "post": {
+        "tags": [
+          "Schedules-Public"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateScheduleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/assets/equipments": {
+      "post": {
+        "tags": [
+          "Equipment"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEquipmentCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Equipment"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfEquipmentAdminSummaryViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/assets/equipments/{id}": {
+      "put": {
+        "tags": [
+          "Equipment"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEquipmentRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Equipment"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Equipment"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EquipmentAdminDetailViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/assets/equipments/{id}/image": {
+      "post": {
+        "tags": [
+          "Equipment"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/assets/maintenance-requests": {
+      "post": {
+        "tags": [
+          "MaintenanceRequests"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateMaintenanceCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "MaintenanceRequests"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfMaintenanceRequestViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/assets/maintenance-requests/{id}/start": {
+      "post": {
+        "tags": [
+          "MaintenanceRequests"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/assets/maintenance-requests/{id}/done": {
+      "post": {
+        "tags": [
+          "MaintenanceRequests"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/assets/maintenance-requests/{id}/cancel": {
+      "post": {
+        "tags": [
+          "MaintenanceRequests"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/assets/public/equipments": {
+      "get": {
+        "tags": [
+          "Equipment-Public"
+        ],
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "type": [
+                "integer",
+                "string"
+              ],
+              "format": "int32",
+              "default": 20
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortDirection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": "asc"
+            }
+          },
+          {
+            "name": "Search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResponseOfEquipmentViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/assets/public/equipments/{id}": {
+      "get": {
+        "tags": [
+          "Equipment-Public"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EquipmentViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/assets/public/equipments/schedulable": {
+      "get": {
+        "tags": [
+          "Equipment-Public"
+        ],
+        "parameters": [
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EquipmentSchedulableViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notify/notifications/dismiss/all": {
+      "post": {
+        "tags": [
+          "Notifications"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DismissAllCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/notify/notifications/dismiss/{id}": {
+      "post": {
+        "tags": [
+          "Notifications"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/notify/notifications": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationViewModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/dashboard/summary": {
+      "get": {
+        "tags": [
+          "AdminBff-Dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminDashboardSummaryViewModel"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddProjectMemberRequest": {
+        "required": [
+          "researcherId",
+          "role",
+          "requestedById"
+        ],
+        "type": "object",
+        "properties": {
+          "researcherId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "role": {
+            "type": "string"
+          },
+          "requestedById": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "AddPublicationResearcherRequest": {
+        "required": [
+          "researcherId"
+        ],
+        "type": "object",
+        "properties": {
+          "researcherId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "AddStockMaterialRequest": {
+        "required": [
+          "quantity",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AdminDashboardAssetsSummaryViewModel": {
+        "required": [
+          "activeMaintenanceRequestsCount"
+        ],
+        "type": "object",
+        "properties": {
+          "activeMaintenanceRequestsCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "AdminDashboardInventorySummaryViewModel": {
+        "required": [
+          "lowStockMaterialsCount",
+          "lowStockMaterials"
+        ],
+        "type": "object",
+        "properties": {
+          "lowStockMaterialsCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "lowStockMaterials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminDashboardMaterialAlertViewModel"
+            }
+          }
+        }
+      },
+      "AdminDashboardMaterialAlertViewModel": {
+        "required": [
+          "id",
+          "name",
+          "location",
+          "stockQuantity",
+          "minStock",
+          "unit"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "stockQuantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "minStock": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      },
+      "AdminDashboardSchedulingSummaryViewModel": {
+        "required": [
+          "pendingSchedulesCount",
+          "approvedSchedulesThisMonthCount",
+          "upcomingSchedules"
+        ],
+        "type": "object",
+        "properties": {
+          "pendingSchedulesCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "approvedSchedulesThisMonthCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "upcomingSchedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdminDashboardUpcomingScheduleViewModel"
+            }
+          }
+        }
+      },
+      "AdminDashboardSummaryViewModel": {
+        "required": [
+          "scheduling",
+          "inventory",
+          "assets",
+          "generatedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "scheduling": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AdminDashboardSchedulingSummaryViewModel"
+              }
+            ]
+          },
+          "inventory": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AdminDashboardInventorySummaryViewModel"
+              }
+            ]
+          },
+          "assets": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AdminDashboardAssetsSummaryViewModel"
+              }
+            ]
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AdminDashboardUpcomingScheduleViewModel": {
+        "required": [
+          "id",
+          "schedulerName",
+          "date",
+          "startDateHour",
+          "equipmentNames",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "schedulerName": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "startDateHour": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "equipmentNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "AssignDoiRequest": {
+        "required": [
+          "doi"
+        ],
+        "type": "object",
+        "properties": {
+          "doi": {
+            "type": "string"
+          }
+        }
+      },
+      "CancelScheduleRequest": {
+        "required": [
+          "justification"
+        ],
+        "type": "object",
+        "properties": {
+          "justification": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangeMemberRoleRequest": {
+        "required": [
+          "newRole",
+          "requestedById"
+        ],
+        "type": "object",
+        "properties": {
+          "newRole": {
+            "type": "string"
+          },
+          "requestedById": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "ChangePasswordRequest": {
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateEquipmentCommand": {
+        "required": [
+          "name",
+          "model",
+          "brand",
+          "code",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "CreateKitCommand": {
+        "required": [
+          "name",
+          "description",
+          "materials"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KitItemInputModel"
+            }
+          }
+        }
+      },
+      "CreateMaintenanceCommand": {
+        "required": [
+          "equipmentId",
+          "description",
+          "problemDescription"
+        ],
+        "type": "object",
+        "properties": {
+          "equipmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string"
+          },
+          "problemDescription": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateMaterialRequest": {
+        "required": [
+          "name",
+          "location",
+          "minStock",
+          "stockQuantity",
+          "unit",
+          "typeId"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "minStock": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "stockQuantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/Unit"
+          },
+          "typeId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateMaterialTypeCommand": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateOrderRequest": {
+        "required": [
+          "materialId",
+          "projectId",
+          "quantity",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "materialId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "quantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "CreatePartnerCommand": {
+        "required": [
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "CreatePositionCommand": {
+        "required": [
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateProjectCommand": {
+        "required": [
+          "principalInvestigatorId",
+          "title",
+          "description",
+          "partnerId"
+        ],
+        "type": "object",
+        "properties": {
+          "principalInvestigatorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "partnerId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreatePublicationCommand": {
+        "required": [
+          "title",
+          "description",
+          "doi",
+          "publicationDate",
+          "publishedOn",
+          "publishUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "doi": {
+            "type": "string"
+          },
+          "publicationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "publishedOn": {
+            "type": "string"
+          },
+          "publishUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateRoleCommand": {
+        "required": [
+          "name",
+          "permissions"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CreateScheduleCommand": {
+        "required": [
+          "scheduler",
+          "scheduling",
+          "acceptTerm",
+          "advisorProfessor",
+          "projectTitle",
+          "description",
+          "equipments"
+        ],
+        "type": "object",
+        "properties": {
+          "scheduler": {
+            "$ref": "#/components/schemas/SchedulerInput"
+          },
+          "scheduling": {
+            "$ref": "#/components/schemas/SchedulingInput"
+          },
+          "acceptTerm": {
+            "type": "boolean"
+          },
+          "advisorProfessor": {
+            "type": "string"
+          },
+          "projectTitle": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "equipments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScheduleEquipmentInput"
+            }
+          }
+        }
+      },
+      "CreateUserCommand": {
+        "required": [
+          "userData",
+          "email",
+          "roleIds"
+        ],
+        "type": "object",
+        "properties": {
+          "userData": {
+            "$ref": "#/components/schemas/UserInfo"
+          },
+          "email": {
+            "type": "string"
+          },
+          "roleIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "DismissAllCommand": {
+        "type": "object"
+      },
+      "EntityTagHeaderValue": {
+        "type": "object",
+        "properties": {
+          "tag": {
+            "$ref": "#/components/schemas/StringSegment"
+          },
+          "isWeak": {
+            "type": "boolean"
+          }
+        }
+      },
+      "EquipmentAdminDetailViewModel": {
+        "required": [
+          "equipmentId",
+          "name",
+          "model",
+          "brand",
+          "code",
+          "location",
+          "description",
+          "imageUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "equipmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "EquipmentAdminSummaryViewModel": {
+        "required": [
+          "equipmentId",
+          "code",
+          "name",
+          "model",
+          "brand",
+          "location",
+          "description",
+          "status",
+          "imageUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "equipmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "EquipmentSchedulableViewModel": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "EquipmentViewModel": {
+        "required": [
+          "id",
+          "name",
+          "model",
+          "brand",
+          "code",
+          "description",
+          "imageUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "FileContentHttpResult": {
+        "type": "object",
+        "properties": {
+          "contentType": {
+            "type": "string"
+          },
+          "fileDownloadName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lastModified": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "entityTag": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/EntityTagHeaderValue"
+              }
+            ]
+          },
+          "enableRangeProcessing": {
+            "type": "boolean"
+          },
+          "fileLength": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int64"
+          },
+          "fileContents": {
+            "$ref": "#/components/schemas/ReadOnlyMemoryOfbyte"
+          }
+        }
+      },
+      "FixOrderDetailsRequest": {
+        "required": [
+          "newProjectId",
+          "newQuantity",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "newProjectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "newQuantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "ForgotPasswordCommand": {
+        "required": [
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "IFormFile": {
+        "type": "string",
+        "format": "binary"
+      },
+      "KitItemInputModel": {
+        "required": [
+          "id",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "quantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "KitItemViewModel": {
+        "required": [
+          "materialId",
+          "name",
+          "quantity",
+          "unit"
+        ],
+        "type": "object",
+        "properties": {
+          "materialId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "unit": {
+            "type": "string"
+          }
+        }
+      },
+      "KitViewModel": {
+        "required": [
+          "id",
+          "name",
+          "description",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KitItemViewModel"
+            }
+          }
+        }
+      },
+      "LoginCommand": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "MaintenanceRequestViewModel": {
+        "required": [
+          "maintenanceRequestId",
+          "equipmentId",
+          "equipmentName",
+          "description",
+          "problemDescription",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "maintenanceRequestId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "equipmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "equipmentName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "problemDescription": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "MaterialTypeViewModel": {
+        "required": [
+          "id",
+          "name",
+          "active"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MaterialViewModel": {
+        "required": [
+          "id",
+          "name",
+          "materialType",
+          "minStock",
+          "stockQuantity",
+          "unit",
+          "location"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "materialType": {
+            "type": "string"
+          },
+          "minStock": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "stockQuantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          }
+        }
+      },
+      "NotificationViewModel": {
+        "required": [
+          "id",
+          "title",
+          "message",
+          "type",
+          "referenceId",
+          "referenceModule",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "referenceId": {
+            "type": "string"
+          },
+          "referenceModule": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "OrderSummaryViewModel": {
+        "required": [
+          "id",
+          "materialId",
+          "projectId",
+          "projectName",
+          "materialName",
+          "materialUnit",
+          "quantityRequested",
+          "quantityReceived",
+          "status",
+          "createdBy",
+          "createdOn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "materialId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectName": {
+            "type": "string"
+          },
+          "materialName": {
+            "type": "string"
+          },
+          "materialUnit": {
+            "type": "string"
+          },
+          "quantityRequested": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "quantityReceived": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "OrderViewModel": {
+        "required": [
+          "id",
+          "materialId",
+          "materialName",
+          "projectId",
+          "projectName",
+          "status",
+          "description",
+          "requestedQuantity",
+          "processedBy",
+          "processedOn",
+          "processingNotes",
+          "receivedBy",
+          "receivedOn",
+          "receivedQuantity",
+          "receiptNotes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "materialId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "materialName": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectName": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "requestedQuantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "processedBy": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "processedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "processingNotes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "receivedBy": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "receivedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "receivedQuantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "receiptNotes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PagedResponseOfEquipmentAdminSummaryViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EquipmentAdminSummaryViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfEquipmentViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EquipmentViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfKitViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KitViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfMaintenanceRequestViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MaintenanceRequestViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfMaterialTypeViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MaterialTypeViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfMaterialViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MaterialViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfOrderSummaryViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrderSummaryViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfPartnerAdminSummaryViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartnerAdminSummaryViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfPartnerSummaryViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartnerSummaryViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfPositionViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PositionViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfProjectAdminSummaryViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectAdminSummaryViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfPublicationAdminSummaryViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicationAdminSummaryViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfPublicationSummaryViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicationSummaryViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfPublicProjectViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicProjectViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfResearcherSummaryViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResearcherSummaryViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfScheduleViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScheduleViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResponseOfUserSummaryViewModel": {
+        "required": [
+          "data",
+          "currentPage",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserSummaryViewModel"
+            }
+          },
+          "currentPage": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalCount": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "totalPages": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PartnerAdminSummaryViewModel": {
+        "required": [
+          "id",
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PartnerSummaryViewModel": {
+        "required": [
+          "id",
+          "name",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PartnerViewModel": {
+        "required": [
+          "id",
+          "name",
+          "description",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PositionViewModel": {
+        "required": [
+          "id",
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "ProcessOrderRequest": {
+        "required": [
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ProjectAdminSummaryViewModel": {
+        "required": [
+          "id",
+          "title",
+          "partnerName",
+          "managerName",
+          "status",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "partnerName": {
+            "type": "string"
+          },
+          "managerName": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ProjectMemberViewModel": {
+        "required": [
+          "researcherId",
+          "researcherName",
+          "role"
+        ],
+        "type": "object",
+        "properties": {
+          "researcherId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "researcherName": {
+            "type": "string"
+          },
+          "role": {
+            "$ref": "#/components/schemas/ProjectRole"
+          }
+        }
+      },
+      "ProjectRole": {
+        "enum": [
+          "ResearchLead",
+          "Manager",
+          "Collaborator"
+        ]
+      },
+      "ProjectStatus": {
+        "enum": [
+          "Planned",
+          "InProgress",
+          "Completed",
+          "Canceled"
+        ]
+      },
+      "ProjectViewModel": {
+        "required": [
+          "id",
+          "title",
+          "description",
+          "status",
+          "partnerId",
+          "partnerName",
+          "members",
+          "createdAt",
+          "canChangeStatus",
+          "canTransferLeadership",
+          "canEditMembers",
+          "canChangeMemberRole",
+          "canRemoveMembers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ProjectStatus"
+          },
+          "partnerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "partnerName": {
+            "type": "string"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectMemberViewModel"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canChangeStatus": {
+            "type": "boolean"
+          },
+          "canTransferLeadership": {
+            "type": "boolean"
+          },
+          "canEditMembers": {
+            "type": "boolean"
+          },
+          "canChangeMemberRole": {
+            "type": "boolean"
+          },
+          "canRemoveMembers": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PublicationAdminSummaryViewModel": {
+        "required": [
+          "id",
+          "title",
+          "doi",
+          "publicationDate",
+          "authors"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "doi": {
+            "type": "string"
+          },
+          "publicationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicationAuthorViewModel"
+            }
+          }
+        }
+      },
+      "PublicationAuthorViewModel": {
+        "required": [
+          "researcherId",
+          "name",
+          "order"
+        ],
+        "type": "object",
+        "properties": {
+          "researcherId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "order": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "PublicationSummaryViewModel": {
+        "required": [
+          "id",
+          "title",
+          "doi",
+          "publishedOn",
+          "publicationDate",
+          "createdAt",
+          "authors"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "doi": {
+            "type": "string"
+          },
+          "publishedOn": {
+            "type": "string"
+          },
+          "publicationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicationAuthorViewModel"
+            }
+          }
+        }
+      },
+      "PublicationViewModel": {
+        "required": [
+          "id",
+          "title",
+          "description",
+          "doi",
+          "publicationDate",
+          "publishedOn",
+          "publishUrl",
+          "authors",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "doi": {
+            "type": "string"
+          },
+          "publicationDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "publishedOn": {
+            "type": "string"
+          },
+          "publishUrl": {
+            "type": "string"
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicationAuthorViewModel"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PublicProjectViewModel": {
+        "required": [
+          "id",
+          "title",
+          "description",
+          "status",
+          "researchLead",
+          "partner"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "researchLead": {
+            "type": "string"
+          },
+          "partner": {
+            "type": "string"
+          }
+        }
+      },
+      "ReadOnlyMemoryOfbyte": {
+        "type": "string"
+      },
+      "ReceiveOrderRequest": {
+        "required": [
+          "quantityReceived",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "quantityReceived": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ReorderPublicationResearchersRequest": {
+        "required": [
+          "researcherIds"
+        ],
+        "type": "object",
+        "properties": {
+          "researcherIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "ReproveScheduleRequest": {
+        "required": [
+          "justification"
+        ],
+        "type": "object",
+        "properties": {
+          "justification": {
+            "type": "string"
+          }
+        }
+      },
+      "ResearcherIdRequest": {
+        "required": [
+          "researcherId"
+        ],
+        "type": "object",
+        "properties": {
+          "researcherId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "ResearcherSummaryViewModel": {
+        "required": [
+          "id",
+          "displayName",
+          "degreeLevel",
+          "position",
+          "lattesUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "degreeLevel": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "lattesUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ResearchRegistrationData": {
+        "required": [
+          "positionId",
+          "degreeLevel",
+          "fieldOfStudy",
+          "lattesUrl",
+          "citationName",
+          "displayName"
+        ],
+        "type": "object",
+        "properties": {
+          "positionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "degreeLevel": {
+            "type": "string"
+          },
+          "fieldOfStudy": {
+            "type": "string"
+          },
+          "lattesUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "citationName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "displayName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ResetPasswordCommand": {
+        "required": [
+          "email",
+          "token",
+          "newPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "token": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "RoleDetailViewModel": {
+        "required": [
+          "id",
+          "name",
+          "permissions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ScheduleEquipmentInput": {
+        "required": [
+          "equipmentId",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "equipmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "ScheduleEquipmentViewModel": {
+        "required": [
+          "equipmentId",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "equipmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "SchedulerInput": {
+        "required": [
+          "name",
+          "course",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "course": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "SchedulerViewModel": {
+        "required": [
+          "name",
+          "course",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "course": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "ScheduleViewModel": {
+        "required": [
+          "id",
+          "scheduler",
+          "scheduling",
+          "projectTitle",
+          "description",
+          "advisorProfessor",
+          "status",
+          "termUrl",
+          "equipments"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scheduler": {
+            "$ref": "#/components/schemas/SchedulerViewModel"
+          },
+          "scheduling": {
+            "$ref": "#/components/schemas/SchedulingViewModel"
+          },
+          "projectTitle": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "advisorProfessor": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "termUrl": {
+            "type": "string"
+          },
+          "equipments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScheduleEquipmentViewModel"
+            }
+          }
+        }
+      },
+      "SchedulingInput": {
+        "required": [
+          "date",
+          "start",
+          "end"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SchedulingViewModel": {
+        "required": [
+          "date",
+          "startDateHour",
+          "endDateHour"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "startDateHour": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDateHour": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "StringSegment": {
+        "type": "object",
+        "properties": {
+          "buffer": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "offset": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "length": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "hasValue": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TransferLeadershipRequest": {
+        "required": [
+          "newLeadResearcherId",
+          "requestedById"
+        ],
+        "type": "object",
+        "properties": {
+          "newLeadResearcherId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requestedById": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "Unit": {
+        "enum": [
+          "Gram",
+          "Milliliter",
+          "Piece"
+        ]
+      },
+      "UpdateEquipmentRequest": {
+        "required": [
+          "name",
+          "brand",
+          "model",
+          "description",
+          "location"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "UpdateKitRequest": {
+        "required": [
+          "name",
+          "description",
+          "materials"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "materials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KitItemInputModel"
+            }
+          }
+        }
+      },
+      "UpdateMaterialRequest": {
+        "required": [
+          "name",
+          "location",
+          "minStock"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "minStock": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "UpdatePartnerRequest": {
+        "required": [
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "UpdateProfileRequest": {
+        "required": [
+          "userData"
+        ],
+        "type": "object",
+        "properties": {
+          "userData": {
+            "$ref": "#/components/schemas/UserInfo"
+          }
+        }
+      },
+      "UpdateProjectRequest": {
+        "required": [
+          "title",
+          "description",
+          "requestedById"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "requestedById": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "UpdatePublicationRequest": {
+        "required": [
+          "title",
+          "description",
+          "publishedOn",
+          "publishUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "publishedOn": {
+            "type": "string"
+          },
+          "publishUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateRolePermissionsRequest": {
+        "required": [
+          "permissions"
+        ],
+        "type": "object",
+        "properties": {
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "UpdateUserRequest": {
+        "required": [
+          "userData",
+          "roleIds"
+        ],
+        "type": "object",
+        "properties": {
+          "userData": {
+            "$ref": "#/components/schemas/UserInfo"
+          },
+          "roleIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "UserInfo": {
+        "required": [
+          "firstName",
+          "lastName",
+          "phoneNumber",
+          "emergencyContactName",
+          "emergencyContactNumber",
+          "researchData"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emergencyContactName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emergencyContactNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "researchData": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ResearchRegistrationData"
+              }
+            ]
+          }
+        }
+      },
+      "UserProfileViewModel": {
+        "required": [
+          "id",
+          "userData",
+          "isActive",
+          "roles",
+          "permissions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userData": {
+            "$ref": "#/components/schemas/UserInfo"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "UserSummaryViewModel": {
+        "required": [
+          "id",
+          "fullName",
+          "email",
+          "isActive",
+          "roles",
+          "emergencyContactName",
+          "emergencyContactNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "emergencyContactName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emergencyContactNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "WriteOffRequest": {
+        "required": [
+          "quantity",
+          "projectId",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "projectId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Identity"
+    },
+    {
+      "name": "Kits"
+    },
+    {
+      "name": "Materials"
+    },
+    {
+      "name": "MaterialTypes"
+    },
+    {
+      "name": "Orders"
+    },
+    {
+      "name": "Inventory-Reports"
+    },
+    {
+      "name": "Partners"
+    },
+    {
+      "name": "Projects"
+    },
+    {
+      "name": "Positions"
+    },
+    {
+      "name": "Publications"
+    },
+    {
+      "name": "Publications-Public"
+    },
+    {
+      "name": "Partners-Public"
+    },
+    {
+      "name": "Projects-Public"
+    },
+    {
+      "name": "Researchers-Public"
+    },
+    {
+      "name": "Schedules"
+    },
+    {
+      "name": "Schedules-Public"
+    },
+    {
+      "name": "Equipment"
+    },
+    {
+      "name": "MaintenanceRequests"
+    },
+    {
+      "name": "Equipment-Public"
+    },
+    {
+      "name": "Notifications"
+    },
+    {
+      "name": "AdminBff-Dashboard"
+    }
+  ]
+}

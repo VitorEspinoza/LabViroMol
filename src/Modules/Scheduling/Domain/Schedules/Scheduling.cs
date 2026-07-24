@@ -15,7 +15,7 @@ public record Scheduling
         StartDateHour = startDateHour;
         EndDateHour = endDateHour;
     }
-    
+
     public static Result<Scheduling> Create(DateOnly date, DateTimeOffset start, DateTimeOffset end)
     {
         var result = BusinessTimePolicies.Validate(date, start, end);

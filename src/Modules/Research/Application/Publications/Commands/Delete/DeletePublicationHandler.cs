@@ -5,7 +5,7 @@ using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class DeletePublicationHandler(
+public sealed class DeletePublicationHandler(
     IPublicationRepository repository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<DeletePublicationCommand, Result>

@@ -5,7 +5,7 @@ namespace LabViroMol.Modules.Assets.Domain.Equipments;
 
 public class Equipment : AggregateRoot<EquipmentId>, IFullAuditable, ITranslatable<EquipmentTranslation>
 {
-    private Equipment() {}
+    private Equipment() { }
 
     public string Name { get; private set; }
     public string Brand { get; private set; }

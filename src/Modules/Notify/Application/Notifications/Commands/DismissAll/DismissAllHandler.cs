@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Notify.Application.Notifications.Commands.DismissAll;
 
-public class DismissAllHandler : ICommandHandler<DismissAllCommand, Result>
+public sealed class DismissAllHandler : ICommandHandler<DismissAllCommand, Result>
 {
     private readonly INotificationRepository _notificationRepository;
     private readonly INotifyUnitOfWork _unitOfWork;
@@ -21,7 +21,7 @@ public class DismissAllHandler : ICommandHandler<DismissAllCommand, Result>
         _unitOfWork = unitOfWork;
         _currentUser = currentUser;
     }
-    
+
     public async ValueTask<Result> Handle(DismissAllCommand command, CancellationToken ct)
     {
         var notificationsNotReadedByUser = await _notificationRepository.GetNotificationsByUserNotDismissed(
@@ -31,9 +31,9 @@ public class DismissAllHandler : ICommandHandler<DismissAllCommand, Result>
 
         if (notificationsNotReadedByUser.Count <= 0)
             return Result.Success();
-        
+
         notificationsNotReadedByUser.ForEach(n => n.Dismiss(_currentUser.Id));
-        
+
         await _unitOfWork.CompleteAsync(ct);
         return Result.Success();
     }

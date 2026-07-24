@@ -14,26 +14,26 @@ public class MaterialConfiguration : IEntityTypeConfiguration<Material>
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id)
             .ValueGeneratedNever();
-     
-        builder.HasMany(m => m.Transactions) 
+
+        builder.HasMany(m => m.Transactions)
             .WithOne()
             .HasForeignKey(t => t.MaterialId)
             .IsRequired();
-        
+
         builder.Property(m => m.StockQuantity)
-            .HasPrecision(18, 4); 
+            .HasPrecision(18, 4);
 
         builder.Property(m => m.Name)
             .HasMaxLength(200)
             .IsRequired();
-        
-          
+
+
         builder.Property(m => m.Unit)
             .HasConversion<string>();
-        
+
         builder.HasOne<MaterialType>()
             .WithMany()
             .HasForeignKey(m => m.TypeId)
-            .OnDelete(DeleteBehavior.Restrict); 
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

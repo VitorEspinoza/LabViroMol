@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LabViroMol.Modules.Assets.Infrastructure.Equipments;
 
-public class EquipmentQueries : IEquipmentQueries
+internal sealed class EquipmentQueries : IEquipmentQueries
 {
     private readonly AssetsDbContext _context;
 

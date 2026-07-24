@@ -71,6 +71,39 @@ namespace LabViroMol.Modules.Notify.Infrastructure.Persistence.Migrations
                     b.ToTable("Notifications", "notify");
                 });
 
+            modelBuilder.Entity("LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("OccurredOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("ProcessedOn")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProcessedOn", "OccurredOn");
+
+                    b.ToTable("OutboxMessages", "notify");
+                });
+
             modelBuilder.Entity("LabViroMol.Modules.Notify.Domain.Notifications.Notification", b =>
                 {
                     b.OwnsMany("LabViroMol.Modules.Notify.Domain.Notifications.NotificationDismissal", "NotificationDismissals", b1 =>

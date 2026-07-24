@@ -5,7 +5,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Assets.Application.MaintenanceRequests.Commands.Cancel;
 
-public class CancelMaintenanceRequestHandler(
+public sealed class CancelMaintenanceRequestHandler(
     IMaintenanceRequestRepository maintenanceRequestRepository,
     IAssetsUnitOfWork assetsUnitOfWork) : ICommandHandler<CancelMaintenanceRequestCommand, Result>
 {

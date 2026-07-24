@@ -24,33 +24,33 @@ public class InventoryDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         modelBuilder.HasDefaultSchema("inventory");
-        
+
         modelBuilder.ApplyPersistenceConfigs();
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(InventoryDbContext).Assembly);
     }
-    
+
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         configurationBuilder
             .Properties<Quantity>()
             .HaveConversion<QuantityConverter>();
-  
-        var assembly = typeof(MaterialId).Assembly; 
-    
+
+        var assembly = typeof(MaterialId).Assembly;
+
         var strongIdTypes = assembly.GetTypes()
             .Where(t => t.IsValueType && t.GetInterfaces()
                 .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IStrongId<>)));
 
         configurationBuilder.Properties<UserId>().HaveConversion<StrongIdConverter<UserId>>();
-        
+
         foreach (var idType in strongIdTypes)
         {
             var converterType = typeof(StrongIdConverter<>).MakeGenericType(idType);
-        
+
             configurationBuilder.Properties(idType).HaveConversion(converterType);
         }
-        
+
     }
 }

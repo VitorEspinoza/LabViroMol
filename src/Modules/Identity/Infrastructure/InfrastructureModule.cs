@@ -10,6 +10,7 @@ using LabViroMol.Modules.Identity.Infrastructure.Persistence;
 using LabViroMol.Modules.Identity.Infrastructure.Services;
 using LabViroMol.Modules.Identity.Infrastructure.Roles;
 using LabViroMol.Modules.Identity.Infrastructure.Users;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
@@ -40,7 +41,7 @@ public static class InfrastructureModule
 
     private static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("LabViroMol");
+        var connectionString = configuration.ResolveLabViroMolConnectionString();
 
         services.AddDbContext<LabViroMolIdentityDbContext>(options =>
             options.UseNpgsql(connectionString, npgsqlOptions =>

@@ -3,6 +3,7 @@ using LabViroMol.Modules.Shared.Kernel.Authorization;
 using LabViroMol.Modules.Shared.Kernel.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
 
 namespace LabViroMol.Modules.Inventory.Presentation.Reports;
@@ -17,8 +18,23 @@ internal sealed class StockReportRequest
 
     public StockReportFilter ToFilter()
     {
-        return new StockReportFilter(From, To, MaterialId, MaterialTypeId, ProjectId);
+        return new StockReportFilter(
+            NormalizeDateTime(From),
+            NormalizeDateTime(To),
+            MaterialId,
+            MaterialTypeId,
+            ProjectId);
     }
+
+    private static DateTime? NormalizeDateTime(DateTime? value) =>
+        value switch
+        {
+            null => null,
+            { Kind: DateTimeKind.Utc } dt => dt,
+            { Kind: DateTimeKind.Local } dt => dt.ToUniversalTime(),
+            { Kind: DateTimeKind.Unspecified } dt => DateTime.SpecifyKind(dt, DateTimeKind.Utc),
+            _ => value
+        };
 }
 
 internal sealed class CriticalStockBalanceRequest
@@ -44,8 +60,24 @@ internal sealed class MaterialAuditMovementsRequest
 
     public MaterialAuditMovementsFilter ToFilter()
     {
-        return new MaterialAuditMovementsFilter(From, To, MaterialId, MaterialTypeId, TransactionType, Limit);
+        return new MaterialAuditMovementsFilter(
+            NormalizeDateTime(From),
+            NormalizeDateTime(To),
+            MaterialId,
+            MaterialTypeId,
+            TransactionType,
+            Limit);
     }
+
+    private static DateTime? NormalizeDateTime(DateTime? value) =>
+        value switch
+        {
+            null => null,
+            { Kind: DateTimeKind.Utc } dt => dt,
+            { Kind: DateTimeKind.Local } dt => dt.ToUniversalTime(),
+            { Kind: DateTimeKind.Unspecified } dt => DateTime.SpecifyKind(dt, DateTimeKind.Utc),
+            _ => value
+        };
 }
 
 internal static class InventoryReportEndpoints
@@ -68,7 +100,8 @@ internal static class InventoryReportEndpoints
                 queries.GetStockOutflowsByProjectAsync,
                 pdfGenerator.GenerateStockOutflowsByProject,
                 "stock-outflows-by-project.pdf",
-                ct));
+                ct))
+            .Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
 
         group.MapGet("/stock-outflows/by-month.pdf", async (
             [AsParameters] StockReportRequest request,
@@ -82,7 +115,8 @@ internal static class InventoryReportEndpoints
                 queries.GetStockOutflowsByMonthAsync,
                 pdfGenerator.GenerateStockOutflowsByMonth,
                 "stock-outflows-by-month.pdf",
-                ct));
+                ct))
+            .Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
 
         group.MapGet("/stock-outflows/totals.pdf", async (
             [AsParameters] StockReportRequest request,
@@ -96,7 +130,8 @@ internal static class InventoryReportEndpoints
                 queries.GetStockOutflowTotalsAsync,
                 pdfGenerator.GenerateStockOutflowTotals,
                 "stock-outflow-totals.pdf",
-                ct));
+                ct))
+            .Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
 
         group.MapGet("/stock-inflows/by-order-material-month.pdf", async (
             [AsParameters] StockReportRequest request,
@@ -110,7 +145,8 @@ internal static class InventoryReportEndpoints
                 queries.GetStockInflowsByOrderMaterialMonthAsync,
                 pdfGenerator.GenerateStockInflowsByOrderMaterialMonth,
                 "stock-inflows-by-order-material-month.pdf",
-                ct));
+                ct))
+            .Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
 
         group.MapGet("/critical-stock-balance.pdf", async (
             [AsParameters] CriticalStockBalanceRequest request,
@@ -131,7 +167,7 @@ internal static class InventoryReportEndpoints
             var pdf = pdfGenerator.GenerateCriticalStockBalance(report);
 
             return Results.File(pdf, "application/pdf", "critical-stock-balance.pdf");
-        });
+        }).Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
 
         group.MapGet("/material-audit-movements.pdf", async (
             [AsParameters] MaterialAuditMovementsRequest request,
@@ -152,7 +188,7 @@ internal static class InventoryReportEndpoints
             var pdf = pdfGenerator.GenerateMaterialAuditMovements(report);
 
             return Results.File(pdf, "application/pdf", "material-audit-movements.pdf");
-        });
+        }).Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
 
         group.MapGet("/manual-stock-adjustments.pdf", async (
             [AsParameters] StockReportRequest request,
@@ -166,7 +202,8 @@ internal static class InventoryReportEndpoints
                 queries.GetManualStockAdjustmentsAsync,
                 pdfGenerator.GenerateManualStockAdjustments,
                 "manual-stock-adjustments.pdf",
-                ct));
+                ct))
+            .Produces<FileContentHttpResult>(StatusCodes.Status200OK, "application/pdf");
     }
 
     private static async Task<IResult> GeneratePdfAsync<TReport>(

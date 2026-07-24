@@ -17,14 +17,14 @@ internal class SendNotificationService : ISendNotification
         _notificationRepository = notificationRepository;
         _unitOfWork = unitOfWork;
     }
-    
+
     public async Task<Result> SendNotification(
-        string title, 
-        string message, 
-        string referenceId, 
-        string referenceModule, 
-        string type, 
-        string permissionId, 
+        string title,
+        string message,
+        string referenceId,
+        string referenceModule,
+        string type,
+        string permissionId,
         CancellationToken ct)
     {
         var result = Notification.Create(
@@ -37,10 +37,10 @@ internal class SendNotificationService : ISendNotification
 
         if (result.IsFailure)
             return result;
-        
+
         await _notificationRepository.AddAsync(result.Data!, ct);
         await _unitOfWork.CompleteAsync(ct);
-        
+
         return Result.Success();
     }
 }

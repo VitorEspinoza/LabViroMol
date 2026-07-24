@@ -6,7 +6,7 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Kits.Commands.Update;
 
-public class UpdateKitHandler : ICommandHandler<UpdateKitCommand, Result>
+public sealed class UpdateKitHandler : ICommandHandler<UpdateKitCommand, Result>
 {
     private readonly IKitRepository _kitRepository;
     private readonly MaterialValidatorService _materialValidatorService;

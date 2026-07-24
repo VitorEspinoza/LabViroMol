@@ -7,16 +7,16 @@ namespace LabViroMol.Modules.Notify.Domain.Notifications;
 
 public class Notification : AggregateRoot<NotificationId>, ICreationAuditable
 {
-    private Notification(){}
+    private Notification() { }
 
     private Notification(
-        NotificationId id, 
-        string title, 
-        string message, 
-        string referenceId, 
-        string referenceModule, 
-        string type, 
-        string targetPermission, 
+        NotificationId id,
+        string title,
+        string message,
+        string referenceId,
+        string referenceModule,
+        string type,
+        string targetPermission,
         DateTimeOffset expiresOn) : base(id)
     {
         Title = title;
@@ -27,22 +27,22 @@ public class Notification : AggregateRoot<NotificationId>, ICreationAuditable
         TargetPermission = targetPermission;
         ExpiresOn = expiresOn;
     }
-    
+
     public string Title { get; private set; }
     public string Message { get; private set; }
     public string ReferenceId { get; private set; }
     public string ReferenceModule { get; private set; }
     public string Type { get; private set; }
     public string TargetPermission { get; private set; }
-    public DateTimeOffset ExpiresOn  { get; private set; }
-    
-    
-    
+    public DateTimeOffset ExpiresOn { get; private set; }
+
+
+
     public List<NotificationDismissal> NotificationDismissals { get; private set; } = [];
 
     public static Result<Notification> Create(string title, string message, string targetPermission, string referenceId, string referenceModule, string type)
     {
-        var creationDate = DateTimeOffset.Now;
+        var creationDate = DateTimeOffset.UtcNow;
         var notification = new Notification(
             IdFactory.New<NotificationId>(),
             title,
@@ -51,22 +51,22 @@ public class Notification : AggregateRoot<NotificationId>, ICreationAuditable
             referenceModule,
             type,
             targetPermission,
-            creationDate.AddDays(3));
-        
+            creationDate.AddDays(3).ToUniversalTime());
+
         return Result<Notification>.Success(notification);
     }
 
     public void Dismiss(UserId userId)
-    {   
+    {
         NotificationDismissals ??= [];
-        
+
         var alreadyDismissed = NotificationDismissals
             .Any(d => d.UserId == userId);
 
         if (alreadyDismissed) return;
-        
+
         var dismissal = NotificationDismissal.Create(userId);
-        
+
         NotificationDismissals.Add(dismissal);
     }
 }

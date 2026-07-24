@@ -5,13 +5,11 @@ namespace LabViroMol.Modules.Research.Application.Publications.Commands.Create;
 using Shared;
 using LabViroMol.Modules.Research.Domain.Publications;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
-using EventHandlers;
 using Mediator;
 
-public class CreatePublicationHandler(
+public sealed class CreatePublicationHandler(
     IPublicationRepository repository,
-    IResearchUnitOfWork unitOfWork,
-    IServiceScopeFactory scopeFactory)
+    IResearchUnitOfWork unitOfWork)
     : ICommandHandler<CreatePublicationCommand, Result<Guid>>
 {
     public async ValueTask<Result<Guid>> Handle(CreatePublicationCommand command, CancellationToken ct)
@@ -30,19 +28,10 @@ public class CreatePublicationHandler(
         var publication = result.Data!;
 
         await repository.AddAsync(publication, ct);
+
+        unitOfWork.AddPersistentEvent(new PublicationTranslationPersistentEvent());
+
         await unitOfWork.CompleteAsync(ct);
-
-        _ = Task.Run(async () =>
-        {
-            using var scope = scopeFactory.CreateScope();
-
-            var publisher =
-                scope.ServiceProvider.GetRequiredService<IPublisher>();
-
-            await publisher.Publish(
-                new PublicationTranslationEvent(publication.Id),
-                CancellationToken.None);
-        });
 
         return Result<Guid>.Success(result.Data!.Id);
     }

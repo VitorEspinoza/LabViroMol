@@ -6,7 +6,7 @@ using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class CancelProjectHandler(
+public sealed class CancelProjectHandler(
     IProjectRepository repository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<CancelProjectCommand, Result>

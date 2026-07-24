@@ -3,6 +3,7 @@ using LabViroMol.Modules.Scheduling.Application.Shared;
 using LabViroMol.Modules.Scheduling.Domain.Schedules;
 using LabViroMol.Modules.Scheduling.Infrastructure.Persistence;
 using LabViroMol.Modules.Scheduling.Infrastructure.Schedules;
+using LabViroMol.Modules.Shared.Infrastructure.Persistence;
 using LabViroMol.Modules.Shared.Infrastructure.Persistence.Outbox;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,7 +38,7 @@ public static class InfrastructureModule
 
     private static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("LabViroMol");
+        var connectionString = configuration.ResolveLabViroMolConnectionString();
 
         services.AddDbContext<SchedulingDbContext>(options =>
             options.UseNpgsql(connectionString, npgsqlOptions =>

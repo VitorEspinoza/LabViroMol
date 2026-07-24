@@ -1,13 +1,14 @@
 using LabViroMol.Modules.Assets.Application.Equipments.EventHandlers;
 using LabViroMol.Modules.Assets.Application.Shared;
 using LabViroMol.Modules.Assets.Domain.Equipments;
+using LabViroMol.Modules.Assets.Domain.Equipments.Events;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LabViroMol.Modules.Assets.Application.Equipments.Commands.Create;
 
-public class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Result>
+public sealed class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Result>
 {
     private readonly IEquipmentRepository _equipmentRepository;
     private readonly IAssetsUnitOfWork _unitOfWork;
@@ -22,7 +23,7 @@ public class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Re
         _unitOfWork = unitOfWork;
         _scopeFactory = scopeFactory;
     }
-    
+
     public async ValueTask<Result> Handle(CreateEquipmentCommand command, CancellationToken ct)
     {
         var existingCode = await _equipmentRepository.GetByCodeAsync(command.Code, ct);
@@ -44,20 +45,11 @@ public class CreateEquipmentHandler : ICommandHandler<CreateEquipmentCommand, Re
         var equipment = result.Data!;
 
         await _equipmentRepository.AddAsync(equipment, ct);
+
+        _unitOfWork.AddPersistentEvent(new EquipmentTranslationPersistentEvent());
+
         await _unitOfWork.CompleteAsync(ct);
 
-        _ = Task.Run(async () =>
-        {
-            using var scope = _scopeFactory.CreateScope();
-
-            var publisher =
-                scope.ServiceProvider.GetRequiredService<IPublisher>();
-            
-            await publisher.Publish(
-                new EquipmentTranslationEvent(equipment.Id),
-                CancellationToken.None);
-        });
-            
 
         return Result.Success();
     }

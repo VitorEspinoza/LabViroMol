@@ -23,7 +23,7 @@ public class StockTransactionConfiguration : IEntityTypeConfiguration<StockTrans
 
         builder.Property(t => t.Type)
             .HasConversion<string>();
-        
+
         builder.Property(t => t.Quantity)
             .HasPrecision(18, 4)
             .IsRequired();

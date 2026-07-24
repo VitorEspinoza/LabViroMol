@@ -6,7 +6,7 @@ using LabViroMol.Modules.Research.Domain.Researchers;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
-public class TransferProjectLeadershipHandler(
+public sealed class TransferProjectLeadershipHandler(
     IProjectRepository projectRepository,
     IResearchUnitOfWork unitOfWork)
     : ICommandHandler<TransferProjectLeadershipCommand, Result>

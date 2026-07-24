@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="35.6.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.4" />
+    <PackageReference Include="NBomber" Version="6.5.0" />
+    <PackageReference Include="NBomber.Http" Version="6.2.1" />
+    <PackageReference Include="Azure.Identity" Version="1.21.0" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.9" />
+    <PackageReference Include="MessagePack" Version="2.5.302" />
+    <PackageReference Include="Npgsql" Version="10.0.3" />
+    <PackageReference Include="Respawn" Version="6.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Modules\Assets\Domain\LabViroMol.Modules.Assets.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Assets\Infrastructure\LabViroMol.Modules.Assets.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Identity\Application\LabViroMol.Modules.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Identity\Domain\LabViroMol.Modules.Identity.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Identity\Infrastructure\LabViroMol.Modules.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Inventory\Domain\LabViroMol.Modules.Inventory.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Inventory\Infrastructure\LabViroMol.Modules.Inventory.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Inventory\Presentation\LabViroMol.Modules.Inventory.Presentation.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Notify\Contracts\LabViroMol.Modules.Notify.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Research\Domain\LabViroMol.Modules.Research.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Research\Presentation\LabViroMol.Modules.Research.Presentation.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Scheduling\Application\LabViroMol.Modules.Scheduling.Application.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Scheduling\Domain\LabViroMol.Modules.Scheduling.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Scheduling\Infrastructure\LabViroMol.Modules.Scheduling.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Shared\Infrastructure\LabViroMol.Modules.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Shared\Kernel\LabViroMol.Modules.Shared.Kernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

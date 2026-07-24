@@ -1,0 +1,3 @@
+P:System.DateTime.Now;Use DateTimeOffset or inject TimeProvider when deterministic time access is required.
+P:System.DateTime.UtcNow;Use DateTimeOffset or inject TimeProvider when deterministic time access is required.
+T:System.Console;Use ILogger or structured telemetry instead of Console in production code.

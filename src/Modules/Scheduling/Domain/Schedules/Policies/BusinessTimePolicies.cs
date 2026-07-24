@@ -9,7 +9,7 @@ public static class BusinessTimePolicies
     {
         if (date.IsBefore(DateOnly.FromDateTime(DateTime.Today)))
             throw new DomainException("A data não pode ser no passado.");
-        
+
         if (!date.IsBusinessDay())
             return Result.BusinessRule("A data deve ser um dia útil.");
 
@@ -20,14 +20,14 @@ public static class BusinessTimePolicies
             return Result.BusinessRule("O horário final está fora do horário comercial.");
 
         if (end.IsBefore(start))
-            throw new DomainException("O horário final deve ser após o inicial.");
+            return Result.BusinessRule("O horário final deve ser após o inicial.");
 
         if (start.Date != date.ToDateTime(TimeOnly.MinValue).Date ||
             end.Date != date.ToDateTime(TimeOnly.MinValue).Date)
         {
             throw new DomainException("Os horários devem pertencer à mesma data.");
         }
-        
+
         return Result.Success();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using LabViroMol.Modules.Shared.Kernel.Primitives;
 
 namespace LabViroMol.Modules.Research.Domain.Researchers;
+
 public record ResearcherName
 {
     public string FirstName { get; init; }
@@ -12,18 +13,18 @@ public record ResearcherName
     {
         Guard.AgainstEmpty(firstName, "O primeiro nome é obrigatório.");
         Guard.AgainstEmpty(lastName, "O sobrenome é obrigatório.");
-        
+
         FirstName = firstName.Trim();
         LastName = lastName.Trim();
         CitationName = citationName?.Trim();
         DisplayName = displayName?.Trim();
     }
-    
+
     public string FullName => $"{FirstName} {LastName}";
 
-    public string PublicDisplayName 
+    public string PublicDisplayName
     {
-        get 
+        get
         {
             if (!string.IsNullOrWhiteSpace(DisplayName))
                 return DisplayName;
@@ -35,9 +36,9 @@ public record ResearcherName
         }
     }
 
-    public string PublicCitationName 
+    public string PublicCitationName
     {
-        get 
+        get
         {
             if (!string.IsNullOrWhiteSpace(CitationName))
                 return CitationName;
@@ -45,7 +46,7 @@ public record ResearcherName
             var parts = LastName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var lastWord = parts.Length > 0 ? parts[^1] : LastName;
 
-            return $"{lastWord.ToUpper()}, {FirstName[0]}."; 
+            return $"{lastWord.ToUpper()}, {FirstName[0]}.";
         }
     }
 }

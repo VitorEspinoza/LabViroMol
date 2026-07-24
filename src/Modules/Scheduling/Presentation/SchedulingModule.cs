@@ -1,6 +1,7 @@
-﻿using LabViroMol.Modules.Scheduling.Application;
+using LabViroMol.Modules.Scheduling.Application;
 using LabViroMol.Modules.Scheduling.Infrastructure;
 using LabViroMol.Modules.Scheduling.Presentation.Schedules;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -16,20 +17,22 @@ public static class SchedulingModule
         services
             .AddApplication()
             .AddInfrastructure(configuration);
-        
+
         return services;
     }
-    
+
     public static IEndpointRouteBuilder MapSchedulingEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/scheduling")
             .WithTags("Scheduling");
 
         group.MapScheduleEndpoints();
-        
-        var publicGroup = group.MapGroup("/public").WithTags("Assets-Public");
+
+        var publicGroup = group.MapGroup("/public")
+            .WithTags("Assets-Public")
+            .WithMetadata(new AllowAnonymousAttribute());
         publicGroup.MapInstitutionalScheduleEndpoints();
-        
+
         return app;
     }
 }

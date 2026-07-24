@@ -5,11 +5,11 @@ using Mediator;
 
 namespace LabViroMol.Modules.Inventory.Application.Materials.EventHandlers;
 
-public class LowStockEventHandler : INotificationHandler<LowStockDomainEvent>
+public sealed class LowStockEventHandler : INotificationHandler<LowStockDomainEvent>
 {
     private readonly ISendNotification _sendNotification;
     private readonly IMaterialRepository _materialRepository;
-    
+
     public LowStockEventHandler(
         ISendNotification sendNotification,
         IMaterialRepository materialRepository)
@@ -17,7 +17,7 @@ public class LowStockEventHandler : INotificationHandler<LowStockDomainEvent>
         _sendNotification = sendNotification;
         _materialRepository = materialRepository;
     }
-    
+
     public async ValueTask Handle(LowStockDomainEvent notification, CancellationToken ct)
     {
         var message = $"""

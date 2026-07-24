@@ -34,6 +34,21 @@ public class InventoryReportEndpointTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task ShouldReturnPdf_WhenReportRequestUsesDateOnlyQueryParameters()
+    {
+        await MaterialDataSeeder.SeedMaterialAsync(DbContext);
+
+        var from = DateTime.UtcNow.AddDays(-365).ToString("yyyy-MM-dd");
+        var to = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+        var response = await Client.GetAsync($"{BaseRoute}/stock-outflows/totals.pdf?from={from}&to={to}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/pdf", response.Content.Headers.ContentType?.MediaType);
+        AssertPdfHeader(await response.Content.ReadAsByteArrayAsync());
+    }
+
+    [Fact]
     public async Task ShouldReturn401_WhenReportRequestIsUnauthenticated()
     {
         ClearAuthentication();

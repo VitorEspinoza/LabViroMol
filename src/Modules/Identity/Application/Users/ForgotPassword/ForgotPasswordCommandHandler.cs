@@ -1,20 +1,20 @@
 using LabViroMol.Modules.Identity.Application.Users.Abstractions;
 using LabViroMol.Modules.Identity.Application.Users.Emails;
-using LabViroMol.Modules.Notify.Contracts;
+using LabViroMol.Modules.Identity.Contracts;
 using LabViroMol.Modules.Shared.Kernel.Primitives;
 using Mediator;
 
 namespace LabViroMol.Modules.Identity.Application.Users.ForgotPassword;
 
-public class ForgotPasswordCommandHandler : ICommandHandler<ForgotPasswordCommand, Result>
+public sealed class ForgotPasswordCommandHandler : ICommandHandler<ForgotPasswordCommand, Result>
 {
     private readonly IIdentityService _identityService;
-    private readonly ISendEmail _emailSender;
+    private readonly IIdentityUnitOfWork _unitOfWork;
 
-    public ForgotPasswordCommandHandler(IIdentityService identityService, ISendEmail emailSender)
+    public ForgotPasswordCommandHandler(IIdentityService identityService, IIdentityUnitOfWork unitOfWork)
     {
         _identityService = identityService;
-        _emailSender = emailSender;
+        _unitOfWork = unitOfWork;
     }
 
     public async ValueTask<Result> Handle(ForgotPasswordCommand command, CancellationToken ct)
@@ -27,7 +27,13 @@ public class ForgotPasswordCommandHandler : ICommandHandler<ForgotPasswordComman
         var (resetLink, firstName) = result.Data!;
 
         var (subject, body) = PasswordEmailTemplates.BuildPasswordResetEmail(firstName, resetLink);
-        await _emailSender.SendEmail(command.Email, subject, body, ct);
+
+        _unitOfWork.AddPersistentEvent(new ForgotPasswordPersistentEvent(
+            command.Email,
+            subject,
+            body));
+
+        await _unitOfWork.CompleteAsync(ct);
 
         return Result.Success();
     }

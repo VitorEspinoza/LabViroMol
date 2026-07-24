@@ -1,0 +1,130 @@
+name: Dynamic (DAST + Perf Smoke)
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - "infra/**"
+
+concurrency:
+  group: dynamic-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  COMPOSE_FILES: "-f docker-compose.ci.yaml"
+  BASE_URL: "http://localhost:8080"
+  JWT_KEY: "ci-fake-secret-key-must-be-at-least-32-characters-long"
+  JWT_ISSUER: "LabViroMol"
+  JWT_AUDIENCE: "LabViroMol"
+  POSTGRES_USER: "labviromol_ci"
+  POSTGRES_PASSWORD: "labviromol_ci"
+  POSTGRES_DB: "LabViroMol_CI"
+  DB_CONNECTION_STRING: "Host=postgres;Port=5432;Database=LabViroMol_CI;Username=labviromol_ci;Password=labviromol_ci"
+  DB_CONNECTION_STRING_RUNNER: "Host=localhost;Port=5432;Database=LabViroMol_CI;Username=labviromol_ci;Password=labviromol_ci"
+
+jobs:
+  dynamic-dast-perf:
+    name: Ephemeral stack -> NBomber smoke -> ZAP API scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: "**/*.csproj"
+
+      - name: Restore + build LoadTests project
+        run: dotnet build tests/LoadTests/LabViroMol.LoadTests.csproj -c Release
+
+      - name: Gerar contrato OpenAPI (build da API)
+        env:
+          ConnectionStrings__LabViroMol: "Host=localhost;Port=5432;Database=dummy;Username=dummy;Password=dummy"
+        run: dotnet build src/LabViroMol.Api/LabViroMol.Api.csproj -c Release
+
+      - name: Subir stack efêmera (postgres + migrate + api)
+        run: |
+          docker compose ${{ env.COMPOSE_FILES }} up -d --wait --wait-timeout 180 || {
+            echo "::group::Logs migrate"
+            docker compose ${{ env.COMPOSE_FILES }} logs migrate
+            echo "::endgroup::"
+            echo "::group::Logs api"
+            docker compose ${{ env.COMPOSE_FILES }} logs api
+            echo "::endgroup::"
+            exit 1
+          }
+
+      - name: Smoke check /health/ready
+        run: |
+          curl -fsS "${{ env.BASE_URL }}/health/ready" | tee /dev/stderr
+
+      - name: Seed (perfil ci-smoke)
+        working-directory: tests/LoadTests
+        env:
+          ConnectionStrings__LabViroMol: ${{ env.DB_CONNECTION_STRING_RUNNER }}
+        run: >
+          dotnet run -c Release --no-build --project LabViroMol.LoadTests.csproj --
+          --command=seed --profile=ci-smoke --baseUrl=${{ env.BASE_URL }}
+
+      - name: NBomber smoke (perfil ci-smoke, gate de thresholds via exit code)
+        working-directory: tests/LoadTests
+        env:
+          ConnectionStrings__LabViroMol: ${{ env.DB_CONNECTION_STRING_RUNNER }}
+        run: >
+          dotnet run -c Release --no-build --project LabViroMol.LoadTests.csproj --
+          --profile=ci-smoke --campaign=ci --scenario=full --baseUrl=${{ env.BASE_URL }}
+
+      - name: Publicar relatório NBomber (artefato)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nbomber-ci-smoke-report
+          path: tests/LoadTests/bin/Release/net10.0/reports/ci/ci-smoke
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Login para o DAST (cookie de autenticação)
+        id: zap-auth
+        run: |
+          set -euo pipefail
+          TOKEN=$(curl -fsS -D - -o /dev/null \
+            -H "Content-Type: application/json" \
+            -d '{"email":"loadtest-user1@test.local","password":"Password123!"}' \
+            "${{ env.BASE_URL }}/api/identity/users/login" \
+            | grep -i '^set-cookie: X-Access-Token=' \
+            | sed 's/^[Ss]et-[Cc]ookie: X-Access-Token=//; s/;.*//' \
+            | tr -d '\r')
+          if [ -z "${TOKEN}" ]; then
+            echo "::error::Login não retornou o cookie X-Access-Token."
+            exit 1
+          fi
+          echo "::add-mask::${TOKEN}"
+          echo "cookie=X-Access-Token=${TOKEN}" >> "$GITHUB_OUTPUT"
+
+      - name: ZAP API scan (DAST via contrato OpenAPI, autenticado)
+        uses: zaproxy/action-api-scan@v0.10.0
+        env:
+          ZAP_AUTH_HEADER: "Cookie"
+          ZAP_AUTH_HEADER_VALUE: ${{ steps.zap-auth.outputs.cookie }}
+        with:
+          target: contracts/LabViroMol.Api.json
+          format: openapi
+          rules_file_name: ".zap/rules.tsv"
+          cmd_options: "-O http://localhost:8080 -a -I -P 8090"
+          fail_action: true
+          allow_issue_writing: false
+          artifact_name: "zap-api-scan-report"
+
+      - name: Teardown stack efêmera
+        if: always()
+        run: docker compose ${{ env.COMPOSE_FILES }} down -v
