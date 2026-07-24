@@ -123,7 +123,9 @@ public sealed record MaterialAuditMovementRow(
     decimal Quantity,
     DateTime TransactedAt,
     Guid TransactedByUserId,
+    string TransactedByUserName,
     Guid? ProjectId,
+    string? ProjectTitle,
     Guid? OrderId,
     string? Justification);
 
@@ -146,4 +148,69 @@ public sealed record ManualStockAdjustmentRow(
     decimal Quantity,
     DateTime TransactedAt,
     Guid TransactedByUserId,
+    string TransactedByUserName,
     string? Justification);
+
+public sealed record StockMovementsByUserReport(
+    DateTime GeneratedAtUtc,
+    DateTime? From,
+    DateTime? To,
+    Guid? MaterialId,
+    string? TransactionType,
+    IReadOnlyList<StockMovementsByUserRow> Rows);
+
+public sealed record StockMovementsByUserRow(
+    Guid UserId,
+    string UserName,
+    string TransactionType,
+    decimal TotalQuantity,
+    int MovementsCount);
+
+public sealed record IdleStockReport(
+    DateTime GeneratedAtUtc,
+    Guid? MaterialTypeId,
+    DateTime Since,
+    IReadOnlyList<IdleStockRow> Rows);
+
+public sealed record IdleStockRow(
+    Guid MaterialId,
+    string MaterialName,
+    string MaterialTypeName,
+    string Location,
+    string Unit,
+    decimal StockQuantity,
+    DateTime? LastMovementAt);
+
+public sealed record OrderStatusCycleReport(
+    DateTime GeneratedAtUtc,
+    DateTime? From,
+    DateTime? To,
+    int StaleDays,
+    IReadOnlyList<OrderStatusCountRow> StatusCounts,
+    double? AveragePendingToProcessingHours,
+    double? AverageProcessingToCompletedHours,
+    IReadOnlyList<StaleOrderRow> StaleOrders);
+
+public sealed record OrderStatusCountRow(string Status, int Count);
+
+public sealed record StaleOrderRow(
+    Guid OrderId,
+    string MaterialName,
+    string Status,
+    DateTime LastTransitionAt,
+    int DaysInStatus);
+
+public sealed record StockByMaterialTypeReport(
+    DateTime GeneratedAtUtc,
+    DateTime? From,
+    DateTime? To,
+    IReadOnlyList<StockByMaterialTypeRow> Rows);
+
+public sealed record StockByMaterialTypeRow(
+    Guid MaterialTypeId,
+    string MaterialTypeName,
+    decimal InflowQuantity,
+    decimal OutflowQuantity,
+    decimal NetQuantity,
+    decimal CurrentStockQuantity,
+    int MaterialsCount);

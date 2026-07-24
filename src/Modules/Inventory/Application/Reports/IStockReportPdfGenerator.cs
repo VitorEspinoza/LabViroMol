@@ -9,4 +9,8 @@ public interface IStockReportPdfGenerator
     byte[] GenerateCriticalStockBalance(CriticalStockBalanceReport report);
     byte[] GenerateMaterialAuditMovements(MaterialAuditMovementsReport report);
     byte[] GenerateManualStockAdjustments(ManualStockAdjustmentsReport report);
+    byte[] GenerateStockMovementsByUser(StockMovementsByUserReport report);
+    byte[] GenerateIdleStock(IdleStockReport report);
+    byte[] GenerateOrderStatusCycle(OrderStatusCycleReport report);
+    byte[] GenerateStockByMaterialType(StockByMaterialTypeReport report);
 }

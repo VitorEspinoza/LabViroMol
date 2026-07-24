@@ -49,11 +49,11 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                 new ChartBlock(
                     "Top projetos por quantidade",
                     "Ranking dos maiores consumidores no periodo filtrado.",
-                    rows.GroupBy(r => r.ProjectTitle)
-                        .Select(g => new ChartItem(g.Key, g.Sum(r => r.TotalQuantity), FormatQuantity(g.Sum(r => r.TotalQuantity))))
-                        .OrderByDescending(x => x.Value)
-                        .Take(6)
-                        .ToList(),
+                    LimitWithOthers(
+                        rows.GroupBy(r => r.ProjectTitle)
+                            .Select(g => new ChartItem(g.Key, g.Sum(r => r.TotalQuantity), FormatQuantity(g.Sum(r => r.TotalQuantity))))
+                            .OrderByDescending(x => x.Value),
+                        6),
                     Primary)
             ],
             ["Projeto", "Material", "Un.", "Quantidade", "Mov.", "Primeira saida", "Ultima saida"],
@@ -96,20 +96,20 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                 new ChartBlock(
                     "Quantidade por mes",
                     "Barras horizontais para leitura rapida dos periodos de maior saida.",
-                    rows.GroupBy(r => $"{r.Year:D4}-{r.Month:D2}")
-                        .Select(g => new ChartItem(g.Key, g.Sum(r => r.TotalQuantity), FormatQuantity(g.Sum(r => r.TotalQuantity))))
-                        .OrderBy(x => x.Label)
-                        .Take(12)
-                        .ToList(),
+                    LimitWithOthers(
+                        rows.GroupBy(r => $"{r.Year:D4}-{r.Month:D2}")
+                            .Select(g => new ChartItem(g.Key, g.Sum(r => r.TotalQuantity), FormatQuantity(g.Sum(r => r.TotalQuantity))))
+                            .OrderBy(x => x.Label),
+                        12),
                     Accent),
                 new ChartBlock(
                     "Top materiais",
                     "Materiais com maior quantidade de saida no periodo.",
-                    rows.GroupBy(r => r.MaterialName)
-                        .Select(g => new ChartItem(g.Key, g.Sum(r => r.TotalQuantity), FormatQuantity(g.Sum(r => r.TotalQuantity))))
-                        .OrderByDescending(x => x.Value)
-                        .Take(6)
-                        .ToList(),
+                    LimitWithOthers(
+                        rows.GroupBy(r => r.MaterialName)
+                            .Select(g => new ChartItem(g.Key, g.Sum(r => r.TotalQuantity), FormatQuantity(g.Sum(r => r.TotalQuantity))))
+                            .OrderByDescending(x => x.Value),
+                        6),
                     Primary)
             ],
             ["Mes", "Material", "Un.", "Tipo", "Quantidade", "Mov."],
@@ -148,10 +148,10 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                 new ChartBlock(
                     "Top materiais por saida total",
                     "Materiais com maior peso no consumo total.",
-                    rows.OrderByDescending(r => r.TotalQuantity)
-                        .Take(8)
-                        .Select(r => new ChartItem(r.MaterialName, r.TotalQuantity, $"{FormatQuantity(r.TotalQuantity)} {r.Unit}"))
-                        .ToList(),
+                    LimitWithOthers(
+                        rows.OrderByDescending(r => r.TotalQuantity)
+                            .Select(r => new ChartItem(r.MaterialName, r.TotalQuantity, $"{FormatQuantity(r.TotalQuantity)} {r.Unit}")),
+                        8),
                     Primary),
                 new ChartBlock(
                     "Projeto vs excecao",
@@ -200,11 +200,11 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                 new ChartBlock(
                     "Entradas por mes",
                     "Volume recebido por competencia.",
-                    rows.GroupBy(r => $"{r.Year:D4}-{r.Month:D2}")
-                        .Select(g => new ChartItem(g.Key, g.Sum(r => r.TotalQuantity), FormatQuantity(g.Sum(r => r.TotalQuantity))))
-                        .OrderBy(x => x.Label)
-                        .Take(12)
-                        .ToList(),
+                    LimitWithOthers(
+                        rows.GroupBy(r => $"{r.Year:D4}-{r.Month:D2}")
+                            .Select(g => new ChartItem(g.Key, g.Sum(r => r.TotalQuantity), FormatQuantity(g.Sum(r => r.TotalQuantity))))
+                            .OrderBy(x => x.Label),
+                        12),
                     Accent),
                 new ChartBlock(
                     "Origem das entradas",
@@ -255,22 +255,22 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                 new ChartBlock(
                     "Maior deficit de estoque",
                     "Quanto mais negativa a diferenca, maior a prioridade de reposicao.",
-                    rows.OrderBy(r => r.Difference)
-                        .Take(8)
-                        .Select(r => new ChartItem(r.MaterialName, Math.Abs(Math.Min(r.Difference, 0)), $"Dif. {FormatQuantity(r.Difference)}"))
-                        .ToList(),
+                    LimitWithOthers(
+                        rows.OrderBy(r => r.Difference)
+                            .Select(r => new ChartItem(r.MaterialName, Math.Abs(Math.Min(r.Difference, 0)), $"Dif. {FormatQuantity(r.Difference)}")),
+                        8),
                     Danger),
                 new ChartBlock(
                     "Estoque atual vs minimo",
                     "Razao entre saldo atual e estoque minimo para materiais mais criticos.",
-                    rows.OrderBy(r => r.StockQuantity - r.MinStock)
-                        .Take(8)
-                        .Select(r =>
-                        {
-                            var ratio = r.MinStock == 0 ? 100 : Math.Round(r.StockQuantity / r.MinStock * 100, 2);
-                            return new ChartItem(r.MaterialName, Math.Min(ratio, 100), $"{FormatQuantity(r.StockQuantity)} / {FormatQuantity(r.MinStock)}");
-                        })
-                        .ToList(),
+                    LimitWithOthers(
+                        rows.OrderBy(r => r.StockQuantity - r.MinStock)
+                            .Select(r =>
+                            {
+                                var ratio = r.MinStock == 0 ? 100 : Math.Round(r.StockQuantity / r.MinStock * 100, 2);
+                                return new ChartItem(r.MaterialName, Math.Min(ratio, 100), $"{FormatQuantity(r.StockQuantity)} / {FormatQuantity(r.MinStock)}");
+                            }),
+                        8),
                     Warning)
             ],
             ["Material", "Tipo", "Local", "Un.", "Atual", "Minimo", "Diferenca"],
@@ -291,6 +291,7 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
     {
         var rows = report.Rows;
         var totalQuantity = rows.Sum(r => r.Quantity);
+        var monthlySummary = BuildAuditMonthlySummary(rows);
 
         return Generate(new ReportDocument(
             report.GeneratedAtUtc,
@@ -318,11 +319,11 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                 new ChartBlock(
                     "Top materiais por quantidade",
                     "Itens com maior volume movimentado.",
-                    rows.GroupBy(r => r.MaterialName)
-                        .Select(g => new ChartItem(g.Key, g.Sum(r => r.Quantity), FormatQuantity(g.Sum(r => r.Quantity))))
-                        .OrderByDescending(x => x.Value)
-                        .Take(6)
-                        .ToList(),
+                    LimitWithOthers(
+                        rows.GroupBy(r => r.MaterialName)
+                            .Select(g => new ChartItem(g.Key, g.Sum(r => r.Quantity), FormatQuantity(g.Sum(r => r.Quantity))))
+                            .OrderByDescending(x => x.Value),
+                        6),
                     Accent)
             ],
             ["Data", "Material", "Tipo material", "Tipo", "Qtd.", "Usuario", "Projeto", "Pedido", "Justificativa"],
@@ -333,12 +334,62 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                 r.MaterialTypeName,
                 TranslateTransactionType(r.TransactionType),
                 FormatQuantity(r.Quantity),
-                ShortId(r.TransactedByUserId),
-                r.ProjectId.HasValue ? ShortId(r.ProjectId.Value) : "-",
+                r.TransactedByUserName,
+                r.ProjectTitle ?? "-",
                 r.OrderId.HasValue ? ShortId(r.OrderId.Value) : "-",
                 r.Justification ?? "-"
             }).ToList(),
-            $"Movimentacoes listadas: {rows.Count}"));
+            $"Movimentacoes listadas: {rows.Count}",
+            WrapColumnIndex: 8,
+            MonthlySummary: monthlySummary));
+    }
+
+    private static MonthlySummarySection? BuildAuditMonthlySummary(IReadOnlyList<MaterialAuditMovementRow> rows)
+    {
+        var monthlyGroups = rows
+            .GroupBy(r => new { r.TransactedAt.Year, r.TransactedAt.Month })
+            .Select(g => new
+            {
+                g.Key.Year,
+                g.Key.Month,
+                Label = $"{g.Key.Year:D4}-{g.Key.Month:D2}",
+                Count = g.Count(),
+                Quantity = g.Sum(r => r.Quantity)
+            })
+            .OrderBy(x => x.Year)
+            .ThenBy(x => x.Month)
+            .ToList();
+
+        if (monthlyGroups.Count == 0)
+            return null;
+
+        var avgMovements = (decimal)rows.Count / monthlyGroups.Count;
+        var avgQuantity = rows.Sum(r => r.Quantity) / monthlyGroups.Count;
+        var busiestMonth = monthlyGroups.OrderByDescending(x => x.Count).First();
+
+        return new MonthlySummarySection(
+            [
+                new Kpi("Meses no periodo", monthlyGroups.Count.ToString(Culture), "Competencias com movimentacao", Primary),
+                new Kpi("Media de movimentacoes/mes", avgMovements.ToString("0.##", Culture), "Media no periodo filtrado", Accent),
+                new Kpi("Mes com mais movimentos", busiestMonth.Label, $"{busiestMonth.Count} movimentacoes", Warning),
+                new Kpi("Quantidade media/mes", FormatQuantity(avgQuantity), "Somatorio dividido pelos meses", Danger)
+            ],
+            [
+                new ChartBlock(
+                    "Movimentacoes por mes",
+                    "Contagem de registros auditaveis por competencia.",
+                    LimitWithOthers(
+                        monthlyGroups.Select(x => new ChartItem(x.Label, x.Count, x.Count.ToString(Culture))),
+                        12),
+                    Primary),
+                new ChartBlock(
+                    "Quantidade por mes",
+                    "Volume movimentado por competencia.",
+                    LimitWithOthers(
+                        monthlyGroups.Select(x => new ChartItem(x.Label, x.Quantity, FormatQuantity(x.Quantity))),
+                        12),
+                    Accent)
+            ]);
     }
 
     public byte[] GenerateManualStockAdjustments(ManualStockAdjustmentsReport report)
@@ -370,11 +421,11 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                 new ChartBlock(
                     "Top materiais ajustados",
                     "Materiais com maior volume de ajuste manual.",
-                    rows.GroupBy(r => r.MaterialName)
-                        .Select(g => new ChartItem(g.Key, g.Sum(r => r.Quantity), FormatQuantity(g.Sum(r => r.Quantity))))
-                        .OrderByDescending(x => x.Value)
-                        .Take(6)
-                        .ToList(),
+                    LimitWithOthers(
+                        rows.GroupBy(r => r.MaterialName)
+                            .Select(g => new ChartItem(g.Key, g.Sum(r => r.Quantity), FormatQuantity(g.Sum(r => r.Quantity))))
+                            .OrderByDescending(x => x.Value),
+                        6),
                     Primary)
             ],
             ["Data", "Material", "Tipo material", "Un.", "Ajuste", "Qtd.", "Usuario", "Justificativa"],
@@ -386,10 +437,227 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                 r.Unit,
                 TranslateTransactionType(r.AdjustmentType),
                 FormatQuantity(r.Quantity),
-                ShortId(r.TransactedByUserId),
+                r.TransactedByUserName,
                 r.Justification ?? "-"
             }).ToList(),
-            $"Ajustes listados: {rows.Count}"));
+            $"Ajustes listados: {rows.Count}",
+            WrapColumnIndex: 7));
+    }
+
+    public byte[] GenerateStockMovementsByUser(StockMovementsByUserReport report)
+    {
+        var rows = report.Rows;
+        var totalQuantity = rows.Sum(r => r.TotalQuantity);
+        var topUser = rows
+            .GroupBy(r => r.UserName)
+            .Select(g => new ChartItem(g.Key, g.Sum(r => r.TotalQuantity), FormatQuantity(g.Sum(r => r.TotalQuantity))))
+            .OrderByDescending(x => x.Value)
+            .FirstOrDefault();
+
+        return Generate(new ReportDocument(
+            report.GeneratedAtUtc,
+            "Consumo e ajustes por usuario responsavel",
+            "Prestacao de contas",
+            "Movimentacoes de estoque agrupadas por responsavel, com quebra por tipo de transacao.",
+            [
+                ("De", report.From.HasValue ? FormatDate(report.From.Value) : "Inicio"),
+                ("Ate", report.To.HasValue ? FormatDate(report.To.Value) : "Agora"),
+                ("Material", report.MaterialId?.ToString() ?? "Todos"),
+                ("Tipo de transacao", report.TransactionType ?? "Todos")
+            ],
+            [
+                new Kpi("Quantidade total", FormatQuantity(totalQuantity), "Somatorio das movimentacoes", Primary),
+                new Kpi("Movimentacoes", rows.Sum(r => r.MovementsCount).ToString(Culture), "Registros considerados", Accent),
+                new Kpi("Usuarios", rows.Select(r => r.UserId).Distinct().Count().ToString(Culture), "Responsaveis distintos", Warning),
+                new Kpi("Maior responsavel", topUser?.Label ?? "-", topUser?.FormattedValue ?? "Sem dados", Danger)
+            ],
+            [
+                new ChartBlock(
+                    "Top usuarios por quantidade",
+                    "Ranking dos responsaveis com maior volume movimentado.",
+                    LimitWithOthers(
+                        rows.GroupBy(r => r.UserName)
+                            .Select(g => new ChartItem(g.Key, g.Sum(r => r.TotalQuantity), FormatQuantity(g.Sum(r => r.TotalQuantity))))
+                            .OrderByDescending(x => x.Value),
+                        8),
+                    Primary),
+                new ChartBlock(
+                    "Movimentacoes por tipo",
+                    "Distribuicao das operacoes consideradas no periodo.",
+                    rows.GroupBy(r => TranslateTransactionType(r.TransactionType))
+                        .Select(g => new ChartItem(g.Key, g.Sum(r => r.TotalQuantity), FormatQuantity(g.Sum(r => r.TotalQuantity))))
+                        .OrderByDescending(x => x.Value)
+                        .ToList(),
+                    Accent)
+            ],
+            ["Usuario", "Tipo", "Quantidade", "Movimentacoes"],
+            rows.Select(r => new[]
+            {
+                r.UserName,
+                TranslateTransactionType(r.TransactionType),
+                FormatQuantity(r.TotalQuantity),
+                r.MovementsCount.ToString(Culture)
+            }).ToList(),
+            $"Total geral: {FormatQuantity(totalQuantity)}"));
+    }
+
+    public byte[] GenerateIdleStock(IdleStockReport report)
+    {
+        var rows = report.Rows;
+        var totalStock = rows.Sum(r => r.StockQuantity);
+        var neverMoved = rows.Count(r => r.LastMovementAt is null);
+
+        return Generate(new ReportDocument(
+            report.GeneratedAtUtc,
+            "Materiais sem movimentacao",
+            "Estoque parado",
+            "Materiais com saldo positivo sem movimentacao recente, candidatos a revisao ou descarte.",
+            [
+                ("Tipo de material", report.MaterialTypeId?.ToString() ?? "Todos"),
+                ("Sem movimentacao desde", FormatDate(report.Since))
+            ],
+            [
+                new Kpi("Materiais parados", rows.Count.ToString(Culture), "Itens sem movimentacao recente", Primary),
+                new Kpi("Estoque parado", FormatQuantity(totalStock), "Quantidade somada dos itens", Accent),
+                new Kpi("Nunca movimentados", neverMoved.ToString(Culture), "Sem nenhuma transacao registrada", Warning),
+                new Kpi("Tipos afetados", rows.Select(r => r.MaterialTypeName).Distinct().Count().ToString(Culture), "Categorias com itens parados", Danger)
+            ],
+            [
+                new ChartBlock(
+                    "Maior estoque parado",
+                    "Materiais com maior quantidade sem movimentacao.",
+                    LimitWithOthers(
+                        rows.OrderByDescending(r => r.StockQuantity)
+                            .Select(r => new ChartItem(r.MaterialName, r.StockQuantity, $"{FormatQuantity(r.StockQuantity)} {r.Unit}")),
+                        8),
+                    Warning),
+                new ChartBlock(
+                    "Parados por tipo de material",
+                    "Distribuicao do estoque parado por categoria.",
+                    LimitWithOthers(
+                        rows.GroupBy(r => r.MaterialTypeName)
+                            .Select(g => new ChartItem(g.Key, g.Sum(r => r.StockQuantity), FormatQuantity(g.Sum(r => r.StockQuantity))))
+                            .OrderByDescending(x => x.Value),
+                        8),
+                    Primary)
+            ],
+            ["Material", "Tipo material", "Local", "Un.", "Estoque atual", "Ultima movimentacao"],
+            rows.Select(r => new[]
+            {
+                r.MaterialName,
+                r.MaterialTypeName,
+                r.Location,
+                r.Unit,
+                FormatQuantity(r.StockQuantity),
+                r.LastMovementAt.HasValue ? FormatDate(r.LastMovementAt.Value) : "Nunca movimentado"
+            }).ToList(),
+            $"Materiais listados: {rows.Count}"));
+    }
+
+    public byte[] GenerateOrderStatusCycle(OrderStatusCycleReport report)
+    {
+        var statusCounts = report.StatusCounts;
+        var staleOrders = report.StaleOrders;
+        var totalOrders = statusCounts.Sum(s => s.Count);
+
+        return Generate(new ReportDocument(
+            report.GeneratedAtUtc,
+            "Pedidos por status e tempo de ciclo",
+            "Gestao de compras e reposicao",
+            "Contagem por status, tempo medio de ciclo e pedidos parados alem do limite configurado.",
+            [
+                ("De", report.From.HasValue ? FormatDate(report.From.Value) : "Inicio"),
+                ("Ate", report.To.HasValue ? FormatDate(report.To.Value) : "Agora"),
+                ("Dias para considerar parado", report.StaleDays.ToString(Culture))
+            ],
+            [
+                new Kpi("Pedidos", totalOrders.ToString(Culture), "Total no periodo filtrado", Primary),
+                new Kpi("Parados", staleOrders.Count.ToString(Culture), $"Alem de {report.StaleDays} dias no mesmo status", Danger),
+                new Kpi("Pendente -> Processando", report.AveragePendingToProcessingHours.HasValue ? $"{report.AveragePendingToProcessingHours:0.##}h" : "-", "Tempo medio de ciclo", Accent),
+                new Kpi("Processando -> Concluido", report.AverageProcessingToCompletedHours.HasValue ? $"{report.AverageProcessingToCompletedHours:0.##}h" : "-", "Tempo medio de ciclo", Warning)
+            ],
+            [
+                new ChartBlock(
+                    "Pedidos por status",
+                    "Distribuicao dos pedidos considerados no periodo.",
+                    statusCounts
+                        .Select(s => new ChartItem(TranslateOrderStatus(s.Status), s.Count, s.Count.ToString(Culture)))
+                        .OrderByDescending(x => x.Value)
+                        .ToList(),
+                    Primary),
+                new ChartBlock(
+                    "Pedidos parados ha mais tempo",
+                    "Maior tempo no status atual entre os pedidos parados.",
+                    LimitWithOthers(
+                        staleOrders
+                            .OrderByDescending(o => o.DaysInStatus)
+                            .Select(o => new ChartItem(o.MaterialName, o.DaysInStatus, $"{o.DaysInStatus} dias")),
+                        8),
+                    Danger)
+            ],
+            ["Pedido", "Material", "Status", "Desde", "Dias parado"],
+            staleOrders.Select(o => new[]
+            {
+                ShortId(o.OrderId),
+                o.MaterialName,
+                TranslateOrderStatus(o.Status),
+                FormatDate(o.LastTransitionAt),
+                o.DaysInStatus.ToString(Culture)
+            }).ToList(),
+            $"Pedidos parados: {staleOrders.Count}"));
+    }
+
+    public byte[] GenerateStockByMaterialType(StockByMaterialTypeReport report)
+    {
+        var rows = report.Rows;
+        var totalInflow = rows.Sum(r => r.InflowQuantity);
+        var totalOutflow = rows.Sum(r => r.OutflowQuantity);
+        var totalStock = rows.Sum(r => r.CurrentStockQuantity);
+
+        return Generate(new ReportDocument(
+            report.GeneratedAtUtc,
+            "Resumo agregado por tipo de material",
+            "Visao gerencial por categoria",
+            "Totais de entrada, saida e saldo atual agrupados por tipo de material.",
+            [
+                ("De", report.From.HasValue ? FormatDate(report.From.Value) : "Inicio"),
+                ("Ate", report.To.HasValue ? FormatDate(report.To.Value) : "Agora")
+            ],
+            [
+                new Kpi("Saldo atual total", FormatQuantity(totalStock), "Soma de todos os tipos", Primary),
+                new Kpi("Entradas", FormatQuantity(totalInflow), "Recebimentos e entradas excepcionais", Accent),
+                new Kpi("Saidas", FormatQuantity(totalOutflow), "Consumo de projeto e baixas excepcionais", Warning),
+                new Kpi("Tipos", rows.Count.ToString(Culture), "Categorias consideradas", Danger)
+            ],
+            [
+                new ChartBlock(
+                    "Saldo atual por tipo",
+                    "Tipos de material com maior saldo em estoque.",
+                    LimitWithOthers(
+                        rows.OrderByDescending(r => r.CurrentStockQuantity)
+                            .Select(r => new ChartItem(r.MaterialTypeName, r.CurrentStockQuantity, FormatQuantity(r.CurrentStockQuantity))),
+                        8),
+                    Primary),
+                new ChartBlock(
+                    "Entrada vs saida por tipo",
+                    "Comparativo de movimentacao no periodo filtrado.",
+                    LimitWithOthers(
+                        rows.OrderByDescending(r => r.InflowQuantity + r.OutflowQuantity)
+                            .Select(r => new ChartItem(r.MaterialTypeName, r.InflowQuantity + r.OutflowQuantity, $"E: {FormatQuantity(r.InflowQuantity)} / S: {FormatQuantity(r.OutflowQuantity)}")),
+                        8),
+                    Accent)
+            ],
+            ["Tipo de material", "Materiais", "Entradas", "Saidas", "Saldo periodo", "Saldo atual"],
+            rows.Select(r => new[]
+            {
+                r.MaterialTypeName,
+                r.MaterialsCount.ToString(Culture),
+                FormatQuantity(r.InflowQuantity),
+                FormatQuantity(r.OutflowQuantity),
+                FormatQuantity(r.NetQuantity),
+                FormatQuantity(r.CurrentStockQuantity)
+            }).ToList(),
+            $"Tipos listados: {rows.Count}"));
     }
 
     private static byte[] Generate(ReportDocument report)
@@ -410,6 +678,10 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                     column.Item().Element(container => ComposeKpis(container, report.Kpis));
                     column.Item().Element(container => ComposeFilters(container, report.Filters.ToList()));
                     column.Item().Element(container => ComposeCharts(container, report.Charts));
+
+                    if (report.MonthlySummary is not null)
+                        column.Item().Element(container => ComposeMonthlySummary(container, report.MonthlySummary));
+
                     column.Item().Element(container => ComposeTableSection(container, report));
                 });
 
@@ -527,6 +799,17 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
         });
     }
 
+    private static void ComposeMonthlySummary(IContainer container, MonthlySummarySection summary)
+    {
+        container.Column(column =>
+        {
+            column.Spacing(8);
+            column.Item().Text("Resumo mensal").FontSize(11).Bold().FontColor(Ink);
+            column.Item().Element(kpiContainer => ComposeKpis(kpiContainer, summary.Kpis));
+            column.Item().Element(chartsContainer => ComposeCharts(chartsContainer, summary.Charts));
+        });
+    }
+
     private static void ComposeChart(IContainer container, ChartBlock chart)
     {
         var items = chart.Items.Where(i => i.Value > 0).ToList();
@@ -597,11 +880,11 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                     return;
                 }
 
-                column.Item().Element(tableContainer => ComposeTable(tableContainer, report.Headers, report.Rows));
+                column.Item().Element(tableContainer => ComposeTable(tableContainer, report.Headers, report.Rows, report.WrapColumnIndex));
             });
     }
 
-    private static void ComposeTable(IContainer container, string[] headers, IReadOnlyList<string[]> rows)
+    private static void ComposeTable(IContainer container, string[] headers, IReadOnlyList<string[]> rows, int? wrapColumnIndex = null)
     {
         container.Table(table =>
         {
@@ -624,9 +907,11 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
                 var row = rows[index];
                 var background = index % 2 == 0 ? White : Surface;
 
-                foreach (var value in row)
+                for (var columnIndex = 0; columnIndex < row.Length; columnIndex++)
                 {
-                    table.Cell().Element(cell => BodyCell(cell, background)).Text(Compact(value, 58)).FontSize(7);
+                    var value = row[columnIndex];
+                    var cellText = columnIndex == wrapColumnIndex ? value : Compact(value, 58);
+                    table.Cell().Element(cell => BodyCell(cell, background)).Text(cellText).FontSize(7);
                 }
             }
         });
@@ -679,6 +964,19 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
         yield return ("Tipo de material", materialTypeId?.ToString() ?? "Todos");
     }
 
+    private static List<ChartItem> LimitWithOthers(IEnumerable<ChartItem> orderedItems, int take)
+    {
+        var items = orderedItems.ToList();
+        if (items.Count <= take)
+            return items;
+
+        var visible = items.Take(take).ToList();
+        var remaining = items.Skip(take).ToList();
+        var remainingSum = remaining.Sum(i => i.Value);
+        visible.Add(new ChartItem($"Outros ({remaining.Count} itens)", remainingSum, FormatQuantity(remainingSum)));
+        return visible;
+    }
+
     private static string FormatQuantity(decimal value)
     {
         return value.ToString("0.####", Culture);
@@ -714,6 +1012,18 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
         };
     }
 
+    private static string TranslateOrderStatus(string value)
+    {
+        return value switch
+        {
+            "Pending" => "Pendente",
+            "Processing" => "Processando",
+            "Completed" => "Concluido",
+            "Canceled" => "Cancelado",
+            _ => value
+        };
+    }
+
     private sealed record ReportDocument(
         DateTime GeneratedAtUtc,
         string Title,
@@ -724,9 +1034,13 @@ public sealed class StockReportPdfGenerator : IStockReportPdfGenerator
         IReadOnlyList<ChartBlock> Charts,
         string[] Headers,
         IReadOnlyList<string[]> Rows,
-        string Summary);
+        string Summary,
+        int? WrapColumnIndex = null,
+        MonthlySummarySection? MonthlySummary = null);
 
     private sealed record Kpi(string Label, string Value, string Hint, string Color);
+
+    private sealed record MonthlySummarySection(IReadOnlyList<Kpi> Kpis, IReadOnlyList<ChartBlock> Charts);
 
     private sealed record ChartBlock(
         string Title,
